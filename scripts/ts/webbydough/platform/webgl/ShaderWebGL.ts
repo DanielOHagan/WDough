@@ -30,7 +30,7 @@ namespace wDOH {
         }
 
         public unBind() : void {
-            mContext.useProgram(0);
+            mContext.useProgram(null);
         }
 
         public compileShaderSources(sources : Map<EShaderType, string>) {
@@ -111,9 +111,18 @@ namespace wDOH {
             return -1;
         }
 
-        //Uniforms
         public createUniform(uniformName: string) : void {
-            
+            if (this.mProgram === null) {
+                throw new Error("Shader Program not initialised.");
+            }
+
+            let uniformLocation : WebGLUniformLocation | null = mContext.getUniformLocation(this.mProgram, uniformName);
+
+            if (uniformLocation === null) {
+                throw new Error(`Failed to create uniform: ${uniformName}`);
+            }
+
+            this.mUniformLocations[uniformName] = uniformLocation;
         }
 
         public createUniforms(uniformNames: string[]) : void {

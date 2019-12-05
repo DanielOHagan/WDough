@@ -35,5 +35,9 @@ namespace wDOH {
 
             requestAnimationFrame(this.loop.bind(this));
         }
+
+        public getApplicationLogic() : IApplicationLogic {
+            return this.mAppLogic;
+        }
     }
 }

@@ -5,5 +5,7 @@ namespace wDOH {
         unBind() : void;
 
         getCount() : number;
+
+        cleanUp() : void;
     }
 }

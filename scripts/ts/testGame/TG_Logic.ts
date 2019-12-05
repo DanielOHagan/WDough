@@ -47,7 +47,9 @@ namespace TestGame {
         ];
 
         private mFlatColourShader : wDOH.IShader | null = null;
-        private mFlatColour : wDOH.Vector4f = new wDOH.Vector4f(0.0, 1.0, 0.0, 1.0);
+        public mFlatColour : wDOH.Vector4f = new wDOH.Vector4f(1.0, 1.0, 0.0, 1.0);
+
+        private squareVAO : wDOH.IVertexArray | null = null;
 
         public init() : void {
             console.log("TG_Logic: init");
@@ -63,17 +65,31 @@ namespace TestGame {
             if (this.mFlatColourShader !== null) {
                 this.mFlatColourShader.createUniform("uColour");
             }
+
+            this.squareVAO = new wDOH.VertexArrayWebGL();
+            let squareVBO : wDOH.IVertexBufer = new wDOH.VertexBufferWebGL(
+                this.mSquareVertices,
+                this.mSquareVertices.length * Float32Array.BYTES_PER_ELEMENT
+            );
+            squareVBO.setBufferLayout(new wDOH.BufferLayout([
+                new wDOH.BufferElement("aVertPos", wDOH.EDataType.FLOAT3)
+            ]))
+            this.squareVAO.addVertexBuffer(squareVBO);
+            let squareIB : wDOH.IIndexBuffer = new wDOH.IndexBufferWebGL(this.mSquareIndices);
+            this.squareVAO.setIndexBuffer(squareIB);
         }
         
         public update(deltaTime: number) : void {
             
             //console.log("TG_Logic: update");
             if (this.mFlatColourShader !== null) {
+                this.mFlatColourShader.bind();
                 (this.mFlatColourShader as wDOH.ShaderWebGL).setUniform4f("uColour", this.mFlatColour);
 
-
+                if (this.squareVAO !== null) {
+                    wDOH.Renderer.drawIndexed(this.mFlatColourShader, this.squareVAO);
+                }
             }
-
         }
     }
 }

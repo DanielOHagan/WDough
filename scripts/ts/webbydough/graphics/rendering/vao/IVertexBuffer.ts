@@ -6,5 +6,7 @@ namespace wDOH {
 
         getBufferLayout() : BufferLayout;
         setBufferLayout(bufferLayout : BufferLayout) : void;
+
+        cleanUp() : void;
     }
 }
