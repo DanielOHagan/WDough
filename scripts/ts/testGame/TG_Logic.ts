@@ -9,10 +9,12 @@ namespace TestGame {
             "",
             "precision mediump float;",
             "",
+            "uniform mat4 uProjectionViewMatrix;",
+            "",
             "in vec3 aVertPos;",
             "",
             "void main() {",
-                "gl_Position = vec4(aVertPos, 1.0);",
+                "gl_Position = uProjectionViewMatrix * vec4(aVertPos, 1.0);",
             "}"
         ].join("\n");
             
@@ -47,9 +49,11 @@ namespace TestGame {
         ];
 
         private mFlatColourShader : wDOH.IShader | null = null;
-        public mFlatColour : wDOH.Vector4f = new wDOH.Vector4f(1.0, 1.0, 0.0, 1.0);
+        private mFlatColour : wDOH.Vector4 = new wDOH.Vector4(1.0, 1.0, 0.0, 1.0);
 
         private squareVAO : wDOH.IVertexArray | null = null;
+
+        private mOrthoCamera : wDOH.OrthographicCamera = new wDOH.OrthographicCamera(-1.6, 1.6, -0.9, 0.9);
 
         public init() : void {
             console.log("TG_Logic: init");
@@ -80,16 +84,26 @@ namespace TestGame {
         }
         
         public update(deltaTime: number) : void {
+
+            if (Math.random() * 10 <= 0.5) {
+                //NOTE:: The *Camera* is being moved NOT the scene!
+                let pos : wDOH.Vector3 = new wDOH.Vector3(this.mOrthoCamera.getPosition().x + 0.1, 0, 1);
+                this.mOrthoCamera.setPosition(pos);
+            }
+
+            mApplication.getRenderer().beginScene(this.mOrthoCamera);
             
-            //console.log("TG_Logic: update");
             if (this.mFlatColourShader !== null) {
                 this.mFlatColourShader.bind();
                 (this.mFlatColourShader as wDOH.ShaderWebGL).setUniform4f("uColour", this.mFlatColour);
 
                 if (this.squareVAO !== null) {
-                    wDOH.Renderer.drawIndexed(this.mFlatColourShader, this.squareVAO);
+                    mApplication.getRenderer().submitShader(this.mFlatColourShader, this.squareVAO, new wDOH.Matrix4x4());
                 }
             }
+
+
+            mApplication.getRenderer().endScene();
         }
     }
 }

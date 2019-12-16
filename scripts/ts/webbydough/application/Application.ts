@@ -5,9 +5,11 @@ namespace wDOH {
 
         private mCanvas : Canvas;
         private mAppLogic : IApplicationLogic;
+        private mRenderer : Renderer;
 
         public constructor(appLogic : IApplicationLogic) {
             this.mCanvas = new Canvas();
+            this.mRenderer = new Renderer();
             this.mAppLogic = appLogic;
         }
 
@@ -15,6 +17,8 @@ namespace wDOH {
 
             //Attach canvas to body
             this.mCanvas.attachCanvas();
+
+            this.mRenderer.init();
 
             this.mAppLogic.init();
 
@@ -38,6 +42,10 @@ namespace wDOH {
 
         public getApplicationLogic() : IApplicationLogic {
             return this.mAppLogic;
+        }
+
+        public getRenderer() : Renderer {
+            return this.mRenderer;
         }
     }
 }

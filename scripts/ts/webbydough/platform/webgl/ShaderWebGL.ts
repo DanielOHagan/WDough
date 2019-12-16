@@ -52,10 +52,7 @@ namespace wDOH {
                 if (shader === null) {
                     throw new Error(
                         "Failed to create shader!" + 
-                        "Name: " + this.mName +
-
-                        //TEMP: Type string conversion
-                        "Type: " + (shaderType === mContext.VERTEX_SHADER ? "Vertex" : "Fragment")
+                        "Name: " + this.mName
                     );
                 }
 
@@ -138,8 +135,12 @@ namespace wDOH {
             mContext.uniform1i(this.getUniformLocation(uniformName), value);
         }
 
-        public setUniform4f(uniformName : string, value : Vector4f) : void {
+        public setUniform4f(uniformName : string, value : Vector4) : void {
             mContext.uniform4f(this.getUniformLocation(uniformName), value.x, value.y, value.z, value.w);
+        }
+
+        public setUniformMat4(uniformName: string, transformationMatrix: Matrix4x4) {
+            mContext.uniformMatrix4fv(this.getUniformLocation(uniformName), false, new Float32Array(transformationMatrix.asArray()));
         }
 
         public getUniformLocation(uniformName : string) : WebGLUniformLocation {
