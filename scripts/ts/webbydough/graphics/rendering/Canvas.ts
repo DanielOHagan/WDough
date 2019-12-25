@@ -6,6 +6,8 @@ namespace wDOH {
      * Wrapper class for the context viewport
      */
     export class Canvas {
+        
+        private readonly mWebGLContext : string = "webgl2";
 
         private mCanvasNode : HTMLCanvasElement;
 
@@ -35,11 +37,11 @@ namespace wDOH {
                 throw new Error("Canvas not yet defined, unable to create rendering context.");
             }
 
-            return this.mCanvasNode.getContext("webgl2") as WebGL2RenderingContext;
+            return this.mCanvasNode.getContext(this.mWebGLContext) as WebGL2RenderingContext;
         }
 
         public attachCanvas(nodeId : string = "body") {
-            if (nodeId == "body") {
+            if (nodeId === "body") {
                 //Attach to body
                 document.body.appendChild(this.mCanvasNode);
             } else {

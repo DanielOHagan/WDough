@@ -96,8 +96,8 @@ namespace wDOH {
             right : number,
             bottom : number,
             top : number,
-            nearZ : number,
-            farZ : number
+            nearZ : number = -1,
+            farZ : number = 1
         ) {
             this.mProjectionMatrix.identity();
             this.mProjectionMatrix.ortho(left, right, bottom, top, nearZ, farZ);
