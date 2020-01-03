@@ -1,4 +1,4 @@
-namespace wDOH {
+namespace WDOH {
 
     export var mContext : WebGL2RenderingContext;
 
@@ -13,6 +13,12 @@ namespace wDOH {
 
         public constructor(canvasId ? : string) {
             this.mCanvasNode = this.createCanvasNode(canvasId);
+            
+            //TDOD:: Make Resizing
+            //TEMP size changing here
+            this.mCanvasNode.width = 1280;
+            this.mCanvasNode.height = 720;
+            
             mContext = this.createRenderingContext();
         }
 

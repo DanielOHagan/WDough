@@ -1,5 +1,5 @@
 
-namespace wDOH {
+namespace WDOH {
 
     export class Application {
 

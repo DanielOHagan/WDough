@@ -1,4 +1,4 @@
-namespace wDOH {
+namespace WDOH {
 
     export interface ICameraController {
 
@@ -12,11 +12,9 @@ namespace wDOH {
         setTranslationSpeed(translationSpeed : number) : void;
         getTranslationSpeed() : number;
 
-        rotateDegress(rotation : number) : void;
+        rotateDegrees(rotation : number) : void;
         setRotation(rotation : number) : void;
         getRotation() : number;
-        setRotationSpeed(rotationSpeed : number) : void;
-        getRotationSpeed() : number;
 
         setZoomScale(scale : number) : void;
         getZoomScale() : number;

@@ -1,8 +1,8 @@
 namespace TestGame {
 
-    export class TG_Logic implements wDOH.IApplicationLogic {
+    export class TG_Logic implements WDOH.IApplicationLogic {
         
-        private mShaderMangaer : wDOH.ShaderManager | null = null;
+        private mShaderMangaer : WDOH.ShaderManager | null = null;
 
         private vertexSrc = [
             "#version 300 es",
@@ -48,21 +48,21 @@ namespace TestGame {
             2, 3, 0
         ];
 
-        private mFlatColourShader : wDOH.IShader | null = null;
-        private mFlatColour : wDOH.Vector4 = new wDOH.Vector4(1.0, 1.0, 0.0, 1.0);
+        private mFlatColourShader : WDOH.IShader | null = null;
+        private mFlatColour : WDOH.Vector4 = new WDOH.Vector4(1.0, 1.0, 0.0, 1.0);
 
-        private squareVAO : wDOH.IVertexArray | null = null;
+        private squareVAO : WDOH.IVertexArray | null = null;
 
-        private mOrthoCamera : wDOH.OrthographicCamera = new wDOH.OrthographicCamera(-1.6, 1.6, -0.9, 0.9);
+        private mOrthoCameraController : WDOH.ICameraController = new TG_OrthoCameraController(1280 / 720);
 
         public init() : void {
             console.log("TG_Logic: init");
 
-            this.mShaderMangaer = new wDOH.ShaderManager();
+            this.mShaderMangaer = new WDOH.ShaderManager();
 
-            let sources : Map<wDOH.EShaderType, string> = new Map();
-            sources.set(wDOH.EShaderType.VERTEX, this.vertexSrc);
-            sources.set(wDOH.EShaderType.FRAGMENT, this.fragmentSrc);
+            let sources : Map<WDOH.EShaderType, string> = new Map();
+            sources.set(WDOH.EShaderType.VERTEX, this.vertexSrc);
+            sources.set(WDOH.EShaderType.FRAGMENT, this.fragmentSrc);
 
             this.mFlatColourShader = this.mShaderMangaer.create("FlatColourShader", sources);
 
@@ -70,16 +70,16 @@ namespace TestGame {
                 this.mFlatColourShader.createUniform("uColour");
             }
 
-            this.squareVAO = new wDOH.VertexArrayWebGL();
-            let squareVBO : wDOH.IVertexBufer = new wDOH.VertexBufferWebGL(
+            this.squareVAO = new WDOH.VertexArrayWebGL();
+            let squareVBO : WDOH.IVertexBufer = new WDOH.VertexBufferWebGL(
                 this.mSquareVertices,
                 this.mSquareVertices.length * Float32Array.BYTES_PER_ELEMENT
             );
-            squareVBO.setBufferLayout(new wDOH.BufferLayout([
-                new wDOH.BufferElement("aVertPos", wDOH.EDataType.FLOAT3)
+            squareVBO.setBufferLayout(new WDOH.BufferLayout([
+                new WDOH.BufferElement("aVertPos", WDOH.EDataType.FLOAT3)
             ]))
             this.squareVAO.addVertexBuffer(squareVBO);
-            let squareIB : wDOH.IIndexBuffer = new wDOH.IndexBufferWebGL(this.mSquareIndices);
+            let squareIB : WDOH.IIndexBuffer = new WDOH.IndexBufferWebGL(this.mSquareIndices);
             this.squareVAO.setIndexBuffer(squareIB);
         }
         
@@ -87,18 +87,20 @@ namespace TestGame {
 
             if (Math.random() * 10 <= 0.5) {
                 //NOTE:: The *Camera* is being moved NOT the scene!
-                let pos : wDOH.Vector3 = new wDOH.Vector3(this.mOrthoCamera.getPosition().x + 0.1, 0, 1);
-                this.mOrthoCamera.setPosition(pos);
+                // this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0.03, 0, 0));
+                // this.mOrthoCameraController.rotateDegrees(0.5);
             }
 
-            mApplication.getRenderer().beginScene(this.mOrthoCamera);
+            this.mOrthoCameraController.onUpdate(deltaTime);
+
+            mApplication.getRenderer().beginScene(this.mOrthoCameraController.getCamera());
             
             if (this.mFlatColourShader !== null) {
                 this.mFlatColourShader.bind();
-                (this.mFlatColourShader as wDOH.ShaderWebGL).setUniform4f("uColour", this.mFlatColour);
+                (this.mFlatColourShader as WDOH.ShaderWebGL).setUniform4f("uColour", this.mFlatColour);
 
                 if (this.squareVAO !== null) {
-                    mApplication.getRenderer().submitShader(this.mFlatColourShader, this.squareVAO, new wDOH.Matrix4x4());
+                    mApplication.getRenderer().submitShader(this.mFlatColourShader, this.squareVAO, new WDOH.Matrix4x4());
                 }
             }
 

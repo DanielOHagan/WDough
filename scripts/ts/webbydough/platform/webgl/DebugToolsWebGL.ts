@@ -1,4 +1,4 @@
-namespace wDOH {
+namespace WDOH {
 
     export class DebugToolsWebGL {
 

@@ -1,4 +1,4 @@
-namespace wDOH {
+namespace WDOH {
 
     export class Renderer {
 
@@ -17,10 +17,8 @@ namespace wDOH {
         }
 
         public beginScene(camera : ICamera) : void {
-            //Update Projection View Matrix if it has changed
-            if (!camera.isProjectionViewMatrixUpdated()) {
-                camera.updateProjectionViewMatrix();
-            }
+            
+            camera.updateProjectionViewMatrix();
 
             this.mProjectionViewMatrix = camera.getProjectionViewMatrix();
         }

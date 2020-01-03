@@ -1,4 +1,4 @@
-namespace wDOH {
+namespace WDOH {
 
     export interface ICamera {
 
@@ -11,8 +11,6 @@ namespace wDOH {
         setRotation(rotation : number) : void;
         getRotation() : number;
         resetRotation() : void;
-
-        isProjectionViewMatrixUpdated() : boolean;
 
         getProjectionMatrix() : Matrix4x4;
         getViewMatrix() : Matrix4x4;

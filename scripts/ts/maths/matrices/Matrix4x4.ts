@@ -1,4 +1,4 @@
-namespace wDOH {
+namespace WDOH {
 
     export class Matrix4x4 {
 
@@ -49,29 +49,81 @@ namespace wDOH {
             //TODO:: This
         }
 
+        public mulMat4x45(mat : Matrix4x4) : void {
+            // let dest : Matrix4x4 = new Matrix4x4();
+
+            // dest.m00 = (this.m00 * mat.m00) + (this.m01 * mat.m10) + (this.m02 * mat.m20) + (this.m03 * mat.m30);
+            // dest.m01 = (this.m00 * mat.m01) + (this.m01 * mat.m11) + (this.m02 * mat.m21) + (this.m03 * mat.m31);
+            // dest.m02 = (this.m00 * mat.m02) + (this.m01 * mat.m12) + (this.m02 * mat.m22) + (this.m03 * mat.m32);
+            // dest.m03 = (this.m00 * mat.m03) + (this.m01 * mat.m13) + (this.m02 * mat.m23) + (this.m03 * mat.m33);
+
+            // dest.m10 = (this.m10 * mat.m00) + (this.m11 * mat.m10) + (this.m12 * mat.m20) + (this.m13 * mat.m30);
+            // dest.m11 = (this.m10 * mat.m01) + (this.m11 * mat.m11) + (this.m12 * mat.m21) + (this.m13 * mat.m31);
+            // dest.m12 = (this.m10 * mat.m02) + (this.m11 * mat.m12) + (this.m12 * mat.m22) + (this.m13 * mat.m32);
+            // dest.m13 = (this.m10 * mat.m03) + (this.m11 * mat.m13) + (this.m12 * mat.m23) + (this.m13 * mat.m33);
+
+            // dest.m20 = (this.m20 * mat.m00) + (this.m21 * mat.m10) + (this.m22 * mat.m20) + (this.m23 * mat.m30);
+            // dest.m21 = (this.m20 * mat.m01) + (this.m21 * mat.m11) + (this.m22 * mat.m21) + (this.m23 * mat.m31);
+            // dest.m22 = (this.m20 * mat.m02) + (this.m21 * mat.m12) + (this.m22 * mat.m22) + (this.m23 * mat.m32);
+            // dest.m23 = (this.m20 * mat.m03) + (this.m21 * mat.m13) + (this.m22 * mat.m23) + (this.m23 * mat.m33);
+
+            // dest.m30 = (this.m30 * mat.m00) + (this.m31 * mat.m10) + (this.m32 * mat.m20) + (this.m33 * mat.m30);
+            // dest.m31 = (this.m30 * mat.m01) + (this.m31 * mat.m11) + (this.m32 * mat.m21) + (this.m33 * mat.m31);
+            // dest.m32 = (this.m30 * mat.m02) + (this.m31 * mat.m12) + (this.m32 * mat.m22) + (this.m33 * mat.m32);
+            // dest.m33 = (this.m30 * mat.m03) + (this.m31 * mat.m13) + (this.m32 * mat.m23) + (this.m33 * mat.m33);
+            
+            // this.set(dest);
+
+            //THE MUL ABOVE DOESN'T WORK!!!!!
+
+
+            
+            //-----THIS MUL BELOW WORKS!!!!-----
+            const a00 = this.m00; //1
+            const a01 = this.m01; //1
+            const a02 = this.m02; //2
+            const a03 = this.m03; //3
+
+            const a10 = this.m10; //4
+            const a11 = this.m11; //5
+            const a12 = this.m12; //6
+            const a13 = this.m13; //7
+            const a20 = this.m20; //8
+            const a21 = this.m21; //9
+            const a22 = this.m22; //10
+            const a23 = this.m23; //11
+            const a30 = this.m30; //12
+            const a31 = this.m31; //13
+            const a32 = this.m32; //14
+            const a33 = this.m33; //15
+
+
+            
+        }
+
         public mulMat4x4(mat : Matrix4x4) : void {
             let dest : Matrix4x4 = new Matrix4x4();
 
-            dest.m00 = (this.m00 * mat.m00) + (this.m01 * mat.m10) + (this.m02 * mat.m20) + (this.m03 * mat.m30);
-            dest.m01 = (this.m00 * mat.m01) + (this.m01 * mat.m11) + (this.m02 * mat.m21) + (this.m03 * mat.m31);
-            dest.m02 = (this.m00 * mat.m02) + (this.m01 * mat.m12) + (this.m02 * mat.m22) + (this.m03 * mat.m32);
-            dest.m03 = (this.m00 * mat.m03) + (this.m01 * mat.m13) + (this.m02 * mat.m23) + (this.m03 * mat.m33);
+            dest.m00 = (mat.m00 * this.m00) + (mat.m01 * this.m10) + (mat.m02 * this.m20) + (mat.m03 * this.m30);
+            dest.m01 = (mat.m00 * this.m01) + (mat.m01 * this.m11) + (mat.m02 * this.m21) + (mat.m03 * this.m31);
+            dest.m02 = (mat.m00 * this.m02) + (mat.m01 * this.m12) + (mat.m02 * this.m22) + (mat.m03 * this.m32);
+            dest.m03 = (mat.m00 * this.m03) + (mat.m01 * this.m13) + (mat.m02 * this.m23) + (mat.m03 * this.m33);
 
-            dest.m10 = (this.m10 * mat.m00) + (this.m11 * mat.m10) + (this.m12 * mat.m20) + (this.m13 * mat.m30);
-            dest.m11 = (this.m10 * mat.m01) + (this.m11 * mat.m11) + (this.m12 * mat.m21) + (this.m13 * mat.m31);
-            dest.m12 = (this.m10 * mat.m02) + (this.m11 * mat.m12) + (this.m12 * mat.m22) + (this.m13 * mat.m32);
-            dest.m13 = (this.m10 * mat.m03) + (this.m11 * mat.m13) + (this.m12 * mat.m23) + (this.m13 * mat.m33);
+            dest.m10 = (mat.m10 * this.m00) + (mat.m11 * this.m10) + (mat.m12 * this.m20) + (mat.m13 * this.m30);
+            dest.m11 = (mat.m10 * this.m01) + (mat.m11 * this.m11) + (mat.m12 * this.m21) + (mat.m13 * this.m31);
+            dest.m12 = (mat.m10 * this.m02) + (mat.m11 * this.m12) + (mat.m12 * this.m22) + (mat.m13 * this.m32);
+            dest.m13 = (mat.m10 * this.m03) + (mat.m11 * this.m13) + (mat.m12 * this.m23) + (mat.m13 * this.m33);
 
-            dest.m20 = (this.m20 * mat.m00) + (this.m21 * mat.m10) + (this.m22 * mat.m20) + (this.m23 * mat.m30);
-            dest.m21 = (this.m20 * mat.m01) + (this.m21 * mat.m11) + (this.m22 * mat.m21) + (this.m23 * mat.m31);
-            dest.m22 = (this.m20 * mat.m02) + (this.m21 * mat.m12) + (this.m22 * mat.m22) + (this.m23 * mat.m32);
-            dest.m23 = (this.m20 * mat.m03) + (this.m21 * mat.m13) + (this.m22 * mat.m23) + (this.m23 * mat.m33);
+            dest.m20 = (mat.m20 * this.m00) + (mat.m21 * this.m10) + (mat.m22 * this.m20) + (mat.m23 * this.m30);
+            dest.m21 = (mat.m20 * this.m01) + (mat.m21 * this.m11) + (mat.m22 * this.m21) + (mat.m23 * this.m31);
+            dest.m22 = (mat.m20 * this.m02) + (mat.m21 * this.m12) + (mat.m22 * this.m22) + (mat.m23 * this.m32);
+            dest.m23 = (mat.m20 * this.m03) + (mat.m21 * this.m13) + (mat.m22 * this.m23) + (mat.m23 * this.m33);
 
-            dest.m30 = (this.m30 * mat.m00) + (this.m31 * mat.m10) + (this.m32 * mat.m20) + (this.m33 * mat.m30);
-            dest.m31 = (this.m30 * mat.m01) + (this.m31 * mat.m11) + (this.m32 * mat.m21) + (this.m33 * mat.m31);
-            dest.m32 = (this.m30 * mat.m02) + (this.m31 * mat.m12) + (this.m32 * mat.m22) + (this.m33 * mat.m32);
-            dest.m33 = (this.m30 * mat.m03) + (this.m31 * mat.m13) + (this.m32 * mat.m23) + (this.m33 * mat.m33);
-            
+            dest.m30 = (mat.m30 * this.m00) + (mat.m31 * this.m10) + (mat.m32 * this.m20) + (mat.m33 * this.m30);
+            dest.m31 = (mat.m30 * this.m01) + (mat.m31 * this.m11) + (mat.m32 * this.m21) + (mat.m33 * this.m31);
+            dest.m32 = (mat.m30 * this.m02) + (mat.m31 * this.m12) + (mat.m32 * this.m22) + (mat.m33 * this.m32);
+            dest.m33 = (mat.m30 * this.m03) + (mat.m31 * this.m13) + (mat.m32 * this.m23) + (mat.m33 * this.m33);
+
             this.set(dest);
         }
 
@@ -153,6 +205,96 @@ namespace wDOH {
             mat.m33 = ((this.m20 * d) - (this.m21 * b) + (this.m22 * a)) * determinant;
 
             this.set(mat);
+        }
+
+        public rotateRads(angleRads : number, axis : Vector3) : void {
+            let sin = Math.sin(angleRads);
+            let cos = Math.cos(angleRads);
+            let C = 1 - cos;
+            let xx = axis.x * axis.x;
+            let xy = axis.x * axis.y;
+            let xz = axis.x * axis.z;
+            let yy = axis.y * axis.y;
+            let yz = axis.y * axis.z;
+            let zz = axis.z * axis.z;
+            let rm00 = xx * C + cos;
+            let rm01 = xy * C + axis.z * sin;
+            let rm02 = xz * C - axis.y * sin;
+            let rm10 = xy * C - axis.z * sin;
+            let rm11 = yy * C + cos;
+            let rm12 = yz * C + axis.x * sin;
+            let rm20 = xz * C + axis.y * sin;
+            let rm21 = yz * C - axis.x * sin;
+            let rm22 = zz * C + cos;
+            let nm00 = this.m00 * rm00 + this.m10 * rm01 + this.m20 * rm02;
+            let nm01 = this.m01 * rm00 + this.m11 * rm01 + this.m21 * rm02;
+            let nm02 = this.m02 * rm00 + this.m12 * rm01 + this.m22 * rm02;
+            let nm03 = this.m03 * rm00 + this.m13 * rm01 + this.m23 * rm02;
+            let nm10 = this.m00 * rm10 + this.m10 * rm11 + this.m20 * rm12;
+            let nm11 = this.m01 * rm10 + this.m11 * rm11 + this.m21 * rm12;
+            let nm12 = this.m02 * rm10 + this.m12 * rm11 + this.m22 * rm12;
+            let nm13 = this.m03 * rm10 + this.m13 * rm11 + this.m23 * rm12;
+
+            let mat : Matrix4x4 = new Matrix4x4();
+            mat.m00 = nm00;
+            mat.m01 = nm01;
+            mat.m02 = nm02;
+            mat.m03 = nm03;
+            mat.m10 = nm10;
+            mat.m11 = nm11;
+            mat.m12 = nm12;
+            mat.m13 = nm13;
+            mat.m20 = this.m00 * rm20 + this.m10 * rm21 + this.m20 * rm22;
+            mat.m21 = this.m01 * rm20 + this.m11 * rm21 + this.m21 * rm22;
+            mat.m22 = this.m02 * rm20 + this.m12 * rm21 + this.m22 * rm22;
+            mat.m23 = this.m03 * rm20 + this.m13 * rm21 + this.m23 * rm22;
+            mat.m30 = this.m30;
+            mat.m31 = this.m31;
+            mat.m32 = this.m32;
+            mat.m33 = this.m33;
+
+            this.set(mat);
+        }
+
+        //TODO:: Make an optomised version of this method
+        public rotateRadsSLOW(angleRads : number, axis : Vector3) : void {
+            //TODO:: Turn rotMat into Matrix3x3
+            let sin : number = Math.sin(angleRads);
+            let cos : number = Math.cos(angleRads);
+
+            let rotMatX : Matrix4x4 = new Matrix4x4();
+            let rotMatY : Matrix4x4 = new Matrix4x4();
+            let rotMatZ : Matrix4x4 = new Matrix4x4();
+
+            //X Rotation Matrix
+            rotMatX.m11 = cos * axis.x;
+            rotMatX.m12 = -sin * axis.x;
+            rotMatX.m21 = sin * axis.x;
+            rotMatX.m22 = cos * axis.x;
+
+            //Y Rotation Matrix
+            rotMatY.m00 = cos * axis.y;
+            rotMatY.m02 = sin * axis.y;
+            rotMatY.m20 = -sin * axis.y;
+            rotMatY.m22 = cos * axis.y;
+
+            //Z Rotation Matrix
+            rotMatZ.m00 = cos * axis.z;
+            rotMatZ.m01 = -sin * axis.z;
+            rotMatZ.m10 = sin * axis.z;
+            rotMatZ.m11 = cos * axis.z;
+
+            let mat : Matrix4x4 = new Matrix4x4();
+            mat.mulMat4x4(rotMatX);
+            mat.mulMat4x4(rotMatY);
+            mat.mulMat4x4(rotMatZ);
+
+            mat.m30 = this.m30;
+            mat.m31 = this.m31;
+            mat.m32 = this.m32;
+            mat.m33 = this.m33;
+
+            this.mulMat4x4(mat);
         }
 
         public asArray() : number[] {

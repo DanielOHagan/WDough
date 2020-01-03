@@ -1,6 +1,6 @@
 namespace TestGame {
 
-    export class TG_OrthoCameraController implements wDOH.ICameraController {
+    export class TG_OrthoCameraController implements WDOH.ICameraController {
 
         private mAspectRatio : number;
         
@@ -10,12 +10,11 @@ namespace TestGame {
         private mZoomScale : number;
 
         private mRotation : number;
-        private mRotationSpeed : number;
 
         private mTranslationSpeed : number;
-        private mPosition : wDOH.Vector3;
+        private mPosition : WDOH.Vector3;
 
-        private mCamera : wDOH.OrthographicCamera;
+        private mCamera : WDOH.OrthographicCamera;
 
         public constructor(aspectRatio : number) {
             this.mZoomLevel = 1;
@@ -23,12 +22,11 @@ namespace TestGame {
             this.mZoomMax = 3;
             this.mZoomMin = 0.25;
             this.mRotation = 0;
-            this.mRotationSpeed = 0.2;
             this.mTranslationSpeed = 0.3;
-            this.mPosition = new wDOH.Vector3(0, 0, 0);
+            this.mPosition = new WDOH.Vector3(0, 0, 0);
 
             this.mAspectRatio = aspectRatio;
-            this.mCamera = new wDOH.OrthographicCamera(
+            this.mCamera = new WDOH.OrthographicCamera(
                 -aspectRatio * this.mZoomLevel,
                 aspectRatio * this.mZoomLevel,
                 -this.mZoomLevel,
@@ -38,25 +36,28 @@ namespace TestGame {
 
         public onUpdate(deltaTime : number) : void {
 
+
+            this.mCamera.setRotation(this.mRotation);
+            this.mCamera.setPosition(this.mPosition);
         }
 
         public onWindowResize(aspectRatio : number) : void {
             this.mAspectRatio = aspectRatio;
 
-            this.updateCamera();
+            this.updateProjection();
         }
 
-        public translatePosition(translation : wDOH.Vector3) : void {
+        public translatePosition(translation : WDOH.Vector3) : void {
             this.mPosition.x += translation.x * this.mTranslationSpeed;
             this.mPosition.y += translation.y * this.mTranslationSpeed;
             this.mPosition.z += translation.z * this.mTranslationSpeed;
         }
 
-        public setPosition(pos : wDOH.Vector3) : void {
+        public setPosition(pos : WDOH.Vector3) : void {
             this.mPosition = pos;
         }
 
-        public getPosition() : wDOH.Vector3 {
+        public getPosition() : WDOH.Vector3 {
             return this.mPosition;
         }
 
@@ -68,8 +69,12 @@ namespace TestGame {
             return this.mTranslationSpeed;
         }
 
-        public rotateDegress(rotation : number) : void {
-            this.mRotation += rotation * this.mRotationSpeed;
+        public rotateDegrees(rotation : number) : void {
+            this.rotateRads(WDOH.MathsWDOH.degToRad(rotation));
+        }
+
+        public rotateRads(rotation : number) : void {
+            this.mRotation += rotation;
         }
 
         public setRotation(rotation : number) : void {
@@ -78,14 +83,6 @@ namespace TestGame {
 
         public getRotation() : number {
             return this.mRotation;
-        }
-
-        public setRotationSpeed(rotationSpeed : number) : void {
-            this.mRotationSpeed = rotationSpeed;
-        }
-
-        public getRotationSpeed() : number {
-            return this.mRotationSpeed;
         }
 
         public setZoomScale(zoomScale : number) : void {
@@ -112,7 +109,7 @@ namespace TestGame {
             return this.mZoomMin;
         }
 
-        public getCamera() : wDOH.ICamera {
+        public getCamera() : WDOH.ICamera {
             return this.mCamera;
         }
 
@@ -126,10 +123,10 @@ namespace TestGame {
                 this.mZoomLevel = this.mZoomMin;
             }
     
-            this.updateCamera();
+            this.updateProjection();
         }
 
-        private updateCamera() : void {
+        private updateProjection() : void {
             this.mCamera.setProjection(
                 -this.mAspectRatio * this.mZoomLevel,
                 this.mAspectRatio * this.mZoomLevel,

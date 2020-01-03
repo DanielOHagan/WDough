@@ -1,12 +1,10 @@
-namespace wDOH {
+namespace WDOH {
 
     export class OrthographicCamera implements ICamera {
 
         private mProjectionMatrix : Matrix4x4;
         private mViewMatrix : Matrix4x4;
         private mProjectionViewMatrix : Matrix4x4;
-
-        private mProjectionViewMatrixUpdated : boolean;
 
         private mPosition : Vector3;
         private mRotation : number;
@@ -24,10 +22,16 @@ namespace wDOH {
             this.mProjectionViewMatrix = new Matrix4x4();
             this.mPosition = new Vector3(0, 0, 0);
             this.mRotation = 0;
-            this.mProjectionViewMatrixUpdated = false;
 
             this.setProjection(left, right, bottom, top, nearZ, farZ);
             this.updateProjectionViewMatrix();
+        }
+
+        private updateViewMatrix() : void {
+            this.mViewMatrix.identity();
+            this.mViewMatrix.translateVec3(this.mPosition);
+            this.mViewMatrix.rotateRads(this.mRotation, new Vector3(0, 0, 1));
+            this.mViewMatrix.invert();
         }
         
         public updateProjectionViewMatrix() : void {
@@ -36,21 +40,10 @@ namespace wDOH {
             this.mProjectionViewMatrix.identity();
             this.mProjectionViewMatrix.mulMat4x4(this.mProjectionMatrix);
             this.mProjectionViewMatrix.mulMat4x4(this.mViewMatrix);
-
-            this.mProjectionViewMatrixUpdated = true;
-        }
-
-        private updateViewMatrix() : void {
-            this.mViewMatrix.identity();
-            this.mViewMatrix.translateVec3(this.mPosition);
-            //this.mViewMatrix.rotate(this.mRotation, new Vector3(0, 0, 1));
-            this.mViewMatrix.invert();
         }
         
         public setPosition(pos : Vector3) : void {
             this.mPosition = pos;
-
-            this.mProjectionViewMatrixUpdated = false;
         }
 
         public getPosition() : Vector3 {
@@ -63,8 +56,6 @@ namespace wDOH {
 
         public setRotation(rotation : number) : void {
             this.mRotation = rotation;
-
-            this.mProjectionViewMatrixUpdated = false;
         }
 
         public getRotation() : number {
@@ -73,10 +64,6 @@ namespace wDOH {
 
         public resetRotation() : void {
             this.setRotation(0);
-        }
-        
-        public isProjectionViewMatrixUpdated() : boolean {
-            return this.mProjectionViewMatrixUpdated;
         }
         
         public getProjectionMatrix() : Matrix4x4 {

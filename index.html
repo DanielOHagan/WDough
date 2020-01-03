@@ -4,8 +4,30 @@
         <meta charset="UTF-8">
         <title>WebbyDough</title>
         <script type="text/javascript" src="scripts/js/webbydough.js"></script>
+
+        <script>function rotateDegs(amount) {
+            mApplication.mAppLogic.mOrthoCameraController.rotateDegrees(amount);
+        }
+        
+        function translateX(amount) {
+            mApplication.mAppLogic.mOrthoCameraController.translatePosition(new WDOH.Vector3(amount, 0, 0));
+        }
+        
+        function translateY(amount) {
+            mApplication.mAppLogic.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, amount, 0));
+        }</script>
     </head>
     <body>
-        
+        <!-- TEMP BUTTONS BEFORE I ADD INPUT SUPPORT -->
+
+        <div style="display: inline-block; max-width: 200px;" >
+            <h3>Orhto Camera Controls</h3>
+            <button onclick="rotateDegs(45)" type="button">Rotate Left</button>
+            <button onclick="rotateDegs(-45)" type="button">Rotate Righht</button>
+            <button onclick="translateX(1)" type="button">Translate X Right</button>
+            <button onclick="translateX(-1)" type="button">Translate X Left</button>
+            <button onclick="translateY(1)" type="button">Translate Y Up</button>
+            <button onclick="translateY(-1)" type="button">Translate Y Down</button>
+        </div>
     </body>
 </html>
