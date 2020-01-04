@@ -49,58 +49,6 @@ namespace WDOH {
             //TODO:: This
         }
 
-        public mulMat4x45(mat : Matrix4x4) : void {
-            // let dest : Matrix4x4 = new Matrix4x4();
-
-            // dest.m00 = (this.m00 * mat.m00) + (this.m01 * mat.m10) + (this.m02 * mat.m20) + (this.m03 * mat.m30);
-            // dest.m01 = (this.m00 * mat.m01) + (this.m01 * mat.m11) + (this.m02 * mat.m21) + (this.m03 * mat.m31);
-            // dest.m02 = (this.m00 * mat.m02) + (this.m01 * mat.m12) + (this.m02 * mat.m22) + (this.m03 * mat.m32);
-            // dest.m03 = (this.m00 * mat.m03) + (this.m01 * mat.m13) + (this.m02 * mat.m23) + (this.m03 * mat.m33);
-
-            // dest.m10 = (this.m10 * mat.m00) + (this.m11 * mat.m10) + (this.m12 * mat.m20) + (this.m13 * mat.m30);
-            // dest.m11 = (this.m10 * mat.m01) + (this.m11 * mat.m11) + (this.m12 * mat.m21) + (this.m13 * mat.m31);
-            // dest.m12 = (this.m10 * mat.m02) + (this.m11 * mat.m12) + (this.m12 * mat.m22) + (this.m13 * mat.m32);
-            // dest.m13 = (this.m10 * mat.m03) + (this.m11 * mat.m13) + (this.m12 * mat.m23) + (this.m13 * mat.m33);
-
-            // dest.m20 = (this.m20 * mat.m00) + (this.m21 * mat.m10) + (this.m22 * mat.m20) + (this.m23 * mat.m30);
-            // dest.m21 = (this.m20 * mat.m01) + (this.m21 * mat.m11) + (this.m22 * mat.m21) + (this.m23 * mat.m31);
-            // dest.m22 = (this.m20 * mat.m02) + (this.m21 * mat.m12) + (this.m22 * mat.m22) + (this.m23 * mat.m32);
-            // dest.m23 = (this.m20 * mat.m03) + (this.m21 * mat.m13) + (this.m22 * mat.m23) + (this.m23 * mat.m33);
-
-            // dest.m30 = (this.m30 * mat.m00) + (this.m31 * mat.m10) + (this.m32 * mat.m20) + (this.m33 * mat.m30);
-            // dest.m31 = (this.m30 * mat.m01) + (this.m31 * mat.m11) + (this.m32 * mat.m21) + (this.m33 * mat.m31);
-            // dest.m32 = (this.m30 * mat.m02) + (this.m31 * mat.m12) + (this.m32 * mat.m22) + (this.m33 * mat.m32);
-            // dest.m33 = (this.m30 * mat.m03) + (this.m31 * mat.m13) + (this.m32 * mat.m23) + (this.m33 * mat.m33);
-            
-            // this.set(dest);
-
-            //THE MUL ABOVE DOESN'T WORK!!!!!
-
-
-            
-            //-----THIS MUL BELOW WORKS!!!!-----
-            const a00 = this.m00; //1
-            const a01 = this.m01; //1
-            const a02 = this.m02; //2
-            const a03 = this.m03; //3
-
-            const a10 = this.m10; //4
-            const a11 = this.m11; //5
-            const a12 = this.m12; //6
-            const a13 = this.m13; //7
-            const a20 = this.m20; //8
-            const a21 = this.m21; //9
-            const a22 = this.m22; //10
-            const a23 = this.m23; //11
-            const a30 = this.m30; //12
-            const a31 = this.m31; //13
-            const a32 = this.m32; //14
-            const a33 = this.m33; //15
-
-
-            
-        }
-
         public mulMat4x4(mat : Matrix4x4) : void {
             let dest : Matrix4x4 = new Matrix4x4();
 
@@ -336,67 +284,67 @@ namespace WDOH {
 
         //Getters 
         public get m00Val() : number {
-            return this.m00;
+            return this.m00.valueOf();
         }
 
         public get m01Val() : number {
-            return this.m01;
+            return this.m01.valueOf();
         }
 
         public get m02Val() : number {
-            return this.m02;
+            return this.m02.valueOf();
         }
 
         public get m03Val() : number {
-            return this.m03;
+            return this.m03.valueOf();
         }
 
         public get m10Val() : number {
-            return this.m10;
+            return this.m10.valueOf();
         }
 
         public get m11Val() : number {
-            return this.m11;
+            return this.m11.valueOf();
         }
 
         public get m12Val() : number {
-            return this.m12;
+            return this.m12.valueOf();
         }
 
         public get m13Val() : number {
-            return this.m13;
+            return this.m13.valueOf();
         }
 
         public get m20Val() : number {
-            return this.m20;
+            return this.m20.valueOf();
         }
 
         public get m21Val() : number {
-            return this.m21;
+            return this.m21.valueOf();
         }
 
         public get m22Val() : number {
-            return this.m22;
+            return this.m22.valueOf();
         }
 
         public get m23Val() : number {
-            return this.m23;
+            return this.m23.valueOf();
         }
 
         public get m30Val() : number {
-            return this.m30;
+            return this.m30.valueOf();
         }
 
         public get m31Val() : number {
-            return this.m31;
+            return this.m31.valueOf();
         }
 
         public get m32Val() : number {
-            return this.m32;
+            return this.m32.valueOf();
         }
 
         public get m33Val() : number {
-            return this.m33;
+            return this.m33.valueOf();
         }
     }
 }

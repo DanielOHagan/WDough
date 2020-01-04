@@ -107,5 +107,10 @@ namespace TestGame {
 
             mApplication.getRenderer().endScene();
         }
+
+        public onEvent(event: WDOH.IEvent) : void {
+            //No app logic related events have been created yet so this method is throws an error
+            throw new Error("Method not implemented.");
+        }
     }
 }

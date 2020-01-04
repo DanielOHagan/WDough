@@ -6,5 +6,7 @@ namespace WDOH {
 
         update(deltaTime : number) : void;
 
+        onEvent(event : IEvent) : void;
+
     }
 }

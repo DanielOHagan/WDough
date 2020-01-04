@@ -2,24 +2,49 @@ namespace WDOH {
 
     export var mContext : WebGL2RenderingContext;
 
-    /**
-     * Wrapper class for the context viewport
-     */
     export class Canvas {
         
         private readonly mWebGLContext : string = "webgl2";
 
         private mCanvasNode : HTMLCanvasElement;
 
-        public constructor(canvasId ? : string) {
+        private mResizable : boolean;
+        private mMinWidth : number;
+        private mMaxWidth : number;
+        private mMinHeight : number;
+        private mMaxHeight : number;
+
+        public constructor(width : number, height : number, canvasId ? : string) {
             this.mCanvasNode = this.createCanvasNode(canvasId);
-            
-            //TDOD:: Make Resizing
-            //TEMP size changing here
-            this.mCanvasNode.width = 1280;
-            this.mCanvasNode.height = 720;
-            
+
+            this.mResizable = true;
+            this.mMinWidth = 300;
+            this.mMinHeight = 200;
+            this.mMaxWidth = 1920;
+            this.mMaxHeight = 1080;
+
+            this.setResizeConfig(
+                this.mMinWidth,
+                this.mMinHeight,
+                this.mMaxWidth,
+                this.mMaxHeight
+            );
+
+            if (!this.areSizesValid(width, height)) {
+                throw new Error(
+                    `Canvas creation sizes outside of allowed parameters:
+                    Min Width: ${this.mMinWidth}, Min Height: ${this.mMinHeight},
+                    Max Width: ${this.mMaxWidth}, Max Height: ${this.mMaxHeight}.
+                    Given Sizes: Width: ${width}, Height: ${height}`
+                );
+            }
+
             mContext = this.createRenderingContext();
+            
+            this.mCanvasNode.width = width;
+            this.mCanvasNode.height = height;
+            this.enableResizeEvents(this.mResizable);
+            this.resize(width, height);
         }
 
         private createCanvasNode(canvasId ? : string) : HTMLCanvasElement {
@@ -60,6 +85,69 @@ namespace WDOH {
 
                 node.appendChild(this.mCanvasNode);
             }
+        }
+
+        public enableResizeEvents(resizable : boolean) : void {
+            this.mResizable = resizable;
+            
+            if (this.mResizable) {
+                //Set resize event
+                window.onresize = function() {
+                    this.mApplication.onEvent(new CanvasResizeEvent(window.innerWidth, window.innerHeight));
+                }
+            } else {
+                //Remove resize event 
+                window.onresize = null;
+            }
+        }
+
+        public resize(width : number, height : number) : void {
+            if (this.mResizable) {
+                //Check min/max size parameters
+                if (!this.areSizesValid(width, height)) {
+                    throw new Error(
+                        `Canvas resize sizes outside of allowed parameters:
+                        Min Width: ${this.mMinWidth}, Min Height: ${this.mMinHeight},
+                        Max Width: ${this.mMaxWidth}, Max Height: ${this.mMaxHeight}.
+                        Given Sizes: Width: ${width}, Height: ${height}`
+                    );
+                }
+
+                this.mCanvasNode.width = width;
+                this.mCanvasNode.height = height;
+
+                console.log("Widht: " + width + "\nHeight: " + height);
+            }
+        }
+
+        public setResizeConfig(
+            minWidth : number,
+            minHeight : number,
+            maxWidth : number,
+            maxHeight : number
+        ) : void {
+            this.mMinWidth = minWidth;
+            this.mMinHeight = minHeight;
+            this.mMaxWidth = maxWidth;
+            this.mMaxHeight = maxHeight;
+
+            this.mCanvasNode.style.minWidth = minWidth.toString();
+            this.mCanvasNode.style.minHeight = minHeight.toString();
+            this.mCanvasNode.style.maxWidth = maxWidth.toString();
+            this.mCanvasNode.style.maxHeight = maxHeight.toString();
+        }
+
+        private areSizesValid(width : number, height : number) : boolean {
+            return !(
+                width < this.mMinWidth ||
+                width > this.mMaxWidth ||
+                height < this.mMinHeight ||
+                height > this.mMaxHeight
+            );
+        }
+
+        public resizable() : boolean {
+            return this.mResizable;
         }
 
         public getCanvasNode() : HTMLCanvasElement {

@@ -8,7 +8,7 @@ namespace WDOH {
         private mRenderer : Renderer;
 
         public constructor(appLogic : IApplicationLogic) {
-            this.mCanvas = new Canvas();
+            this.mCanvas = new Canvas(1280, 720);
             this.mRenderer = new Renderer();
             this.mAppLogic = appLogic;
         }
@@ -19,6 +19,14 @@ namespace WDOH {
             this.mCanvas.attachCanvas();
 
             this.mRenderer.init();
+
+            //Set viewport for initial frame
+            this.mRenderer.getRendererAPI().setViewport(
+                0,
+                0,
+                this.mCanvas.getCanvasNode().width,
+                this.mCanvas.getCanvasNode().height
+            );
 
             this.mAppLogic.init();
 
@@ -40,6 +48,44 @@ namespace WDOH {
             requestAnimationFrame(this.loop.bind(this));
         }
 
+        //-----Events-----
+        public onEvent(event : IEvent) : void {
+            switch (event.getCatagory()) {
+                case EEventCatagory.CANVAS:
+                    this.onCanvasEvent(event);
+                    break;
+                case EEventCatagory.NONE:
+                default:
+                    throw new Error("Unrecognised, or NONE, event catagory.");
+                    break;
+            }
+        }
+
+        public onCanvasEvent(event : IEvent) : void {
+            switch (event.getType()) {
+                case EEventType.CANVAS_RESIZE:
+                    this.resizeViewport(event as CanvasResizeEvent);
+                    break;
+                case EEventType.NONE:
+                default:
+                    throw new Error("Unrecognised, or NONE, event type.");
+                    break;
+            }
+        }
+
+        private resizeViewport(resizeEvent : CanvasResizeEvent) : void {
+            if (this.mCanvas.resizable()) {
+                resizeEvent.invoke();
+
+                //Update canvas node
+                this.mCanvas.resize(resizeEvent.width, resizeEvent.height);
+
+                //Update renderer viewport
+                this.mRenderer.getRendererAPI().setViewport(0, 0, resizeEvent.width, resizeEvent.height);
+            }
+        }
+
+        //-----Getters-----
         public getApplicationLogic() : IApplicationLogic {
             return this.mAppLogic;
         }

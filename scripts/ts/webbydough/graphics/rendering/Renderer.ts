@@ -4,7 +4,6 @@ namespace WDOH {
 
         private mRendererAPI : IRendererAPI;
 
-        //Scene Data
         private mProjectionViewMatrix : Matrix4x4;
 
         public constructor() {
@@ -41,6 +40,10 @@ namespace WDOH {
             //(shader as ShaderWebGL).setUniformMat4("uTransformationViewMatrix", transformationMatrix);
 
             this.mRendererAPI.drawIndexed(vertexArray.getIndexBuffer().getCount());
+        }
+
+        public getRendererAPI() : IRendererAPI {
+            return this.mRendererAPI;
         }
     }
 }
