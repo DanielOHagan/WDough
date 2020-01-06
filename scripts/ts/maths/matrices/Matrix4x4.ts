@@ -94,25 +94,16 @@ namespace WDOH {
         }
 
         public translateVec2(vec : Vector2) : void {
-            this.m30 = (this.m00 * vec.x) + (this.m10 * vec.y) + this.m20 + this.m30;
-            this.m31 = (this.m01 * vec.x) + (this.m11 * vec.y) + this.m21 + this.m31;
-            this.m32 = (this.m02 * vec.x) + (this.m12 * vec.y) + this.m22 + this.m32;
-            this.m33 = (this.m03 * vec.x) + (this.m13 * vec.y) + this.m23 + this.m33;
+            this.m30 = vec.x;
+            this.m31 = vec.y;
         }
 
         public translateVec3(vec : Vector3) : void {
-            this.m30 = (this.m00 * vec.x) + (this.m10 * vec.y) + (this.m20 * vec.z) + this.m30;
-            this.m31 = (this.m01 * vec.x) + (this.m11 * vec.y) + (this.m21 * vec.z) + this.m31;
-            this.m32 = (this.m02 * vec.x) + (this.m12 * vec.y) + (this.m22 * vec.z) + this.m32;
-            this.m33 = (this.m03 * vec.x) + (this.m13 * vec.y) + (this.m23 * vec.z) + this.m33;
+            this.m30 = vec.x;
+            this.m31 = vec.y;
+            this.m32 = vec.z;
         }
 
-        public translateVec4(vec : Vector4) : void {
-            this.m30 = (this.m00 * vec.x) + (this.m10 * vec.y) + (this.m20 * vec.z) + (this.m30 * vec.w);
-            this.m31 = (this.m01 * vec.x) + (this.m11 * vec.y) + (this.m21 * vec.z) + (this.m31 * vec.w);
-            this.m32 = (this.m02 * vec.x) + (this.m12 * vec.y) + (this.m22 * vec.z) + (this.m32 * vec.w);
-            this.m33 = (this.m03 * vec.x) + (this.m13 * vec.y) + (this.m23 * vec.z) + (this.m33 * vec.w);
-        }
 
         public invert() : void {
             let mat : Matrix4x4 = new Matrix4x4();
@@ -174,14 +165,14 @@ namespace WDOH {
             let rm20 = xz * C + axis.y * sin;
             let rm21 = yz * C - axis.x * sin;
             let rm22 = zz * C + cos;
-            let nm00 = this.m00 * rm00 + this.m10 * rm01 + this.m20 * rm02;
-            let nm01 = this.m01 * rm00 + this.m11 * rm01 + this.m21 * rm02;
-            let nm02 = this.m02 * rm00 + this.m12 * rm01 + this.m22 * rm02;
-            let nm03 = this.m03 * rm00 + this.m13 * rm01 + this.m23 * rm02;
-            let nm10 = this.m00 * rm10 + this.m10 * rm11 + this.m20 * rm12;
-            let nm11 = this.m01 * rm10 + this.m11 * rm11 + this.m21 * rm12;
-            let nm12 = this.m02 * rm10 + this.m12 * rm11 + this.m22 * rm12;
-            let nm13 = this.m03 * rm10 + this.m13 * rm11 + this.m23 * rm12;
+            let nm00 = (this.m00 * rm00) + (this.m10 * rm01) + (this.m20 * rm02);
+            let nm01 = (this.m01 * rm00) + (this.m11 * rm01) + (this.m21 * rm02);
+            let nm02 = (this.m02 * rm00) + (this.m12 * rm01) + (this.m22 * rm02);
+            let nm03 = (this.m03 * rm00) + (this.m13 * rm01) + (this.m23 * rm02);
+            let nm10 = (this.m00 * rm10) + (this.m10 * rm11) + (this.m20 * rm12);
+            let nm11 = (this.m01 * rm10) + (this.m11 * rm11) + (this.m21 * rm12);
+            let nm12 = (this.m02 * rm10) + (this.m12 * rm11) + (this.m22 * rm12);
+            let nm13 = (this.m03 * rm10) + (this.m13 * rm11) + (this.m23 * rm12);
 
             let mat : Matrix4x4 = new Matrix4x4();
             mat.m00 = nm00;
@@ -203,46 +194,26 @@ namespace WDOH {
 
             this.set(mat);
         }
+        
+        public scaleNum(scale : number) : void {
+            this.scaleXYZ(scale, scale, scale);
+        }
 
-        //TODO:: Make an optomised version of this method
-        public rotateRadsSLOW(angleRads : number, axis : Vector3) : void {
-            //TODO:: Turn rotMat into Matrix3x3
-            let sin : number = Math.sin(angleRads);
-            let cos : number = Math.cos(angleRads);
+        public scaleXYZ(x : number, y : number, z : number) : void {
+            this.m00 *= x;
+            this.m01 *= x;
+            this.m02 *= x;
+            this.m03 *= x;
 
-            let rotMatX : Matrix4x4 = new Matrix4x4();
-            let rotMatY : Matrix4x4 = new Matrix4x4();
-            let rotMatZ : Matrix4x4 = new Matrix4x4();
+            this.m10 *= y;
+            this.m11 *= y;
+            this.m12 *= y;
+            this.m13 *= y;
 
-            //X Rotation Matrix
-            rotMatX.m11 = cos * axis.x;
-            rotMatX.m12 = -sin * axis.x;
-            rotMatX.m21 = sin * axis.x;
-            rotMatX.m22 = cos * axis.x;
-
-            //Y Rotation Matrix
-            rotMatY.m00 = cos * axis.y;
-            rotMatY.m02 = sin * axis.y;
-            rotMatY.m20 = -sin * axis.y;
-            rotMatY.m22 = cos * axis.y;
-
-            //Z Rotation Matrix
-            rotMatZ.m00 = cos * axis.z;
-            rotMatZ.m01 = -sin * axis.z;
-            rotMatZ.m10 = sin * axis.z;
-            rotMatZ.m11 = cos * axis.z;
-
-            let mat : Matrix4x4 = new Matrix4x4();
-            mat.mulMat4x4(rotMatX);
-            mat.mulMat4x4(rotMatY);
-            mat.mulMat4x4(rotMatZ);
-
-            mat.m30 = this.m30;
-            mat.m31 = this.m31;
-            mat.m32 = this.m32;
-            mat.m33 = this.m33;
-
-            this.mulMat4x4(mat);
+            this.m20 *= z;
+            this.m21 *= z;
+            this.m22 *= z;
+            this.m23 *= z;
         }
 
         public asArray() : number[] {

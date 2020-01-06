@@ -41,7 +41,7 @@ namespace TestGame {
             this.mCamera.setPosition(this.mPosition);
         }
 
-        public onWindowResize(aspectRatio : number) : void {
+        public onCanvasResize(aspectRatio : number) : void {
             this.mAspectRatio = aspectRatio;
 
             this.updateProjection();

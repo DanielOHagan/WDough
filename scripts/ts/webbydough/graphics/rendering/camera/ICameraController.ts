@@ -4,7 +4,7 @@ namespace WDOH {
 
         onUpdate(deltaTime : number) : void;
 
-        onWindowResize(aspectRation : number) : void;
+        onCanvasResize(aspectRatio : number) : void;
 
         translatePosition(translation : Vector3) : void;
         setPosition(pos : Vector3) : void;

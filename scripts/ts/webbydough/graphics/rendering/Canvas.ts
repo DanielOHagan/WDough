@@ -4,6 +4,9 @@ namespace WDOH {
 
     export class Canvas {
         
+        public static readonly DEFAULT_CANVAS_ID = "wdoh-canvas";
+        public static readonly DEFAULT_CANVAS_WRAPPER_ID = "defult-wdoh-canvas-wrapper";
+
         private readonly mWebGLContext : string = "webgl2";
 
         private mCanvasNode : HTMLCanvasElement;
@@ -18,12 +21,12 @@ namespace WDOH {
             this.mCanvasNode = this.createCanvasNode(canvasId);
 
             this.mResizable = true;
-            this.mMinWidth = 300;
-            this.mMinHeight = 200;
+            this.mMinWidth = 0;
+            this.mMinHeight = 0;
             this.mMaxWidth = 1920;
             this.mMaxHeight = 1080;
 
-            this.setResizeConfig(
+            this.setSizeParameters(
                 this.mMinWidth,
                 this.mMinHeight,
                 this.mMaxWidth,
@@ -52,6 +55,7 @@ namespace WDOH {
 
             if (canvasId === undefined) {
                 canvasNode = document.createElement("canvas") as HTMLCanvasElement;
+                canvasNode.setAttribute("id", Canvas.DEFAULT_CANVAS_ID);
             } else {
                 canvasNode = document.getElementById(canvasId) as HTMLCanvasElement;
             }
@@ -104,23 +108,14 @@ namespace WDOH {
         public resize(width : number, height : number) : void {
             if (this.mResizable) {
                 //Check min/max size parameters
-                if (!this.areSizesValid(width, height)) {
-                    throw new Error(
-                        `Canvas resize sizes outside of allowed parameters:
-                        Min Width: ${this.mMinWidth}, Min Height: ${this.mMinHeight},
-                        Max Width: ${this.mMaxWidth}, Max Height: ${this.mMaxHeight}.
-                        Given Sizes: Width: ${width}, Height: ${height}`
-                    );
+                if (this.areSizesValid(width, height)) {
+                    this.mCanvasNode.width = width;
+                    this.mCanvasNode.height = height;
                 }
-
-                this.mCanvasNode.width = width;
-                this.mCanvasNode.height = height;
-
-                console.log("Widht: " + width + "\nHeight: " + height);
             }
         }
 
-        public setResizeConfig(
+        public setSizeParameters(
             minWidth : number,
             minHeight : number,
             maxWidth : number,

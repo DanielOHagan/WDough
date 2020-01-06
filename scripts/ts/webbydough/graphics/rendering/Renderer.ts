@@ -34,10 +34,10 @@ namespace WDOH {
             shader.bind();
             vertexArray.bind();
 
-            shader.createUniforms(["uProjectionViewMatrix"/*, "uTransformationViewMatrix"*/]);
+            shader.createUniforms(["uProjectionViewMatrix", "uTransformationViewMatrix"]);
 
             (shader as ShaderWebGL).setUniformMat4("uProjectionViewMatrix", this.mProjectionViewMatrix);
-            //(shader as ShaderWebGL).setUniformMat4("uTransformationViewMatrix", transformationMatrix);
+            (shader as ShaderWebGL).setUniformMat4("uTransformationViewMatrix", transformationMatrix);
 
             this.mRendererAPI.drawIndexed(vertexArray.getIndexBuffer().getCount());
         }

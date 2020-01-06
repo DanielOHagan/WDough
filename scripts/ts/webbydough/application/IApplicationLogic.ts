@@ -8,5 +8,7 @@ namespace WDOH {
 
         onEvent(event : IEvent) : void;
 
+        onCanvasResize(aspectRatio : number) : void;
+
     }
 }

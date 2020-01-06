@@ -8,7 +8,7 @@ namespace WDOH {
         private mRenderer : Renderer;
 
         public constructor(appLogic : IApplicationLogic) {
-            this.mCanvas = new Canvas(1280, 720);
+            this.mCanvas = new Canvas(window.innerWidth, window.innerHeight);
             this.mRenderer = new Renderer();
             this.mAppLogic = appLogic;
         }
@@ -16,7 +16,7 @@ namespace WDOH {
         public init() : void {
 
             //Attach canvas to body
-            this.mCanvas.attachCanvas();
+            this.mCanvas.attachCanvas(Canvas.DEFAULT_CANVAS_WRAPPER_ID);
 
             this.mRenderer.init();
 
@@ -79,6 +79,9 @@ namespace WDOH {
 
                 //Update canvas node
                 this.mCanvas.resize(resizeEvent.width, resizeEvent.height);
+
+                //Update Application (an application would typically update camera projections)
+                this.mAppLogic.onCanvasResize(resizeEvent.width / resizeEvent.height);
 
                 //Update renderer viewport
                 this.mRenderer.getRendererAPI().setViewport(0, 0, resizeEvent.width, resizeEvent.height);

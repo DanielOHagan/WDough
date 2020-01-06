@@ -27,7 +27,7 @@ namespace WDOH {
             this.updateProjectionViewMatrix();
         }
 
-        private updateViewMatrix() : void {
+        public updateViewMatrix() : void {
             this.mViewMatrix.identity();
             this.mViewMatrix.translateVec3(this.mPosition);
             this.mViewMatrix.rotateRads(this.mRotation, new Vector3(0, 0, 1));
