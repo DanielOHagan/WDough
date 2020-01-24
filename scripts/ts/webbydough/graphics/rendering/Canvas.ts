@@ -121,6 +121,9 @@ namespace WDOH {
             maxWidth : number,
             maxHeight : number
         ) : void {
+
+            //TODO:: Run checks when setting these values (e.g. if maxValue is larger than minValue)
+
             this.mMinWidth = minWidth;
             this.mMinHeight = minHeight;
             this.mMaxWidth = maxWidth;

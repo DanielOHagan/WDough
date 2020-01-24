@@ -2,6 +2,13 @@ namespace WDOH {
 
     export enum EDataType {
 
+        /**
+         * This describes the data stored in a Buffer
+         * 
+         * Float is data type of the a single component of the data,
+         * the corresponding number is the number of components, no number means that it is a single compnent.
+         */
+
         NONE = 0,
 
         FLOAT,

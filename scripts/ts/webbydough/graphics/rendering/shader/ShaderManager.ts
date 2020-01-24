@@ -2,19 +2,19 @@ namespace WDOH {
 
     export class ShaderManager {
 
-        private mShaders : Map<string, IShader>;
+        private mShaderMap : Map<string, IShader>;
 
         public constructor() {
-            this.mShaders = new Map<string, IShader>();
+            this.mShaderMap = new Map<string, IShader>();
         }
 
         public create(name : string, sources : Map<EShaderType, string>) : IShader | null {
-            if (this.mShaders.has(name)) {
+            if (this.mShaderMap.has(name)) {
                 throw new Error(`Shader name already in use: ${name}`);
             } else {
                 let shader : IShader = ShaderWebGL.create(name, sources);
 
-                this.mShaders.set(shader.getName(), shader);
+                this.mShaderMap.set(shader.getName(), shader);
 
                 return shader;
             }
@@ -23,25 +23,36 @@ namespace WDOH {
         }
 
         public add(name : string, shader : IShader) : void {
-            if (!this.mShaders.has(name)) {
-                this.mShaders.set(name, shader);
+            if (!this.mShaderMap.has(name)) {
+                this.mShaderMap.set(name, shader);
             } else {
                 throw new Error(`Shader: ${name} already in use.`);
             }
         }
 
         public set(name : string, shader : IShader) : void {
-            if (this.mShaders.has(name)) {
-                this.mShaders.set(name, shader);
+            if (this.mShaderMap.has(name)) {
+                this.mShaderMap.set(name, shader);
             } else {
                 throw new Error(`Shader: ${name} not found.`);
             }
         }
 
-        public remove(name : string) : void {
-            this.mShaders.delete(name);
+        public get(name : string) : IShader | null {
+            for (let shaderName of this.mShaderMap.keys()) {
+                if (name === shaderName) {
+                    if (this.mShaderMap.get(name) !== undefined) {
+                        return this.mShaderMap.get(name) as IShader;
+                    }
+                }
+            }
 
-            //Log the shader deletion
+            return null;
         }
+
+        public remove(name : string) : void {
+            this.mShaderMap.delete(name);
+        }
+
     }
 }

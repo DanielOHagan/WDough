@@ -80,7 +80,7 @@ namespace WDOH {
                 //Update canvas node
                 this.mCanvas.resize(resizeEvent.width, resizeEvent.height);
 
-                //Update Application (an application would typically update camera projections)
+                //Update Application
                 this.mAppLogic.onCanvasResize(resizeEvent.width / resizeEvent.height);
 
                 //Update renderer viewport

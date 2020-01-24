@@ -66,7 +66,14 @@ namespace WDOH {
 
                 mContext.compileShader(shader);
                 if (!mContext.getShaderParameter(shader, mContext.COMPILE_STATUS)) {
-                    throw new Error("Shader: " + this.mName + " failed to compile.");
+                    let errorMessage : string = "Shader named: '" + this.mName + "' failed to compile.";
+                    let infoLog : string | null = mContext.getShaderInfoLog(shader);
+
+                    throw new Error(
+                        infoLog !== null ?
+                        errorMessage + " Info: \n" + infoLog :
+                        errorMessage
+                    );
                 }
 
                 mContext.attachShader(program, shader);
@@ -135,11 +142,11 @@ namespace WDOH {
             mContext.uniform1i(this.getUniformLocation(uniformName), value);
         }
 
-        public setUniform4f(uniformName : string, value : Vector4) : void {
+        public setUniformFloat4(uniformName : string, value : Vector4) : void {
             mContext.uniform4f(this.getUniformLocation(uniformName), value.x, value.y, value.z, value.w);
         }
 
-        public setUniformMat4(uniformName: string, transformationMatrix: Matrix4x4) {
+        public setUniformMat4(uniformName : string, transformationMatrix: Matrix4x4) : void {
             mContext.uniformMatrix4fv(this.getUniformLocation(uniformName), false, new Float32Array(transformationMatrix.asArray()));
         }
 

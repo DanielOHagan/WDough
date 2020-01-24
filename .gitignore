@@ -1,2 +1,6 @@
 # Files
 *.js
+
+# Directories
+scripts/js/
+.vscode/
