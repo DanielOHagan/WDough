@@ -104,6 +104,7 @@ namespace TestGame {
         private texturedSquareVAO : WDOH.IVertexArray | null;
         private mTextureShader : WDOH.IShader | null;
         private mTestTexture : WDOH.ITexture | null;
+        private mLogoTexture : WDOH.ITexture | null;
 
         private mSquareVAO : WDOH.IVertexArray | null;
 
@@ -117,6 +118,7 @@ namespace TestGame {
             this.mFlatColour = new WDOH.Vector4(0, 1, 0, 1);
             this.mFlatColourShader = null;
             this.mTestTexture = null;
+            this.mLogoTexture = null;
             this.mTextureShader = null;
             this.texturedSquareVAO = null;
         }
@@ -149,6 +151,7 @@ namespace TestGame {
 
             //Texture
             this.mTestTexture = this.mTextureManager.createTexture("res/TG/images/testTexture.png", WDOH.ETextureBindingPoint.TEX_2D);
+            this.mLogoTexture = this.mTextureManager.createTexture("res/TG/images/partiallyTransparent.png", WDOH.ETextureBindingPoint.TEX_2D);
 
             //mSquareVAO
             this.mSquareVAO = new WDOH.VertexArrayWebGL();
@@ -177,9 +180,6 @@ namespace TestGame {
             this.texturedSquareVAO.addVertexBuffer(texturedSquareVBO);
             let texturedSquareIndexBuffer : WDOH.IIndexBuffer = new WDOH.IndexBufferWebGL(this.mSquareIndices);
             this.texturedSquareVAO.setIndexBuffer(texturedSquareIndexBuffer);
-
-            WDOH.DebugToolsWebGL.printBufferSize(WDOH.mContext.ARRAY_BUFFER)
-            WDOH.DebugToolsWebGL.printBufferSize(WDOH.mContext.ELEMENT_ARRAY_BUFFER)
         }
         
         public update(deltaTime : number) : void {
@@ -228,13 +228,24 @@ namespace TestGame {
                 }
             }
 
-            if (this.mTextureShader !== null && this.mTestTexture !== null) {
+            if (this.mTextureShader !== null && this.mTestTexture !== null && this.mLogoTexture !== null) {
                 this.mTextureShader.bind();
 
                 this.mTestTexture.bind();
                 this.mTestTexture.activate(0);
                 
-                if (this.texturedSquareVAO !== null) {                    
+                if (this.texturedSquareVAO !== null) {
+                    mApplication.getRenderer().submitShader(
+                        this.mTextureShader,
+                        this.texturedSquareVAO,
+                        new WDOH.Matrix4x4()
+                    );
+                }
+
+                this.mLogoTexture.bind();
+                this.mLogoTexture.activate(0);
+
+                if (this.texturedSquareVAO !== null) {
                     mApplication.getRenderer().submitShader(
                         this.mTextureShader,
                         this.texturedSquareVAO,
