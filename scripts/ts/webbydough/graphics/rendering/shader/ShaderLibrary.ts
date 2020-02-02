@@ -1,6 +1,6 @@
 namespace WDOH {
 
-    export class ShaderManager {
+    export class ShaderLibrary {
 
         private mShaderMap : Map<string, IShader>;
 

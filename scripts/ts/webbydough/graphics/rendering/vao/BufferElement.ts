@@ -1,6 +1,7 @@
 namespace WDOH {
     
     export class BufferElement {
+        
         public name : string; //Name corresponding to Shader Atrib
         public dataType : EDataType;
         public offset : number;

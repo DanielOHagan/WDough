@@ -13,7 +13,7 @@ namespace WDOH {
             this.mAppLogic = appLogic;
         }
 
-        public init() : void {
+        public init(/*appSettings : ApplicationSettings*/) : void {
 
             //Attach canvas to body
             this.mCanvas.attachCanvas(Canvas.DEFAULT_CANVAS_WRAPPER_ID);
@@ -33,6 +33,7 @@ namespace WDOH {
             //Rendering context set-up
             mContext.clearColor(1.0, 0.0, 1.0, 1.0);
 
+            Input.get().init(true, true, []);
         }
 
         public run() : void {
@@ -49,8 +50,14 @@ namespace WDOH {
         }
 
         //-----Events-----
-        public onEvent(event : IEvent) : void {
+        public onEvent(event : AEvent) : void {
             switch (event.getCatagory()) {
+                case EEventCatagory.INPUT_KEY:
+
+                    break;
+                case EEventCatagory.INPUT_MOUSE:
+
+                    break;
                 case EEventCatagory.CANVAS:
                     this.onCanvasEvent(event);
                     break;
@@ -61,7 +68,17 @@ namespace WDOH {
             }
         }
 
-        public onCanvasEvent(event : IEvent) : void {
+        public onKeyEvent(keyEvent : KeyEvent) : void {
+            if (!keyEvent.shouldIgnore()) {
+                this.mAppLogic.onKeyEvent(keyEvent);
+            }
+        }
+
+        public onMouseEvent(mouseEvent : WDOH.MouseEvent) : void {
+            this.mAppLogic.onMouseEvent(mouseEvent);
+        }
+
+        public onCanvasEvent(event : AEvent) : void {
             switch (event.getType()) {
                 case EEventType.CANVAS_RESIZE:
                     this.resizeViewport(event as CanvasResizeEvent);
@@ -75,8 +92,6 @@ namespace WDOH {
 
         private resizeViewport(resizeEvent : CanvasResizeEvent) : void {
             if (this.mCanvas.resizable()) {
-                resizeEvent.invoke();
-
                 //Update canvas node
                 this.mCanvas.resize(resizeEvent.width, resizeEvent.height);
 

@@ -1,32 +1,15 @@
 namespace WDOH {
 
-    export class CanvasResizeEvent implements IEvent {
+    export class CanvasResizeEvent extends AEvent {
 
         private mWidth : number;
         private mHeight : number;
 
-        private mInvoked : boolean;
 
         public constructor(width : number, height : number) {
+            super(EEventType.CANVAS_RESIZE, EEventCatagory.CANVAS);
             this.mWidth = width;
             this.mHeight = height;
-            this.mInvoked = false;
-        }
-
-        public getType() : EEventType {
-            return EEventType.CANVAS_RESIZE;
-        }
-
-        public getCatagory() : EEventCatagory {
-            return EEventCatagory.CANVAS;
-        }
-
-        public invoke() : void {
-            this.mInvoked = true;
-        }
-        
-        public hasBeenInvoked(): boolean {
-            return this.mInvoked;
         }
 
         public get width() : number {

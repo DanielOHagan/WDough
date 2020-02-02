@@ -5,7 +5,7 @@ namespace WDOH {
     export class Canvas {
         
         public static readonly DEFAULT_CANVAS_ID = "wdoh-canvas";
-        public static readonly DEFAULT_CANVAS_WRAPPER_ID = "defult-wdoh-canvas-wrapper";
+        public static readonly DEFAULT_CANVAS_WRAPPER_ID = "defualt-wdoh-canvas-wrapper";
 
         private readonly mWebGLContext : string = "webgl2";
 

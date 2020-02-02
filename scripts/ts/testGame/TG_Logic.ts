@@ -1,8 +1,8 @@
 namespace TestGame {
 
     export class TG_Logic implements WDOH.IApplicationLogic {
-        
-        private mShaderMangaer : WDOH.ShaderManager;
+
+        private mShaderLibrary : WDOH.ShaderLibrary;
         private mTextureManager : WDOH.TextureManager;
 
         private vertexSrc = [
@@ -98,13 +98,11 @@ namespace TestGame {
             -0.5, -0.5, 0.0, 0.0, 1.0
         ];
 
-        private mFlatColourShader : WDOH.IShader | null;
         private mFlatColour : WDOH.Vector4;
 
         private texturedSquareVAO : WDOH.IVertexArray | null;
-        private mTextureShader : WDOH.IShader | null;
         private mTestTexture : WDOH.ITexture | null;
-        private mLogoTexture : WDOH.ITexture | null;
+        private mOtherTestTexture : WDOH.ITexture | null;
 
         private mSquareVAO : WDOH.IVertexArray | null;
 
@@ -113,13 +111,11 @@ namespace TestGame {
         public constructor(aspectRatio : number) {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
             this.mSquareVAO = null;
-            this.mShaderMangaer = new WDOH.ShaderManager();
+            this.mShaderLibrary = new WDOH.ShaderLibrary();
             this.mTextureManager = new WDOH.TextureManager();
             this.mFlatColour = new WDOH.Vector4(0, 1, 0, 1);
-            this.mFlatColourShader = null;
             this.mTestTexture = null;
-            this.mLogoTexture = null;
-            this.mTextureShader = null;
+            this.mOtherTestTexture = null;
             this.texturedSquareVAO = null;
         }
 
@@ -135,23 +131,23 @@ namespace TestGame {
             textureShaderSources.set(WDOH.EShaderType.VERTEX, this.textureVertexSrc);
             textureShaderSources.set(WDOH.EShaderType.FRAGMENT, this.textureFragSrc);
 
-            this.mFlatColourShader = this.mShaderMangaer.create("FlatColour", flatColourShaderSources);
-            this.mTextureShader = this.mShaderMangaer.create("Texture", textureShaderSources);
+            let flatColourShader = this.mShaderLibrary.create("FlatColour", flatColourShaderSources);
+            let textureShader = this.mShaderLibrary.create("Texture", textureShaderSources);
 
-            if (this.mFlatColourShader !== null) {
-                this.mFlatColourShader.createUniform("uColour");
+            if (flatColourShader !== null) {
+                flatColourShader.createUniform("uColour");
             }
 
-            if (this.mTextureShader !== null) {
-                this.mTextureShader.createUniform("uTexture");
+            if (textureShader !== null) {
+                textureShader.createUniform("uTexture");
 
-                this.mTextureShader.bind();
-                (this.mTextureShader as WDOH.ShaderWebGL).setUniformInt("uTexture", 0);
+                textureShader.bind();
+                (textureShader as WDOH.ShaderWebGL).setUniformInt("uTexture", 0);
             }
 
             //Texture
             this.mTestTexture = this.mTextureManager.createTexture("res/TG/images/testTexture.png", WDOH.ETextureBindingPoint.TEX_2D);
-            this.mLogoTexture = this.mTextureManager.createTexture("res/TG/images/partiallyTransparent.png", WDOH.ETextureBindingPoint.TEX_2D);
+            this.mOtherTestTexture = this.mTextureManager.createTexture("res/TG/images/partiallyTransparent.png", WDOH.ETextureBindingPoint.TEX_2D);
 
             //mSquareVAO
             this.mSquareVAO = new WDOH.VertexArrayWebGL();
@@ -193,10 +189,13 @@ namespace TestGame {
             this.mOrthoCameraController.onUpdate(deltaTime);
 
             mApplication.getRenderer().beginScene(this.mOrthoCameraController.getCamera());
+
+            let textureShader : WDOH.IShader | null = this.mShaderLibrary.get("Texture");
+            let flatColourShader : WDOH.IShader | null = this.mShaderLibrary.get("FlatColour");
             
-            if (this.mFlatColourShader !== null) {
-                this.mFlatColourShader.bind();
-                (this.mFlatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", this.mFlatColour);
+            if (flatColourShader !== null) {
+                flatColourShader.bind();
+                (flatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", this.mFlatColour);
 
                 if (this.mSquareVAO !== null) {
 
@@ -210,9 +209,9 @@ namespace TestGame {
                             pos.y += 0.4;
 
                             if (Math.random() < 0.8) {
-                                (this.mFlatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", this.mFlatColour);
+                                (flatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", this.mFlatColour);
                             } else {
-                                (this.mFlatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", new WDOH.Vector4(1, 1, 0, 1));
+                                (flatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", new WDOH.Vector4(1, 1, 0, 1));
                             }
 
                             if (Math.random() < 0.02) {
@@ -222,34 +221,38 @@ namespace TestGame {
                             transformationMatrix.scaleNum(0.025);
                             transformationMatrix.translateVec3(pos);
 
-                            mApplication.getRenderer().submitShader(this.mFlatColourShader, this.mSquareVAO, transformationMatrix);
+                            mApplication.getRenderer().submitShader(flatColourShader, this.mSquareVAO, transformationMatrix);
                         }
                     }
                 }
             }
 
-            if (this.mTextureShader !== null && this.mTestTexture !== null && this.mLogoTexture !== null) {
-                this.mTextureShader.bind();
+            if (textureShader !== null && this.mTestTexture !== null && this.mOtherTestTexture !== null) {
+                textureShader.bind();
 
                 this.mTestTexture.bind();
                 this.mTestTexture.activate(0);
                 
                 if (this.texturedSquareVAO !== null) {
                     mApplication.getRenderer().submitShader(
-                        this.mTextureShader,
+                        textureShader,
                         this.texturedSquareVAO,
                         new WDOH.Matrix4x4()
                     );
                 }
 
-                this.mLogoTexture.bind();
-                this.mLogoTexture.activate(0);
+                this.mOtherTestTexture.bind();
+                this.mOtherTestTexture.activate(0);
 
                 if (this.texturedSquareVAO !== null) {
+                    let transformationmatrix : WDOH.Matrix4x4 = new WDOH.Matrix4x4();
+
+                    transformationmatrix.translateVec2(new WDOH.Vector2(0, 0.2));
+
                     mApplication.getRenderer().submitShader(
-                        this.mTextureShader,
+                        textureShader,
                         this.texturedSquareVAO,
-                        new WDOH.Matrix4x4()
+                        transformationmatrix
                     );
                 }
             }
@@ -258,9 +261,40 @@ namespace TestGame {
             mApplication.getRenderer().endScene();
         }
 
-        public onEvent(event : WDOH.IEvent) : void {
+        public onEvent(event : WDOH.AEvent) : void {
             //No app logic related events have been created yet so this method is throws an error
             throw new Error("Method not implemented.");
+        }
+
+        public onKeyEvent(keyEvent : WDOH.KeyEvent) : void {
+            console.log(keyEvent.getInputCode().toString());
+
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_W)) {
+                this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, 0.04, 0));
+            }
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_S)) {
+                this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, -0.04, 0));
+            }
+
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_D)) {
+                this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0.04, 0, 0));
+            }
+
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_A)) {
+                this.mOrthoCameraController.translatePosition(new WDOH.Vector3(-0.04, 0, 0));
+            }
+
+
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_Q)) {
+                this.mOrthoCameraController.rotateDegrees(-5);
+            }
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_E)) {
+                this.mOrthoCameraController.rotateDegrees(5);
+            }
+        }
+
+        public onMouseEvent(mouseEvent : WDOH.MouseEvent) : void {
+            
         }
 
         public onCanvasResize(aspectRatio : number) : void {

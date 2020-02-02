@@ -1,10 +1,15 @@
 namespace WDOH {
 
+    export enum EFileTypeTextureWebGL {
+        NONE = 0,
+
+        PNG = "png",
+        JPEG = "jpg"
+    } 
+
     export class TextureWebGL implements ITexture {
 
-        public static readonly SUPPORTED_FILE_TYPES : string[] = ["png", "jpg"];
-        public static readonly DEFAULT_MIPMAP_LOD : number = 0;
-
+        private static readonly DEFAULT_MIPMAP_LOD : number = 0;
         private static readonly TEXTURE_PLACEHOLDER_DATA : Uint8Array = new Uint8Array(0);
 
         private mData : HTMLImageElement | null;
@@ -13,11 +18,15 @@ namespace WDOH {
         private mWidth : number;
         private mHeight : number;
         private mLoaded : boolean;
+        private mFileType : EFileTypeTextureWebGL;
+        private mAlphaChannel : boolean;
 
         public constructor(filePath : string, bindingPoint : ETextureBindingPoint) {
             this.mLoaded = false;
             this.mWidth = 0;
             this.mHeight = 0;
+            this.mFileType = EFileTypeTextureWebGL.NONE;
+            this.mAlphaChannel = false;
 
             this.mBindingPoint = TextureWebGL.bindingPointToGLEeum(bindingPoint);
 
@@ -99,32 +108,60 @@ namespace WDOH {
         }
 
         private onHtmlImageLoad(htmlImage : HTMLImageElement) : void {
-            //Get data from the image element
-            this.mWidth = htmlImage.width;
-            this.mHeight = htmlImage.height;
-
             if (this.mData !== null) {
+                //Get data from the image element
+                this.mWidth = htmlImage.width;
+                this.mHeight = htmlImage.height;
+
+                //Determine file type
+                let extension : string | undefined = htmlImage.src.split('.').pop()?.toLowerCase();
+
+                if (extension === undefined) {
+                    this.mFileType = EFileTypeTextureWebGL.NONE
+                }
+
+                switch(extension) {
+                    case EFileTypeTextureWebGL.JPEG:
+                        this.mFileType = EFileTypeTextureWebGL.JPEG;
+                        this.mAlphaChannel = false;
+                        break;
+                    case EFileTypeTextureWebGL.PNG:
+                        this.mFileType = EFileTypeTextureWebGL.PNG;
+                        this.mAlphaChannel = true;
+                        break;
+                }
+                
+                if (this.mFileType === EFileTypeTextureWebGL.NONE) {
+                    let msg : string = "Unable to determine image type. Src: " + htmlImage.src;
+                    this.cleanUp();
+                    throw new Error(msg);
+                }
+                
                 //Bind and upload data
                 this.bind();
+
+                let internalFormat : GLint;
+                let format : GLint;
+
+                if (this.mAlphaChannel) {
+                    internalFormat = mContext.RGBA;
+                    format = mContext.RGBA;
+                } else {
+                    internalFormat = mContext.RGB;
+                    format = mContext.RGB;
+                }
+
                 mContext.texImage2D(
                     mContext.TEXTURE_2D,
                     TextureWebGL.DEFAULT_MIPMAP_LOD,
-                    mContext.RGBA,
+                    internalFormat,
                     this.mWidth,
                     this.mHeight,
                     0,
-                    mContext.RGBA,
+                    format,
                     mContext.UNSIGNED_BYTE,
                     this.mData
                 );
-                
-                // mContext.texStorage2D(
-                //     mContext.TEXTURE_2D,
-                //     TextureWebGL.DEFAULT_MIPMAP_LOD,
-                //     mContext.RGBA8,
-                //     this.mWidth,
-                //     this.mHeight,
-                // );
                 
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_S, mContext.CLAMP_TO_EDGE);
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_T, mContext.CLAMP_TO_EDGE);

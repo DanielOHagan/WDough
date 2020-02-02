@@ -2,7 +2,6 @@ namespace WDOH {
 
     export class BufferLayout {
 
-        //Maybe change the BufferElement[] into another type to allow for easier changing of elements at runtime
         private mBufferElements : BufferElement[];
         private mStride : number;
 
