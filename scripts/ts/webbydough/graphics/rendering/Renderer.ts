@@ -2,6 +2,8 @@ namespace WDOH {
 
     export class Renderer {
 
+        public static readonly DEFAULT_CLEAR_COLOUR : Vector4 = new Vector4(1, 0, 1, 1);
+
         private mRendererAPI : IRendererAPI;
 
         private mProjectionViewMatrix : Matrix4x4;

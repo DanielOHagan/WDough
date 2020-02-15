@@ -4,6 +4,9 @@ namespace WDOH {
 
         init() : void;
 
+        //Returns whether the application logic has finished initialising and is ready to start running 
+        canRun() : boolean;
+
         update(deltaTime : number) : void;
 
         onEvent(event : AEvent) : void;

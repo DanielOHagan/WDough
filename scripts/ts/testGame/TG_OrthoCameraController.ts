@@ -36,7 +36,6 @@ namespace TestGame {
 
         public onUpdate(deltaTime : number) : void {
 
-
             this.mCamera.setRotation(this.mRotation);
             this.mCamera.setPosition(this.mPosition);
         }

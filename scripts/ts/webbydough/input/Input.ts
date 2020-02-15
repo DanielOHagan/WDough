@@ -8,9 +8,9 @@ namespace WDOH {
             EKeyInputCode.KEY_K, EKeyInputCode.KEY_L, EKeyInputCode.KEY_M, EKeyInputCode.KEY_N, EKeyInputCode.KEY_O, 
             EKeyInputCode.KEY_P, EKeyInputCode.KEY_Q, EKeyInputCode.KEY_R, EKeyInputCode.KEY_S, EKeyInputCode.KEY_T, 
             EKeyInputCode.KEY_U, EKeyInputCode.KEY_V, EKeyInputCode.KEY_W, EKeyInputCode.KEY_X, EKeyInputCode.KEY_Y, 
-            EKeyInputCode.KEY_Z, EKeyInputCode.KEY_0, EKeyInputCode.KEY_1, EKeyInputCode.KEY_2, EKeyInputCode.KEY_3,
-            EKeyInputCode.KEY_4, EKeyInputCode.KEY_5, EKeyInputCode.KEY_6, EKeyInputCode.KEY_7, EKeyInputCode.KEY_8,
-            EKeyInputCode.KEY_9
+            EKeyInputCode.KEY_Z,
+            EKeyInputCode.KEY_0, EKeyInputCode.KEY_1, EKeyInputCode.KEY_2, EKeyInputCode.KEY_3, EKeyInputCode.KEY_4,
+            EKeyInputCode.KEY_5, EKeyInputCode.KEY_6, EKeyInputCode.KEY_7, EKeyInputCode.KEY_8, EKeyInputCode.KEY_9
         ];
 
         private static INSTANCE : Input = new Input();
@@ -108,6 +108,8 @@ namespace WDOH {
             if (!Input.get().mMouseEventListeners) {
                 console.log("Added mouse event listeners");
 
+                //TODO:: This
+
                 Input.get().mMouseEventListeners = !Input.get().mMouseEventListeners;
             }
         }
@@ -115,6 +117,8 @@ namespace WDOH {
         public removeMouseEventListeners() : void {
             if (Input.get().mMouseEventListeners) {
                 console.log("Removed mouse event listeners");
+
+                //TODO:: This
 
                 Input.get().mMouseEventListeners = !Input.get().mMouseEventListeners;
             }
@@ -147,7 +151,7 @@ namespace WDOH {
         public static isKeyPressed(keyCode : EKeyInputCode) : boolean {
             return Input.get().isKeyPressedImpl(keyCode)
         }
-        
+
         public isKeyPressedImpl(keyCode : EKeyInputCode) : boolean {
             let pressed : boolean | undefined = Input.get().mPressedKeys.get(keyCode);
             return pressed !== undefined && pressed;

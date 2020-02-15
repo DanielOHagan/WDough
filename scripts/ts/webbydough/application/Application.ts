@@ -5,12 +5,20 @@ namespace WDOH {
 
         private mCanvas : Canvas;
         private mAppLogic : IApplicationLogic;
+        private mAppLoop : ApplicationLoop;
         private mRenderer : Renderer;
+
+        private mRunning : boolean;
 
         public constructor(appLogic : IApplicationLogic) {
             this.mCanvas = new Canvas(window.innerWidth, window.innerHeight);
             this.mRenderer = new Renderer();
+            this.mAppLoop = new ApplicationLoop(
+                ApplicationLoop.DEFAULT_TARGET_FPS,
+                false
+            );
             this.mAppLogic = appLogic;
+            this.mRunning = false;
         }
 
         public init(/*appSettings : ApplicationSettings*/) : void {
@@ -37,26 +45,31 @@ namespace WDOH {
         }
 
         public run() : void {
-            this.loop();
+            if (!this.mAppLogic.canRun()) {
+                throw new Error("Unable to run, application logic is not able to run.")
+            }
+            this.mRunning = true;
+            this.mAppLoop.run();
         }
 
-        private loop() : void {
+        public update(deltaTime : number) : void {
 
             mContext.clear(mContext.COLOR_BUFFER_BIT);
 
-            this.mAppLogic.update(0);
-
-            requestAnimationFrame(this.loop.bind(this));
+            this.mAppLogic.update(deltaTime);
         }
 
         //-----Events-----
+        //This is primarily a 'catch all' event for any AEvent instances
+        //It is faster and recommended to call the specific on____Event() methods when
+        // it is known which events will be passed
         public onEvent(event : AEvent) : void {
             switch (event.getCatagory()) {
                 case EEventCatagory.INPUT_KEY:
-
+                    this.onKeyEvent(event as KeyEvent);
                     break;
                 case EEventCatagory.INPUT_MOUSE:
-
+                    this.onMouseEvent(event as MouseEvent);
                     break;
                 case EEventCatagory.CANVAS:
                     this.onCanvasEvent(event);
@@ -110,6 +123,10 @@ namespace WDOH {
 
         public getRenderer() : Renderer {
             return this.mRenderer;
+        }
+
+        public isRunning() : boolean {
+            return this.mRunning;
         }
     }
 }

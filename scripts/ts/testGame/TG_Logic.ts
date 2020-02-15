@@ -2,6 +2,8 @@ namespace TestGame {
 
     export class TG_Logic implements WDOH.IApplicationLogic {
 
+        private mCanRun : boolean;
+
         private mShaderLibrary : WDOH.ShaderLibrary;
         private mTextureManager : WDOH.TextureManager;
 
@@ -117,6 +119,7 @@ namespace TestGame {
             this.mTestTexture = null;
             this.mOtherTestTexture = null;
             this.texturedSquareVAO = null;
+            this.mCanRun = false;
         }
 
         public init() : void {
@@ -176,6 +179,12 @@ namespace TestGame {
             this.texturedSquareVAO.addVertexBuffer(texturedSquareVBO);
             let texturedSquareIndexBuffer : WDOH.IIndexBuffer = new WDOH.IndexBufferWebGL(this.mSquareIndices);
             this.texturedSquareVAO.setIndexBuffer(texturedSquareIndexBuffer);
+
+            this.mCanRun = true;
+        }
+
+        public canRun() : boolean {
+            return this.mCanRun;
         }
         
         public update(deltaTime : number) : void {
@@ -267,8 +276,9 @@ namespace TestGame {
         }
 
         public onKeyEvent(keyEvent : WDOH.KeyEvent) : void {
-            console.log(keyEvent.getInputCode().toString());
 
+
+            //Polling examples
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_W)) {
                 this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, 0.04, 0));
             }

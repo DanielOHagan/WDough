@@ -14,7 +14,7 @@ namespace WDOH {
 
             this.mInputCode = Input.get().keyStringAsInputCode(keyBoardEvent.key.toLowerCase());
 
-            if (this.mInputCode === EKeyInputCode.INGORED) {
+            if (this.mInputCode === EKeyInputCode.INGORED || this.mInputCode === EKeyInputCode.UNKNOWN) {
                 this.mIgnore = true;
             } else if (eventType === EEventType.INPUT_KEY_UP) {
                 Input.get().setKeyPressedFlag(this.mInputCode, false);
