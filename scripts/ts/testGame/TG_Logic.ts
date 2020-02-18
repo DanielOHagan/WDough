@@ -7,34 +7,6 @@ namespace TestGame {
         private mShaderLibrary : WDOH.ShaderLibrary;
         private mTextureManager : WDOH.TextureManager;
 
-        private vertexSrc = [
-            "#version 300 es",
-            "",
-            "precision mediump float;",
-            "",
-            "uniform mat4 uProjectionViewMatrix;",
-            "uniform mat4 uTransformationViewMatrix;",
-            "",
-            "in vec3 aVertPos;",
-            "",
-            "void main() {",
-                "gl_Position = uProjectionViewMatrix * uTransformationViewMatrix * vec4(aVertPos, 1.0);",
-            "}"
-        ].join("\n");
-        private fragmentSrc = [
-            "#version 300 es",
-            "",
-            "precision mediump float;",
-            "",
-            "uniform vec4 uColour;",
-            "",
-            "out vec4 fragColour;",
-            "",
-            "void main() {",
-                "fragColour = uColour;",
-            "}"
-        ].join("\n");
-
         private textureVertexSrc = [
             "#version 300 es",
             "",
@@ -70,18 +42,6 @@ namespace TestGame {
             "}"
         ].join("\n");
 
-        private mSquareVertices : number[] = [
-            //Set out as (Position) X Y Z
-            //top left
-            -0.5,  0.5, 0.0,
-            //top right
-            0.5,  0.5, 0.0, 
-            //bottom right
-            0.5, -0.5, 0.0, 
-            //bottom left
-            -0.5, -0.5, 0.0,
-        ];
-
         //The position vertices for squareVAO and texturedSquareVAO are the same so these indices can be used for both
         private mSquareIndices : number[] = [
             0, 1, 2,
@@ -100,22 +60,16 @@ namespace TestGame {
             -0.5, -0.5, 0.0, 0.0, 1.0
         ];
 
-        private mFlatColour : WDOH.Vector4;
-
         private texturedSquareVAO : WDOH.IVertexArray | null;
         private mTestTexture : WDOH.ITexture | null;
         private mOtherTestTexture : WDOH.ITexture | null;
-
-        private mSquareVAO : WDOH.IVertexArray | null;
 
         private mOrthoCameraController : WDOH.ICameraController;
 
         public constructor(aspectRatio : number) {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
-            this.mSquareVAO = null;
             this.mShaderLibrary = new WDOH.ShaderLibrary();
             this.mTextureManager = new WDOH.TextureManager();
-            this.mFlatColour = new WDOH.Vector4(0, 1, 0, 1);
             this.mTestTexture = null;
             this.mOtherTestTexture = null;
             this.texturedSquareVAO = null;
@@ -125,21 +79,11 @@ namespace TestGame {
         public init() : void {
             console.log("TG_Logic: init");
 
-            //Shader initialisation and compilation
-            let flatColourShaderSources : Map<WDOH.EShaderType, string> = new Map();
-            flatColourShaderSources.set(WDOH.EShaderType.VERTEX, this.vertexSrc);
-            flatColourShaderSources.set(WDOH.EShaderType.FRAGMENT, this.fragmentSrc);
-
             let textureShaderSources : Map<WDOH.EShaderType, string> = new Map();
             textureShaderSources.set(WDOH.EShaderType.VERTEX, this.textureVertexSrc);
             textureShaderSources.set(WDOH.EShaderType.FRAGMENT, this.textureFragSrc);
 
-            let flatColourShader = this.mShaderLibrary.create("FlatColour", flatColourShaderSources);
             let textureShader = this.mShaderLibrary.create("Texture", textureShaderSources);
-
-            if (flatColourShader !== null) {
-                flatColourShader.createUniform("uColour");
-            }
 
             if (textureShader !== null) {
                 textureShader.createUniform("uTexture");
@@ -151,20 +95,6 @@ namespace TestGame {
             //Texture
             this.mTestTexture = this.mTextureManager.createTexture("res/TG/images/testTexture.png", WDOH.ETextureBindingPoint.TEX_2D);
             this.mOtherTestTexture = this.mTextureManager.createTexture("res/TG/images/partiallyTransparent.png", WDOH.ETextureBindingPoint.TEX_2D);
-
-            //mSquareVAO
-            this.mSquareVAO = new WDOH.VertexArrayWebGL();
-            let squareVBO : WDOH.IVertexBufer = new WDOH.VertexBufferWebGL(
-                this.mSquareVertices,
-                WDOH.EDataType.FLOAT
-            );
-            squareVBO.setBufferLayout(new WDOH.BufferLayout([
-                new WDOH.BufferElement("aVertPos", WDOH.EDataType.FLOAT3)
-            ]))
-            this.mSquareVAO.addVertexBuffer(squareVBO);
-
-            let squareIB : WDOH.IIndexBuffer = new WDOH.IndexBufferWebGL(this.mSquareIndices);
-            this.mSquareVAO.setIndexBuffer(squareIB);
 
             //Textured VAO
             this.texturedSquareVAO = new WDOH.VertexArrayWebGL();
@@ -200,42 +130,16 @@ namespace TestGame {
             mApplication.getRenderer().beginScene(this.mOrthoCameraController.getCamera());
 
             let textureShader : WDOH.IShader | null = this.mShaderLibrary.get("Texture");
-            let flatColourShader : WDOH.IShader | null = this.mShaderLibrary.get("FlatColour");
+
+            mApplication.getRenderer().render2D().drawQuad(
+                new WDOH.Vector3(0, 0, 0),
+                new WDOH.Vector2(1, 1), //Doesn't currently work
+                new WDOH.Vector4(0, 1, 0, 1)
+            );
+
             
-            if (flatColourShader !== null) {
-                flatColourShader.bind();
-                (flatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", this.mFlatColour);
 
-                if (this.mSquareVAO !== null) {
-
-                    for (let x = 0; x < 20; x++) {
-                        for (let y = 0; y < 20; y++) {
-                            let transformationMatrix : WDOH.Matrix4x4 = new WDOH.Matrix4x4();
-                            let pos : WDOH.Vector3 = new WDOH.Vector3(x * 0.03, y * 0.03, 0.0);
-
-                            //offset down and left
-                            pos.x += 1.45;
-                            pos.y += 0.4;
-
-                            if (Math.random() < 0.8) {
-                                (flatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", this.mFlatColour);
-                            } else {
-                                (flatColourShader as WDOH.ShaderWebGL).setUniformFloat4("uColour", new WDOH.Vector4(1, 1, 0, 1));
-                            }
-
-                            if (Math.random() < 0.02) {
-                                transformationMatrix.rotateRads(WDOH.MathsWDOH.degToRad(45), new WDOH.Vector3(0, 0, 1));
-                            }
-
-                            transformationMatrix.scaleNum(0.025);
-                            transformationMatrix.translateVec3(pos);
-
-                            mApplication.getRenderer().submitShader(flatColourShader, this.mSquareVAO, transformationMatrix);
-                        }
-                    }
-                }
-            }
-
+            /*
             if (textureShader !== null && this.mTestTexture !== null && this.mOtherTestTexture !== null) {
                 textureShader.bind();
 
@@ -258,14 +162,14 @@ namespace TestGame {
 
                     transformationmatrix.translateVec2(new WDOH.Vector2(0, 0.2));
 
-                    mApplication.getRenderer().submitShader(
-                        textureShader,
-                        this.texturedSquareVAO,
-                        transformationmatrix
-                    );
+                    // mApplication.getRenderer().submitShader(
+                    //     textureShader,
+                    //     this.texturedSquareVAO,
+                    //     transformationmatrix
+                    // );
                 }
             }
-
+*/
 
             mApplication.getRenderer().endScene();
         }
@@ -278,7 +182,7 @@ namespace TestGame {
         public onKeyEvent(keyEvent : WDOH.KeyEvent) : void {
 
 
-            //Polling examples
+            
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_W)) {
                 this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, 0.04, 0));
             }

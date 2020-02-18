@@ -29,8 +29,8 @@ namespace WDOH {
                 let currentTime : number = Time.getCurrentTimeSeconds();
                 let deltaTime = currentTime - this.mLastCycleTime;
                 
-                //If still in the time slot for previous frame,
-                // don't call mApplication.update
+                //If still in the time slot for previous frame
+                // then don't call mApplication.update
                 this.mCurrentFrameTime += deltaTime;
                 let updateFrame : boolean;
                 

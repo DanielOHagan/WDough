@@ -1,5 +1,6 @@
 # Files
 *.js
+*.bat
 
 # Directories
 scripts/js/

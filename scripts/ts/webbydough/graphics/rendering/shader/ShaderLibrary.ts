@@ -8,11 +8,30 @@ namespace WDOH {
             this.mShaderMap = new Map<string, IShader>();
         }
 
+        /**
+         * Does not add the created shader to ShaderLibrary instance's mShaderMap
+         * @param name Unique identifier name of shader
+         * @param sources Source code for shader with respective type
+         * @returns IShader instance created from the given sources
+         */
+        public static loadSeparatedShader(name : string, sources : Map<EShaderType, string>) : IShader {
+            let shader : IShader = ShaderWebGL.create(name, sources);
+            return shader;
+        }
+
+        /**
+         * Creates an IShader reference and adds it to the ShaderLibrary instance's mShaderMap,
+         *  the shader can then be referenced by this method's return value or by calling
+         *  the get() method using the same name argument as the one passed here
+         * @param name Unique identifier name of shader
+         * @param sources Source code for shader with respective type
+         * @returns IShader instance created from the given sources
+         */
         public create(name : string, sources : Map<EShaderType, string>) : IShader | null {
             if (this.mShaderMap.has(name)) {
                 throw new Error(`Shader name already in use: ${name}`);
             } else {
-                let shader : IShader = ShaderWebGL.create(name, sources);
+                let shader : IShader = ShaderLibrary.loadSeparatedShader(name, sources);
 
                 this.mShaderMap.set(shader.getName(), shader);
 
@@ -54,5 +73,8 @@ namespace WDOH {
             this.mShaderMap.delete(name);
         }
 
+        public clear() : void {
+            this.mShaderMap.clear();
+        }
     }
 }
