@@ -195,7 +195,7 @@ namespace WDOH {
             this.set(mat);
         }
         
-        public scaleNum(scale : number) : void {
+        public scaleScalar(scale : number) : void {
             this.scaleXYZ(scale, scale, scale);
         }
 

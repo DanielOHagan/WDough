@@ -1,6 +1,6 @@
 namespace WDOH {
 
-    export class Renderer2D {
+    export class Renderer2D implements IRenderer {
 
         public constructor() {
 
@@ -10,22 +10,60 @@ namespace WDOH {
             Renderer2DStorage.init();
         }
 
-        public drawQuad(pos : Vector3, size : Vector2, colour : Vector4) : void {
-            let shader : IShader | null = Renderer2DStorage.mShaderLibrary.get(Renderer2DStorage.FLAT_COLOUR_SHADER);
-            
-            if (shader === null) {
-                throw new Error("Render2d: Shader not available: FlatColourShader");
+        public beginScene(camera : ICamera) {
+            let flatColourShader : IShader | null = Renderer2DStorage.mShaderLibrary.get(Renderer2DStorage.FLAT_COLOUR_SHADER);
+            if (flatColourShader === null) {
+                throw new Error("Renderer2D: Shader not available: " + Renderer2DStorage.FLAT_COLOUR_SHADER);
             }
-            shader.bind();
+            flatColourShader.bind();
+            flatColourShader.setUniformMat4(Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT, camera.getProjectionViewMatrix());
 
-            shader.createUniform("uColour");
-            (shader as WDOH.ShaderWebGL).setUniformFloat4("uColour", colour);
+            let textureShader : IShader | null = Renderer2DStorage.mShaderLibrary.get(Renderer2DStorage.TEXTURE_SHADER);
+            if (textureShader === null) {
+                throw new Error("Renderer2D: Shader not available: " + Renderer2DStorage.TEXTURE_SHADER);
+            }
+            textureShader.bind();
+            textureShader.setUniformMat4(Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT, camera.getProjectionViewMatrix());
+        }
+
+        public drawColouredQuad(pos : Vector3, size : Vector2, rotationDegrees : number, colour : Vector4) : void {
+            let flatColourShader : IShader | null = Renderer2DStorage.mShaderLibrary.get(Renderer2DStorage.FLAT_COLOUR_SHADER);
+            
+            if (flatColourShader === null) {
+                throw new Error("Renderer2D: Shader not available: " + Renderer2DStorage.FLAT_COLOUR_SHADER);
+            }
+            flatColourShader.bind();
 
             let transformationMatrix : Matrix4x4 = new Matrix4x4();
             transformationMatrix.translateVec3(pos);
+            transformationMatrix.rotateRads(WDOH.MathsWDOH.degToRad(rotationDegrees), new Vector3(0, 0, 1));
+            transformationMatrix.scaleXYZ(size.x, size.y, 1);
 
+            flatColourShader.setUniformFloat4("uColour", colour);
+            flatColourShader.setUniformMat4(Renderer2DStorage.UNIFORM_NAME_TRANSFORMATION_MAT, transformationMatrix);
 
-            mApplication.getRenderer().submitShader(shader, Renderer2DStorage.mQuadVao, transformationMatrix);
+            Renderer2DStorage.mQuadVao.bind();
+            mApplication.getRenderer().getRendererAPI().drawIndexed(Renderer2DStorage.mQuadVao.getIndexBuffer().getCount());
+        }
+
+        public drawTexturedQuad(pos : Vector3, size : Vector2, rotationDegrees : number, texture : ITexture) : void {
+            let textureShader :  IShader | null = Renderer2DStorage.mShaderLibrary.get(Renderer2DStorage.TEXTURE_SHADER);
+
+            if (textureShader === null) {
+                throw new Error("Renderer2D: Shader not available: " + Renderer2DStorage.TEXTURE_SHADER);
+            }
+            textureShader.bind();
+            texture.bind();
+
+            let transformationMatrix : Matrix4x4 = new Matrix4x4();
+            transformationMatrix.translateVec3(pos);
+            transformationMatrix.rotateRads(WDOH.MathsWDOH.degToRad(rotationDegrees), new Vector3(0, 0, 1));
+            transformationMatrix.scaleXYZ(size.x, size.y, 1);
+
+            textureShader.setUniformMat4(Renderer2DStorage.UNIFORM_NAME_TRANSFORMATION_MAT, transformationMatrix);
+
+            Renderer2DStorage.mQuadVao.bind();
+            mApplication.getRenderer().getRendererAPI().drawIndexed(Renderer2DStorage.mQuadVao.getIndexBuffer().getCount());
         }
         
         public cleanUp() : void {

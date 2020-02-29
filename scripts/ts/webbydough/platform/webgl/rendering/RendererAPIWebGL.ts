@@ -5,6 +5,8 @@ namespace WDOH {
         public init(): void {
             mContext.enable(mContext.BLEND);
             mContext.blendFuncSeparate(mContext.SRC_ALPHA, mContext.ONE_MINUS_SRC_ALPHA, mContext.ONE, mContext.ONE);
+
+            mContext.enable(mContext.DEPTH_TEST);
         }
         
         public setClearColour(colour : Vector4) : void {

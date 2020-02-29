@@ -1,6 +1,6 @@
 namespace WDOH {
 
-    export class Renderer {
+    export class Renderer implements IRenderer {
 
         public static readonly DEFAULT_CLEAR_COLOUR : Vector4 = new Vector4(1, 0, 1, 1);
 
@@ -25,6 +25,8 @@ namespace WDOH {
             camera.updateProjectionViewMatrix();
 
             this.mProjectionViewMatrix = camera.getProjectionViewMatrix();
+
+            this.mRenderer2d.beginScene(camera);
         }
 
         public endScene() : void {
@@ -39,10 +41,10 @@ namespace WDOH {
             shader.bind();
             vertexArray.bind();
 
-            shader.createUniforms(["uProjectionViewMatrix", "uTransformationViewMatrix"]);
+            shader.createUniforms(["uProjectionViewMatrix", "uTransformationMatrix"]);
 
-            (shader as ShaderWebGL).setUniformMat4("uProjectionViewMatrix", this.mProjectionViewMatrix);
-            (shader as ShaderWebGL).setUniformMat4("uTransformationViewMatrix", transformationMatrix);
+            shader.setUniformMat4("uProjectionViewMatrix", this.mProjectionViewMatrix);
+            shader.setUniformMat4("uTransformationMatrix", transformationMatrix);
 
             this.mRendererAPI.drawIndexed(vertexArray.getIndexBuffer().getCount());
         }

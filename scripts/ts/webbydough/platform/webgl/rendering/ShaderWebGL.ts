@@ -142,12 +142,51 @@ namespace WDOH {
             mContext.uniform1i(this.getUniformLocation(uniformName), value);
         }
 
-        public setUniformFloat4(uniformName : string, value : Vector4) : void {
-            mContext.uniform4f(this.getUniformLocation(uniformName), value.x, value.y, value.z, value.w);
+        public setUniformInt2(uniformName : string, vec : Vector2) : void {
+            //Remove decimal value
+            vec.x = Math.floor(vec.x);
+            vec.y = Math.floor(vec.y);
+
+            mContext.uniform2i(this.getUniformLocation(uniformName), vec.x, vec.y);
         }
 
-        public setUniformMat4(uniformName : string, transformationMatrix: Matrix4x4) : void {
-            mContext.uniformMatrix4fv(this.getUniformLocation(uniformName), false, new Float32Array(transformationMatrix.asArray()));
+        public setUniformInt3(uniformName : string, vec : Vector3) : void {
+            //Remove decimal value
+            vec.x = Math.floor(vec.x);
+            vec.y = Math.floor(vec.y);
+            vec.z = Math.floor(vec.z);
+
+            mContext.uniform3i(this.getUniformLocation(uniformName), vec.x, vec.y, vec.z);
+        }
+
+        public setUniformInt4(uniformName : string, vec : Vector4) : void {
+            //Remove decimal value
+            vec.x = Math.floor(vec.x);
+            vec.y = Math.floor(vec.y);
+            vec.z = Math.floor(vec.z);
+            vec.w = Math.floor(vec.w);
+
+            mContext.uniform4i(this.getUniformLocation(uniformName), vec.x, vec.y, vec.z, vec.w);
+        }
+
+        public setUniformFloat(uniformName : string, value : number) : void {
+            mContext.uniform1f(this.getUniformLocation(uniformName), value);
+        }
+        
+        public setUniformFloat2(uniformName : string, vec : Vector2) : void {
+            mContext.uniform2f(this.getUniformLocation(uniformName), vec.x, vec.y);
+        }
+        
+        public setUniformFloat3(uniformName : string, vec : Vector3) : void {
+            mContext.uniform3f(this.getUniformLocation(uniformName), vec.x, vec.y, vec.z);
+        }
+
+        public setUniformFloat4(uniformName : string, vec : Vector4) : void {
+            mContext.uniform4f(this.getUniformLocation(uniformName), vec.x, vec.y, vec.z, vec.w);
+        }
+
+        public setUniformMat4(uniformName : string, mat: Matrix4x4) : void {
+            mContext.uniformMatrix4fv(this.getUniformLocation(uniformName), false, new Float32Array(mat.asArray()));
         }
 
         public getUniformLocation(uniformName : string) : WebGLUniformLocation {
