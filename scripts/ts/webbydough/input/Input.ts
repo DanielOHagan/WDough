@@ -1,5 +1,8 @@
 namespace WDOH {
 
+    /**
+     * Singleton and 'Impl' methods for ease-of-use and cleaner API for end user.
+     */
     export class Input {
 
         public static readonly DEFAULT_KEY_INPUT_CODES : EKeyInputCode[] = [

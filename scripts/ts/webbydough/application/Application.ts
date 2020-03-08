@@ -116,6 +116,15 @@ namespace WDOH {
             }
         }
 
+        public displayFps(fps : number) : void {
+            // console.log("FPS: " + fps);
+        }
+
+        private cleanUp() : void {
+            this.mAppLogic.cleanUp();
+            this.mRenderer.cleanUp();
+        }
+
         //-----Getters-----
         public getApplicationLogic() : IApplicationLogic {
             return this.mAppLogic;

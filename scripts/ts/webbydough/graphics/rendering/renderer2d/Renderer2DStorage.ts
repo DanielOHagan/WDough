@@ -2,108 +2,39 @@ namespace WDOH {
 
     export class Renderer2DStorage {
 
-        public static readonly FLAT_COLOUR_SHADER : string = "FlatColour";
-        public static readonly TEXTURE_SHADER : string = "Texture";
-
+        
+        public static readonly FLAT_COLOUR_SHADER : string = "flatcolour";
+        public static readonly TEXTURE_SHADER : string = "texture";
+        
         public static readonly UNIFORM_NAME_PROJ_VIEW_MAT : string = "uProjectionViewMatrix";
         public static readonly UNIFORM_NAME_TRANSFORMATION_MAT : string = "uTransformationMatrix";
         //TODO:: Add more static uniform names for frequent use
-
+        
+        private static readonly REQUIRED_SHADERS : string[] = [Renderer2DStorage.FLAT_COLOUR_SHADER, Renderer2DStorage.TEXTURE_SHADER]
+        
         //TODO:: Make this non WebGL specific
-
+        
         //TODO:: Remove shader source code from here
 
         public static mShaderLibrary : ShaderLibrary;
         public static mQuadVao : IVertexArray;
 
+        public static mRequiredShadersLoaded : boolean;
+        public static mRequiredShadersInitialised : boolean;
+
         private constructor() {}
 
         public static init() : void {
             Renderer2DStorage.mShaderLibrary = new ShaderLibrary();
+            Renderer2DStorage.mRequiredShadersLoaded = false;
+            Renderer2DStorage.mRequiredShadersInitialised = false;
 
-            this.createShaders();
+            this.loadShaders();
             this.createVertexArrays();
         }
 
-        private static createShaders() : void {
-
-            //TODO:: Have this src somewhere else
-            let flatColourVertSrc : string = [
-                "#version 300 es",
-                "",
-                "precision mediump float;",
-                "",
-                "uniform mat4 " + Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT + ";",
-                "uniform mat4 " + Renderer2DStorage.UNIFORM_NAME_TRANSFORMATION_MAT + ";",
-                "",
-                "in vec3 aVertPos;",
-                "",
-                "void main() {",
-                    "gl_Position = " + Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT + " * " + 
-                                        Renderer2DStorage.UNIFORM_NAME_TRANSFORMATION_MAT +
-                                        " * vec4(aVertPos, 1.0);",
-                "}"
-            ].join("\n");
-            let flatColourFragSrc : string = [
-                "#version 300 es",
-                "",
-                "precision mediump float;",
-                "",
-                "uniform vec4 uColour;",
-                "",
-                "out vec4 fragColour;",
-                "",
-                "void main() {",
-                    "fragColour = uColour;",
-                "}"
-            ].join("\n");
-
-            let textureVertexSrc : string = [
-                "#version 300 es",
-                "",
-                "precision mediump float;",
-                "",
-                "uniform mat4 " + Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT + ";",
-                "uniform mat4 " + Renderer2DStorage.UNIFORM_NAME_TRANSFORMATION_MAT + ";",
-                "",
-                "in vec3 aVertPos;",
-                "in vec2 aTexCoord;",
-                "",
-                "out vec2 vTexCoord;",
-                "",
-                "void main() {",
-                    "vTexCoord = aTexCoord;",
-                    "gl_Position = " + Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT + " * " +
-                                        Renderer2DStorage.UNIFORM_NAME_TRANSFORMATION_MAT +
-                                        " * vec4(aVertPos, 1.0);",
-                "}"
-            ].join("\n");
-            let textureFragSrc : string = [
-                "#version 300 es",
-                "",
-                "precision mediump float;",
-                "",
-                "uniform sampler2D uTexture;",
-                "",
-                "in vec2 vTexCoord;",
-                "",
-                "out vec4 fragColour;",
-                "",
-                "void main() {",
-                    "fragColour = texture(uTexture, vTexCoord);",
-                "}"
-            ].join("\n");
-
-            //Shader initialisation and compilation
-            let flatColourSrcs : Map<EShaderType, string> = new Map();
-            flatColourSrcs.set(EShaderType.VERTEX, flatColourVertSrc);
-            flatColourSrcs.set(EShaderType.FRAGMENT, flatColourFragSrc);
-
-            let textureSrcs : Map<EShaderType, string> = new Map();
-            textureSrcs.set(EShaderType.VERTEX, textureVertexSrc);
-            textureSrcs.set(EShaderType.FRAGMENT, textureFragSrc);
-
-            let flatColourShader : IShader | null = this.mShaderLibrary.create(Renderer2DStorage.FLAT_COLOUR_SHADER, flatColourSrcs);
+        public static initRequiredShaders() : void {
+            let flatColourShader : IShader | null = this.mShaderLibrary.get(Renderer2DStorage.FLAT_COLOUR_SHADER);
             if (flatColourShader === null) {
                 throw new Error("Renderer2DStorage: Failed to create Shader: " + Renderer2DStorage.FLAT_COLOUR_SHADER);
             }
@@ -112,7 +43,7 @@ namespace WDOH {
             flatColourShader.createUniform(Renderer2DStorage.UNIFORM_NAME_TRANSFORMATION_MAT);
             flatColourShader.createUniform("uColour");
 
-            let textureShader : IShader | null = this.mShaderLibrary.create(Renderer2DStorage.TEXTURE_SHADER, textureSrcs);
+            let textureShader : IShader | null = this.mShaderLibrary.get(Renderer2DStorage.TEXTURE_SHADER);
             if (textureShader === null) {
                 throw new Error("Renderer2DStorage: Failed to create Shader: " + Renderer2DStorage.TEXTURE_SHADER);
             }
@@ -121,6 +52,15 @@ namespace WDOH {
             textureShader.createUniform(Renderer2DStorage.UNIFORM_NAME_TRANSFORMATION_MAT);
             textureShader.createUniform("uTexture");
             textureShader.setUniformInt("uTexture", 0); //Set default texture slot to 0
+
+            Renderer2DStorage.mRequiredShadersInitialised = true;
+        }
+
+        private static loadShaders() : void {
+
+            ShaderReader.loadShaderFileIntoStorage("res/WDOH/flatColour.glsl");
+            ShaderReader.loadShaderFileIntoStorage("res/WDOH/texture.glsl");
+            
         }
 
         private static createVertexArrays() : void {
@@ -152,6 +92,43 @@ namespace WDOH {
             let squareIB : IIndexBuffer = new IndexBufferWebGL(quadIndices);
             Renderer2DStorage.mQuadVao.setIndexBuffer(squareIB);
             //-----Quad End-----
+        }
+
+        public static isReady() : boolean {
+            // console.log(Renderer2DStorage.mRequiredShadersLoaded  ? "t" : "n");
+            return Renderer2DStorage.mRequiredShadersLoaded && Renderer2DStorage.mRequiredShadersInitialised;
+        }
+
+        public static checkShadersLoaded() : void {
+            //Check if all required shaders have loaded
+            let requiredShaders : string[] = Renderer2DStorage.REQUIRED_SHADERS;
+            let loadedShaders : string[] = ShaderReader.getShaderFileNamesByLoadStatus(true);
+
+            let allRequiredShadersLoaded : boolean = false;
+
+            for (let requiredIndex = 0; requiredIndex < requiredShaders.length; requiredIndex++) {
+                for (let loadedIndex = 0; loadedIndex < loadedShaders.length; loadedIndex++) {
+                    if (requiredShaders[requiredIndex] === loadedShaders[loadedIndex]) {
+                        
+                        if (requiredIndex === requiredShaders.length - 1) {
+                            allRequiredShadersLoaded = true;
+                            break;
+                        }                     
+
+                        requiredIndex++;
+                        loadedIndex = 0;
+                    }
+                }
+                
+                if (allRequiredShadersLoaded === true) {
+                    break;
+                } 
+            }
+            Renderer2DStorage.mRequiredShadersLoaded = allRequiredShadersLoaded;
+        }
+
+        public static requiredShadersInitialised() : boolean {
+            return Renderer2DStorage.mRequiredShadersInitialised;
         }
 
         public static cleanUp() : void {

@@ -60,6 +60,8 @@ namespace WDOH {
 
         public cleanUp() : void {
             this.mRenderer2d.cleanUp();
+
+            ShaderReader.cleanUp();
         }
     }
 }
