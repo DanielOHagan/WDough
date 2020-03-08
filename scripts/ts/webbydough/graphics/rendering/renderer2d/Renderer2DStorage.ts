@@ -2,7 +2,8 @@ namespace WDOH {
 
     export class Renderer2DStorage {
 
-        
+        private static readonly WDOH_SHADER_DIR : string = "res/WDOH/shaders";
+
         public static readonly FLAT_COLOUR_SHADER : string = "flatcolour";
         public static readonly TEXTURE_SHADER : string = "texture";
         
@@ -58,8 +59,8 @@ namespace WDOH {
 
         private static loadShaders() : void {
 
-            ShaderReader.loadShaderFileIntoStorage("res/WDOH/flatColour.glsl");
-            ShaderReader.loadShaderFileIntoStorage("res/WDOH/texture.glsl");
+            ShaderReader.loadShaderFileIntoStorage(Renderer2DStorage.WDOH_SHADER_DIR + "/flatColour.glsl");
+            ShaderReader.loadShaderFileIntoStorage(Renderer2DStorage.WDOH_SHADER_DIR + "/texture.glsl");
             
         }
 
