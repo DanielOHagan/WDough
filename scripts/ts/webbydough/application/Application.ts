@@ -7,10 +7,12 @@ namespace WDOH {
         private mAppLogic : IApplicationLogic;
         private mAppLoop : ApplicationLoop;
         private mRenderer : Renderer;
+        private mLogger : Logger;
 
+        // private mDebug : boolean;
         private mRunning : boolean;
 
-        public constructor(appLogic : IApplicationLogic) {
+        public constructor(appLogic : IApplicationLogic, appName : string | null) {
             this.mCanvas = new Canvas(window.innerWidth, window.innerHeight);
             this.mRenderer = new Renderer();
             this.mAppLoop = new ApplicationLoop(
@@ -19,6 +21,7 @@ namespace WDOH {
             );
             this.mAppLogic = appLogic;
             this.mRunning = false;
+            this.mLogger = new Logger(appName);
         }
 
         public init(/*appSettings : ApplicationSettings*/) : void {
@@ -117,7 +120,7 @@ namespace WDOH {
         }
 
         public displayFps(fps : number) : void {
-            // console.log("FPS: " + fps);
+            this.mLogger.infoWDOH("FPS: " + fps);
         }
 
         private cleanUp() : void {
@@ -136,6 +139,10 @@ namespace WDOH {
 
         public isRunning() : boolean {
             return this.mRunning;
+        }
+
+        public getLogger() : Logger {
+            return this.mLogger;
         }
     }
 }

@@ -8,47 +8,55 @@ namespace WDOH {
             this.mTextureMap = new Map();
         }
 
-        public createTexture(filePath : string, bindingPoint : ETextureBindingPoint) : ITexture {
-            if (this.mTextureMap.has(filePath)) {
-                console.log("Texture already stored, returning stored texture");
+        public createTexture(filePath : string, textureName : string, bindingPoint : ETextureBindingPoint) : ITexture {
+            if (this.mTextureMap.has(textureName)) {
 
-                if (this.mTextureMap.get(filePath) !== undefined) {
-                    return this.mTextureMap.get(filePath) as ITexture;
+                mApplication.getLogger().infoApp("Texture already stored, returning stored texture");
+
+                if (this.mTextureMap.get(textureName) !== undefined) {
+                    return this.mTextureMap.get(textureName) as ITexture;
                 }
             }
 
             let texture : ITexture = new TextureWebGL(filePath, bindingPoint);
 
             if (texture.hasLoaded()) {
-                this.mTextureMap.set(filePath, texture);
+                this.mTextureMap.set(textureName, texture);
                 return texture;
             } else {
                 throw new Error(`Failed to load texture: ${filePath}`);
             }
         }
 
-        public removeTextureByFilePath(filePath : string) : void {
-            this.mTextureMap.delete(filePath);
+        public getTextureByName(textureName : string) : ITexture | null {
+            if (this.mTextureMap.has(textureName)) {
+                return (this.mTextureMap.get(textureName) as ITexture);
+            }
+
+            mApplication.getLogger().infoApp("Texture name not found. Returning null.");
+            return null;
+        }
+
+        public removeTextureByName(textureName : string) : void {
+            this.mTextureMap.delete(textureName);
         }
 
         public removeTextureInstance(texture : ITexture) : void {
             for (let key of this.mTextureMap.keys()) {
                 if (this.mTextureMap.get(key) === texture) {
+                    (this.mTextureMap.get(key) as ITexture).cleanUp();
                     this.mTextureMap.delete(key);
                 }
             }
         }
-        
-        public flushTextures() : void {
-            this.mTextureMap.clear();
-        }
 
-        private cleanUp() : void {
+        public cleanUp() : void {
             for (let key of this.mTextureMap.keys()) {
                 if (this.mTextureMap.get(key) !== undefined) {
                     (this.mTextureMap.get(key) as ITexture).cleanUp();
                 }
             }
+            this.mTextureMap.clear();
         }
     }
 }

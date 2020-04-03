@@ -5,10 +5,8 @@ namespace TestGame {
         private mCanRun : boolean;
 
         private mTextureManager : WDOH.TextureManager;
-
-        //TODO:: These should be in mTextureManager, NOT class members in ApplicationLogic
         private mTestTexture : WDOH.ITexture | null;
-        private mOtherTestTexture : WDOH.ITexture | null;
+        private mTransparentTexture : WDOH.ITexture | null;
 
         private mOrthoCameraController : WDOH.ICameraController;
 
@@ -16,16 +14,15 @@ namespace TestGame {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
             this.mTextureManager = new WDOH.TextureManager();
             this.mTestTexture = null;
-            this.mOtherTestTexture = null;
+            this.mTransparentTexture = null;
             this.mCanRun = false;
         }
 
         public init() : void {
-            console.log("TG_Logic: init");
+            mApplication.getLogger().infoApp("Logic init");
 
-            //Texture
-            this.mTestTexture = this.mTextureManager.createTexture("res/TG/images/testTexture.png", WDOH.ETextureBindingPoint.TEX_2D);
-            this.mOtherTestTexture = this.mTextureManager.createTexture("res/TG/images/partiallyTransparent.png", WDOH.ETextureBindingPoint.TEX_2D);
+            this.mTestTexture = this.mTextureManager.createTexture("res/TG/images/testTexture.png", "Test", WDOH.ETextureBindingPoint.TEX_2D);
+            this.mTransparentTexture = this.mTextureManager.createTexture("res/TG/images/partiallyTransparent.png", "Transparent", WDOH.ETextureBindingPoint.TEX_2D);
 
             this.mCanRun = true;
         }
@@ -40,7 +37,7 @@ namespace TestGame {
 
             mApplication.getRenderer().beginScene(this.mOrthoCameraController.getCamera());
 
-            //Draw green quad
+            //Draw coloured quad
             // mApplication.getRenderer().render2D().drawColouredQuad(
             //     new WDOH.Vector3(0, 0, 0),
             //     new WDOH.Vector2(1, 1),
@@ -68,7 +65,7 @@ namespace TestGame {
             }
 
             //Draw textures
-            if (this.mTestTexture !== null && this.mOtherTestTexture !== null) {
+            if (this.mTestTexture !== null && this.mTransparentTexture !== null) {
                 mApplication.getRenderer().render2D().drawTexturedQuad(
                     new WDOH.Vector3(0, 0, 0),
                     new WDOH.Vector2(1, 1),
@@ -80,7 +77,7 @@ namespace TestGame {
                     new WDOH.Vector3(0, 0, 0.1),
                     new WDOH.Vector2(1, 1),
                     0,
-                    this.mOtherTestTexture
+                    this.mTransparentTexture
                 );
             }
 
@@ -95,26 +92,28 @@ namespace TestGame {
         public onKeyEvent(keyEvent : WDOH.KeyEvent) : void {
 
             //Camera Translation
-            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_W)) {
-                this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, 0.04, 0));
-            }
-            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_S)) {
-                this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, -0.04, 0));
-            }
-            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_D)) {
-                this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0.04, 0, 0));
-            }
-            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_A)) {
-                this.mOrthoCameraController.translatePosition(new WDOH.Vector3(-0.04, 0, 0));
-            }
 
-            //Camera Rotation
-            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_Q)) {
-                this.mOrthoCameraController.rotateDegrees(-5);
-            }
-            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_E)) {
-                this.mOrthoCameraController.rotateDegrees(5);
-            }
+            //Event example
+            // if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_W) {
+            //     this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, 0.04, 0));
+            // }
+            // if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_S) {
+            //     this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0, -0.04, 0));
+            // }
+            // if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_D) {
+            //     this.mOrthoCameraController.translatePosition(new WDOH.Vector3(0.04, 0, 0));
+            // }
+            // if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_A) {
+            //     this.mOrthoCameraController.translatePosition(new WDOH.Vector3(-0.04, 0, 0));
+            // }
+
+            // //Camera Rotation
+            // if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_Q) {
+            //     this.mOrthoCameraController.rotateDegrees(-5);
+            // }
+            // if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_E) {
+            //     this.mOrthoCameraController.rotateDegrees(5);
+            // }
 
 
         }
@@ -128,7 +127,7 @@ namespace TestGame {
         }
 
         public cleanUp() : void {
-
+            this.mTextureManager.cleanUp();
         }
     }
 }

@@ -65,17 +65,6 @@ namespace WDOH {
                 mContext.shaderSource(shader, shaderSrc)
 
                 mContext.compileShader(shader);
-                if (!mContext.getShaderParameter(shader, mContext.COMPILE_STATUS)) {
-                    let errorMessage : string = "Shader named: '" + this.mName + "' failed to compile.";
-                    let infoLog : string | null = mContext.getShaderInfoLog(shader);
-
-                    throw new Error(
-                        infoLog !== null ?
-                        errorMessage + " Info: \n" + infoLog :
-                        errorMessage
-                    );
-                }
-
                 mContext.attachShader(program, shader);
 
                 compiledShaders[compiledShadersIndex] = shader;
@@ -87,11 +76,18 @@ namespace WDOH {
                 
                 mContext.deleteProgram(program);
 
+                let errorMessage : string = "Program failed to link";
+
                 for (let shader of compiledShaders) {
+                    if (mContext.getShaderParameter(shader, mContext.COMPILE_STATUS)) {
+                        errorMessage += "\n\tShader: '" + this.mName + "' failed to compile.";
+                        errorMessage += mContext.getShaderInfoLog(shader);
+                    }
+
                     mContext.deleteShader(shader);
                 }
 
-                throw new Error("Program failed to link.");
+                throw new Error(errorMessage);
             }
 
             //Detach shaders after linking program

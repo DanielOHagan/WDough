@@ -9,16 +9,15 @@ namespace WDOH {
         
         public static readonly UNIFORM_NAME_PROJ_VIEW_MAT : string = "uProjectionViewMatrix";
         public static readonly UNIFORM_NAME_TRANSFORMATION_MAT : string = "uTransformationMatrix";
-        //TODO:: Add more static uniform names for frequent use
         
         private static readonly REQUIRED_SHADERS : string[] = [Renderer2DStorage.FLAT_COLOUR_SHADER, Renderer2DStorage.TEXTURE_SHADER]
         
-        //TODO:: Make this non WebGL specific
-        
-        //TODO:: Remove shader source code from here
-
+        //Shaders
         public static mShaderLibrary : ShaderLibrary;
+        //VAOs
         public static mQuadVao : IVertexArray;
+        //Textures
+        public static mWhiteTexture : ITexture;
 
         public static mRequiredShadersLoaded : boolean;
         public static mRequiredShadersInitialised : boolean;
@@ -30,8 +29,9 @@ namespace WDOH {
             Renderer2DStorage.mRequiredShadersLoaded = false;
             Renderer2DStorage.mRequiredShadersInitialised = false;
 
-            this.loadShaders();
-            this.createVertexArrays();
+            Renderer2DStorage.initShaders();
+            Renderer2DStorage.initVertexArrays();
+            Renderer2DStorage.initTextures();
         }
 
         public static initRequiredShaders() : void {
@@ -57,14 +57,14 @@ namespace WDOH {
             Renderer2DStorage.mRequiredShadersInitialised = true;
         }
 
-        private static loadShaders() : void {
+        private static initShaders() : void {
 
             ShaderReader.loadShaderFileIntoStorage(Renderer2DStorage.WDOH_SHADER_DIR + "/flatColour.glsl");
             ShaderReader.loadShaderFileIntoStorage(Renderer2DStorage.WDOH_SHADER_DIR + "/texture.glsl");
             
         }
 
-        private static createVertexArrays() : void {
+        private static initVertexArrays() : void {
             //-----Quad Start-----
             let quadVertices : number[] = [
                 //Set out as (Position) X Y Z, (TexCoord) U V
@@ -95,8 +95,12 @@ namespace WDOH {
             //-----Quad End-----
         }
 
+        private static initTextures() : void {
+            //TODO:: Store a white texture
+            
+        }
+
         public static isReady() : boolean {
-            // console.log(Renderer2DStorage.mRequiredShadersLoaded  ? "t" : "n");
             return Renderer2DStorage.mRequiredShadersLoaded && Renderer2DStorage.mRequiredShadersInitialised;
         }
 
@@ -133,7 +137,14 @@ namespace WDOH {
         }
 
         public static cleanUp() : void {
+            //Shaders
             Renderer2DStorage.mShaderLibrary.clear();
+            
+            //VAOs
+            Renderer2DStorage.mQuadVao.cleanUp();
+
+            //Textures
+            Renderer2DStorage.mWhiteTexture.cleanUp();
         }
     }
 }

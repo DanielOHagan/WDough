@@ -59,7 +59,7 @@ namespace WDOH {
                     this.mFpsCounterTime = 0;
 
                     //To display FPS every SECOND, call displayFps here
-                    //mApplication.displayFps(this.mPreviousFps);
+                    mApplication.displayFps(this.mPreviousFps);
                 }
                 
                 if (updateFrame) {

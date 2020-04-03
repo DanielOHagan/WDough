@@ -36,6 +36,27 @@ namespace TestGame {
 
         public onUpdate(deltaTime : number) : void {
 
+            //Input Polling exmaple
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_W)) {
+                this.translatePosition(new WDOH.Vector3(0, 0.04, 0));
+            }
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_S)) {
+                this.translatePosition(new WDOH.Vector3(0, -0.04, 0));
+            }
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_D)) {
+                this.translatePosition(new WDOH.Vector3(0.04, 0, 0));
+            }
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_A)) {
+                this.translatePosition(new WDOH.Vector3(-0.04, 0, 0));
+            }
+
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_Q)) {
+                this.rotateDegrees(-5);
+            }
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_E)) {
+                this.rotateDegrees(5);
+            }
+
             this.mCamera.setRotation(this.mRotation);
             this.mCamera.setPosition(this.mPosition);
         }
