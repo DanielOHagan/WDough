@@ -11,16 +11,15 @@ namespace WDOH {
 
         // private mDebug : boolean;
         private mRunning : boolean;
+        private mFocused : boolean;
 
         public constructor(appLogic : IApplicationLogic, appName : string | null) {
             this.mCanvas = new Canvas(window.innerWidth, window.innerHeight);
             this.mRenderer = new Renderer();
-            this.mAppLoop = new ApplicationLoop(
-                ApplicationLoop.DEFAULT_TARGET_FPS,
-                false
-            );
+            this.mAppLoop = new ApplicationLoop(ApplicationLoop.DEFAULT_TARGET_FPS);
             this.mAppLogic = appLogic;
             this.mRunning = false;
+            this.mFocused = true;
             this.mLogger = new Logger(appName);
         }
 
@@ -77,6 +76,9 @@ namespace WDOH {
                 case EEventCatagory.CANVAS:
                     this.onCanvasEvent(event);
                     break;
+                case EEventCatagory.APPLICATION:
+                    this.onApplicationEvent(event);
+                    break;
                 case EEventCatagory.NONE:
                 default:
                     throw new Error("Unrecognised, or NONE, event catagory.");
@@ -99,6 +101,21 @@ namespace WDOH {
                 case EEventType.CANVAS_RESIZE:
                     this.resizeViewport(event as CanvasResizeEvent);
                     break;
+
+                case EEventType.NONE:
+                default:
+                    throw new Error("Unrecognised, or NONE, event type.");
+                    break;
+            }
+        }
+
+        public onApplicationEvent(event : AEvent) : void {
+            switch (event.getType()) {
+                case EEventType.APPLICATION_FOCUS_CHANGE:
+                    this.mFocused = (event as FocusChangeEvent).isFocused();
+                    this.mAppLoop.onFocusChange(this.mFocused);
+                    break;
+
                 case EEventType.NONE:
                 default:
                     throw new Error("Unrecognised, or NONE, event type.");
@@ -128,6 +145,11 @@ namespace WDOH {
             this.mRenderer.cleanUp();
         }
 
+        //-----Setters-----
+        public setFocused(focused : boolean) : void {
+            this.mFocused = focused;
+        }
+
         //-----Getters-----
         public getApplicationLogic() : IApplicationLogic {
             return this.mAppLogic;
@@ -143,6 +165,10 @@ namespace WDOH {
 
         public getLogger() : Logger {
             return this.mLogger;
+        }
+
+        public isFocused() : boolean {
+            return this.mFocused;
         }
     }
 }

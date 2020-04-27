@@ -48,6 +48,8 @@ namespace WDOH {
             this.mCanvasNode.height = height;
             this.enableResizeEvents(this.mResizable);
             this.resize(width, height);
+
+            this.setWindowCallbacks();
         }
 
         private createCanvasNode(canvasId ? : string) : HTMLCanvasElement {
@@ -142,6 +144,17 @@ namespace WDOH {
                 height < this.mMinHeight ||
                 height > this.mMaxHeight
             );
+        }
+
+        private setWindowCallbacks() : void {
+            //Set callbacks
+            window.onblur = function() {
+                this.mApplication.onEvent(new FocusChangeEvent(false));
+            }
+
+            window.onfocus = function() {
+                this.mApplication.onEvent(new FocusChangeEvent(true));
+            }
         }
 
         public resizable() : boolean {

@@ -3,6 +3,8 @@ namespace WDOH {
     export enum EEventType {
         NONE = 0,
 
+        APPLICATION_FOCUS_CHANGE,
+
         CANVAS_RESIZE,
 
         INPUT_KEY_DOWN,

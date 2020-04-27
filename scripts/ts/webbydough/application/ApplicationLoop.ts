@@ -3,24 +3,27 @@ namespace WDOH {
     export class ApplicationLoop {
         
         public static readonly DEFAULT_TARGET_FPS : number = 30;
+        public static readonly DEFAULT_TARGET_BACKGROUND_FPS : number = 15;
         
         private mLastCycleTime : number;
         
-        private mLimitBackgroundFps : boolean;
+        private mRunInBackground : boolean;
         private mFps : number;
         private mTargetFps : number;
+        private mTargetBackgroundFps : number;
         private mFpsCounterTime : number;
         private mPreviousFps : number;
         private mTargetFrameTime : number;
         private mCurrentFrameTime : number;
 
-        public constructor(targetFps : number, limitBackgroundFps : boolean) {
+        public constructor(targetFps : number) {
             this.mFps = 0;
             this.mTargetFps = targetFps;
+            this.mTargetBackgroundFps = ApplicationLoop.DEFAULT_TARGET_BACKGROUND_FPS;
             this.mFpsCounterTime = 0;
             this.mPreviousFps = 0;
             this.mTargetFrameTime = 1 / targetFps;
-            this.mLimitBackgroundFps = limitBackgroundFps;
+            this.mRunInBackground = false;
 
             this.mCurrentFrameTime = 0;
             this.mLastCycleTime = Time.getCurrentTimeSeconds();
@@ -63,6 +66,10 @@ namespace WDOH {
                 }
                 
                 if (updateFrame) {
+                    updateFrame = mApplication.isFocused() || this.mRunInBackground;
+                }
+
+                if (updateFrame) {
                     this.mFps++;
                     mApplication.update(deltaTime);
 
@@ -74,10 +81,27 @@ namespace WDOH {
             }
         }
 
+        public onFocusChange(focused : boolean) : void {
+            this.updateTargetFrameTime(focused)
+        }
+
+        private updateTargetFrameTime(focused : boolean) : void {
+            if (focused) {
+                this.mTargetFrameTime = 1 / this.mTargetFps;
+            } else {
+                this.mTargetFrameTime = 1 / this.mTargetBackgroundFps;
+            }
+        }
+
         //When changing mTargetFps USE THIS METHOD
         public setTargetFps(targetFps : number) : void {
             this.mTargetFps = targetFps;
-            this.mTargetFrameTime = 1 / targetFps;
+            this.updateTargetFrameTime(mApplication.isFocused());
+        }
+
+        public setTargetBackgroundFps(targetBackgroundFps : number) : void {
+            this.mTargetBackgroundFps = targetBackgroundFps;
+            this.updateTargetFrameTime(mApplication.isFocused());
         }
 
         public getTargetFps() : number {
@@ -87,6 +111,14 @@ namespace WDOH {
         public getFps() : number {
             //Return the last full second's FPS count
             return this.mPreviousFps;
+        }
+
+        public shouldRunInBackground() : boolean {
+            return this.mRunInBackground;
+        }
+
+        public setRunInBackground(run : boolean) : void {
+            this.mRunInBackground = run;
         }
     }
 }

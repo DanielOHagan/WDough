@@ -18,7 +18,7 @@ namespace TestGame {
 
         public constructor(aspectRatio : number) {
             this.mZoomLevel = 1;
-            this.mZoomScale = 0.3;
+            this.mZoomScale = 1;
             this.mZoomMax = 3;
             this.mZoomMin = 0.25;
             this.mRotation = 0;
@@ -38,23 +38,30 @@ namespace TestGame {
 
             //Input Polling exmaple
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_W)) {
-                this.translatePosition(new WDOH.Vector3(0, 0.04, 0));
+                this.translatePosition(new WDOH.Vector3(0, 4 * deltaTime, 0));
             }
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_S)) {
-                this.translatePosition(new WDOH.Vector3(0, -0.04, 0));
+                this.translatePosition(new WDOH.Vector3(0, -4 * deltaTime, 0));
             }
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_D)) {
-                this.translatePosition(new WDOH.Vector3(0.04, 0, 0));
+                this.translatePosition(new WDOH.Vector3(4 * deltaTime, 0, 0));
             }
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_A)) {
-                this.translatePosition(new WDOH.Vector3(-0.04, 0, 0));
+                this.translatePosition(new WDOH.Vector3(-4 * deltaTime, 0, 0));
             }
 
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_Q)) {
-                this.rotateDegrees(-5);
+                this.rotateDegrees(-5 * deltaTime);
             }
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_E)) {
-                this.rotateDegrees(5);
+                this.rotateDegrees(5 * deltaTime);
+            }
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_Z)) {
+                this.zoom(this.mZoomScale * deltaTime)
+            }
+
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_X)) {
+                this.zoom(-this.mZoomScale * deltaTime)
             }
 
             this.mCamera.setRotation(this.mRotation);

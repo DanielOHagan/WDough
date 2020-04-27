@@ -5,7 +5,6 @@ namespace WDOH {
         private mWidth : number;
         private mHeight : number;
 
-
         public constructor(width : number, height : number) {
             super(EEventType.CANVAS_RESIZE, EEventCatagory.CANVAS);
             this.mWidth = width;
