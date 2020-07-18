@@ -31,6 +31,17 @@ namespace WDOH {
             mContext.bindBuffer(mContext.ELEMENT_ARRAY_BUFFER, null);
         }
 
+        public setData(data : number[], offset : number = 0) : void {
+            if (this.mIndexBuffer !== null) {
+                mContext.bindBuffer(mContext.ELEMENT_ARRAY_BUFFER, this.mIndexBuffer);
+                mContext.bufferSubData(
+                    mContext.ELEMENT_ARRAY_BUFFER,
+                    offset,
+                    new Int32Array(data)
+                );
+            }
+        }
+
         public getCount() : number {
             return this.mCount;
         }

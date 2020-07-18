@@ -3,7 +3,7 @@ namespace WDOH {
     export class VertexArrayWebGL implements IVertexArray {
 
         private mVertexBufferIndex : number;
-        private mVertexBuffers : IVertexBufer[];
+        private mVertexBuffers : IVertexBuffer[];
         private mIndexBuffer : IIndexBuffer | null;
         private mVertexArray : WebGLVertexArrayObject | null;
 
@@ -30,7 +30,7 @@ namespace WDOH {
             mContext.bindVertexArray(null);
         }
 
-        public addVertexBuffer(vertexBuffer : IVertexBufer) : void {
+        public addVertexBuffer(vertexBuffer : IVertexBuffer) : void {
             mContext.bindVertexArray(this.mVertexArray);
             vertexBuffer.bind();            
 
@@ -59,7 +59,7 @@ namespace WDOH {
             this.mIndexBuffer = indexBuffer;
         }
 
-        public getVertexBuffers() : IVertexBufer[] {
+        public getVertexBuffers() : IVertexBuffer[] {
             return this.mVertexBuffers;
         }
 

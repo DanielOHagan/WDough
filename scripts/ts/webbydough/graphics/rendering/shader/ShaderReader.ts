@@ -99,6 +99,10 @@ namespace WDOH {
             return shaderFileNames;
         }
 
+        public static isShaderLoaded(name : string) : boolean {
+            return this.mShaderLoadList.get(name) === true;
+        }
+
         public static cleanUp() : void {
             ShaderReader.mShaderLoadList.clear();
         }

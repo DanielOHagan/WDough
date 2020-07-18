@@ -30,7 +30,11 @@ namespace WDOH {
         }
 
         public endScene() : void {
+            this.mRenderer2d.endScene();
+        }
 
+        public flush() : void {
+            this.mRenderer2d.flush();
         }
 
         public submitShader(

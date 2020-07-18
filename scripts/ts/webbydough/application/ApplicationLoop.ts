@@ -78,6 +78,8 @@ namespace WDOH {
                 }
 
                 this.mLastCycleTime = currentTime;
+            } else {
+                mApplication.cleanUp();
             }
         }
 

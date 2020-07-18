@@ -16,6 +16,7 @@ namespace WDOH {
         setUniformInt2(uniformName : string, vec : Vector2) : void;
         setUniformInt3(uniformName : string, vec : Vector3) : void;
         setUniformInt4(uniformName : string, vec : Vector4) : void;
+        setUniformIntArray(uniformName : string, array : number[]) : void;
 
         setUniformFloat(uniformName : string, value : number) : void;
         setUniformFloat2(uniformName : string, vec : Vector2) : void;

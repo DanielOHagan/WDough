@@ -4,15 +4,20 @@ namespace TestGame {
 
         private mCanRun : boolean;
 
-        private mTextureManager : WDOH.TextureManager;
         private mTestTexture : WDOH.ITexture | null;
         private mTransparentTexture : WDOH.ITexture | null;
 
         private mOrthoCameraController : WDOH.ICameraController;
 
+        private time = 0;
+        private mColours : WDOH.Vector4[] = [];
+
+        private readonly mTestGridWidth = 125;
+        private readonly mTestGridHeight = 120;
+        private readonly mTestGridMinColourIndex : number = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
+
         public constructor(aspectRatio : number) {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
-            this.mTextureManager = new WDOH.TextureManager();
             this.mTestTexture = null;
             this.mTransparentTexture = null;
             this.mCanRun = false;
@@ -21,10 +26,22 @@ namespace TestGame {
         public init() : void {
             mApplication.getLogger().infoApp("Logic init");
 
-            this.mTestTexture = this.mTextureManager.createTexture("res/TG/images/testTexture.png", "Test", WDOH.ETextureBindingPoint.TEX_2D);
-            this.mTransparentTexture = this.mTextureManager.createTexture("res/TG/images/partiallyTransparent.png", "Transparent", WDOH.ETextureBindingPoint.TEX_2D);
+            this.mTestTexture = WDOH.TextureLoader.loadTextureFromFile(
+                "res/TG/images/testTexture.png",
+                WDOH.ETextureBindingPoint.TEX_2D
+            );
+            this.mTransparentTexture = WDOH.TextureLoader.loadTextureFromFile(
+                "res/TG/images/partiallyTransparent.png",
+                WDOH.ETextureBindingPoint.TEX_2D
+            );
 
             this.mCanRun = true;
+
+            for (let i = 0; i < 100; i++) {
+                this.mColours[i] = new WDOH.Vector4(1, 1, 1, 1);
+            }
+
+            mApplication.getLogger().infoApp("Test grid contains: " + this.mTestGridWidth * this.mTestGridHeight + " Quads.");
         }
 
         public canRun() : boolean {
@@ -38,55 +55,95 @@ namespace TestGame {
             mApplication.getRenderer().beginScene(this.mOrthoCameraController.getCamera());
 
             //Draw coloured quad
-            // mApplication.getRenderer().render2D().drawColouredQuad(
-            //     new WDOH.Vector3(0, 0, 0),
-            //     new WDOH.Vector2(1, 1),
-            //     0,
-            //     new WDOH.Vector4(0, 1, 0, 1)
+            // mApplication.getRenderer().render2D().drawQuad(
+                // new WDOH.Vector3(0, 0, 0),
+                // new WDOH.Vector2(1, 1),
+                // new WDOH.Vector4(0, 1, 0, 1)
             // );
 
+            
             {
-                //Draw quad grid that appears upper right
+                this.time += deltaTime;
+
                 let size : WDOH.Vector2 = new WDOH.Vector2(0.025, 0.025);
 
-                for (let x = 0; x < 20; x++) {
-                    for (let y = 0; y < 20; y++) {
+                for (let x = 0; x < this.mTestGridWidth; x++) {
+
+                    for (let y = 0; y < this.mTestGridHeight; y++) {
                         let pos : WDOH.Vector3 = new WDOH.Vector3(x * 0.03, y * 0.03, 0.0);
                         
-                        pos.x += 1.45;
-                        pos.y += 0.4;
+                        pos.x -= 0.45;
+                        pos.y -= 0.4;
+
+                        let ran = Math.random();
+
+                        if (this.time > 1) {
+                            if (ran < 0.2) {
+                                this.mColours[y] = new WDOH.Vector4(0, 1, 0, 1);
+                            } else if (ran > 0.2 && ran < 0.3) {
+                                this.mColours[y] = new WDOH.Vector4(1, 1, 0, 1)
+                            } else if (ran > 0.4 && ran < 0.5) {
+                                this.mColours[y] = new WDOH.Vector4(1, 0, 0, 1);
+                            } else if (ran > 0.5 && ran < 0.6) {
+                                this.mColours[y] = new WDOH.Vector4(1, 1, 1, 1);
+                            } else if (ran > 0.6 && ran < 0.7) {
+                                this.mColours[y] = new WDOH.Vector4(0, 0, 1, 1);
+                            } else if (ran > 0.7 && ran < 0.8) {
+                                this.mColours[y] = new WDOH.Vector4(1, 1, 1, 1);
+                            } else if (ran > 0.8) {
+                                this.mColours[y] = new WDOH.Vector4(0, 0, 0, 1);
+                            }
+
+                            if (y === this.mTestGridMinColourIndex) {
+                                this.time = 0; //Check if all mColour[y] have been set then loop round
+                            }
+                        }
                         
-                        let colour : WDOH.Vector4 = Math.random() < 0.8 ? new WDOH.Vector4(0, 1, 0, 1) : new WDOH.Vector4(1, 1, 0, 1);
                         let rotation : number = Math.random() < 0.02 ? 45 : 0;
 
-                        mApplication.getRenderer().render2D().drawColouredQuad(pos, size, rotation, colour);
+                        mApplication.getRenderer().render2D().drawQuad(pos, size, this.mColours[y]);
                     }
                 }
             }
 
-            //Draw textures
-            if (this.mTestTexture !== null && this.mTransparentTexture !== null) {
-                mApplication.getRenderer().render2D().drawTexturedQuad(
-                    new WDOH.Vector3(0, 0, 0),
-                    new WDOH.Vector2(1, 1),
-                    0,
-                    this.mTestTexture
-                );
+            // mApplication.getRenderer().render2D().drawQuad(new WDOH.Vector3(-0.6, -0.3, 0), new WDOH.Vector2(0.4, 0.4), new WDOH.Vector4(0, 0, 1, 1));
 
-                mApplication.getRenderer().render2D().drawTexturedQuad(
-                    new WDOH.Vector3(0, 0, 0.1),
-                    new WDOH.Vector2(1, 1),
-                    0,
-                    this.mTransparentTexture
-                );
-            }
+            // if (this.mTestTexture !== null) {
+                // mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Vector3(0, 0, 0), new WDOH.Vector2(0.4, 0.4), this.mTestTexture);
+                // mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Vector3(-1.6, -0.3, 0), new WDOH.Vector2(0.4, 0.4), this.mTestTexture);
+            // }
+
+            // if (this.mTransparentTexture !== null) {
+                // mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Vector3(0.6, 0.3, 0), new WDOH.Vector2(0.1, 0.3), this.mTransparentTexture)
+                // mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Vector3(0.9, 0.8, 0), new WDOH.Vector2(0.05, 0.03), this.mTransparentTexture)
+            // }
+            
+            // if (this.mTransparentTexture !== null) {
+            // }
+            
+
+            //Draw textures
+            // if (this.mTestTexture !== null && this.mTransparentTexture !== null) {
+            //     mApplication.getRenderer().render2D().drawTexturedQuad(
+            //         new WDOH.Vector3(0, 0, 0),
+            //         new WDOH.Vector2(1, 1),
+            //         0,
+            //         this.mTestTexture
+            //     );
+
+            //     mApplication.getRenderer().render2D().drawTexturedQuad(
+            //         new WDOH.Vector3(0, 0, 0.1),
+            //         new WDOH.Vector2(1, 1),
+            //         0,
+            //         this.mTransparentTexture
+            //     );
+            // }
 
             mApplication.getRenderer().endScene();
         }
 
         public onEvent(event : WDOH.AEvent) : void {
-            //No app logic related events have been created yet so this method throws an error
-            throw new Error("Method not implemented.");
+            
         }
 
         public onKeyEvent(keyEvent : WDOH.KeyEvent) : void {
@@ -127,7 +184,7 @@ namespace TestGame {
         }
 
         public cleanUp() : void {
-            this.mTextureManager.cleanUp();
+            
         }
     }
 }

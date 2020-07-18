@@ -5,7 +5,9 @@ namespace WDOH {
         private constructor() {};
 
         public static printBufferParam(buffer : number, param : number) : void {
-            console.log(mContext.getBufferParameter(buffer, param));
+            if (mApplication !== null) {
+                mApplication.getLogger().infoWDOH(mContext.getBufferParameter(buffer, param))
+            }
         }
 
         public static printBufferSize(buffer : number) : void {

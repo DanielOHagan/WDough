@@ -6,7 +6,8 @@ namespace WDOH {
          * This describes the data stored in a Buffer
          * 
          * Float is data type of the a single component of the data,
-         * the corresponding number is the number of components, no number means that it is a single compnent.
+         * the corresponding number is the number of components,
+         * no number means that it is a single compnent.
          */
 
         NONE = 0,
@@ -16,13 +17,15 @@ namespace WDOH {
         FLOAT3,
         FLOAT4,
 
-        MAT3,
-        MAT4,
-
         INT,
         INT2,
         INT3,
         INT4,
+
+        BYTE,
+
+        MAT3,
+        MAT4,
 
         BOOL
     }

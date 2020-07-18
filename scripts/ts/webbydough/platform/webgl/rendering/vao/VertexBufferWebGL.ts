@@ -1,22 +1,49 @@
 namespace WDOH {
 
-    export class VertexBufferWebGL implements IVertexBufer {
+    export class VertexBufferWebGL implements IVertexBuffer {
         
         private mBufferLayout : BufferLayout | null;
         private mBuffer : WebGLBuffer | null;
 
-        public constructor(vertices : number[], dataType : EDataType) {
-            this.mBuffer = mContext.createBuffer();
+        private constructor() {
             this.mBufferLayout = null;
+            this.mBuffer = null;
+        }
 
-            if (this.mBuffer === null) {
+        public static createStaticBuffer(vertices : number[], dataType : EDataType) : IVertexBuffer {
+            let buffer : VertexBufferWebGL = new VertexBufferWebGL();
+
+            buffer.mBuffer = mContext.createBuffer();
+            buffer.mBufferLayout = null;
+
+            if (buffer.mBuffer === null) {
                 throw new Error("Unable to create Vertex Buffer");
             }
 
-            let data : BufferSource = this.dataToBufferSource(vertices, dataType);
+            let data : BufferSource = DataAllocatorWebGL.createBufferSourceFromData(vertices, dataType);
 
-            mContext.bindBuffer(mContext.ARRAY_BUFFER, this.mBuffer);
+            mContext.bindBuffer(mContext.ARRAY_BUFFER, buffer.mBuffer);
             mContext.bufferData(mContext.ARRAY_BUFFER, data, mContext.STATIC_DRAW);
+
+            return buffer;
+        }
+
+        public static createDynamicBuffer(size : number, dataType : EDataType) : IVertexBuffer {
+            let buffer : VertexBufferWebGL = new VertexBufferWebGL();
+
+            buffer.mBuffer = mContext.createBuffer();
+            buffer.mBufferLayout = null;
+
+            if (buffer.mBuffer === null) {
+                throw new Error("Unable to create Vertex Buffer");
+            }
+
+            let data : BufferSource = DataAllocatorWebGL.createEmptyBufferSource(size, dataType);
+
+            mContext.bindBuffer(mContext.ARRAY_BUFFER, buffer.mBuffer);
+            mContext.bufferData(mContext.ARRAY_BUFFER, data, mContext.DYNAMIC_DRAW);
+
+            return buffer;
         }
 
         public bind() : void {
@@ -29,6 +56,17 @@ namespace WDOH {
 
         public unBind() : void {
             mContext.bindBuffer(mContext.ARRAY_BUFFER, null);
+        }
+
+        public setData(data : number[], offset : number) : void {
+            if (this.mBuffer !== null) {
+                mContext.bindBuffer(mContext.ARRAY_BUFFER, this.mBuffer);
+                mContext.bufferSubData(
+                    mContext.ARRAY_BUFFER,
+                    offset,
+                    new Float32Array(data)
+                );
+            }
         }
 
         public getBufferLayout() : BufferLayout {
@@ -45,32 +83,6 @@ namespace WDOH {
 
         public cleanUp() : void {
             mContext.deleteBuffer(this.mBuffer);
-        }
-
-        private dataToBufferSource(data : number[], dataType : EDataType) : BufferSource {
-            switch (dataType) {
-                case EDataType.FLOAT:
-                case EDataType.FLOAT2:
-                case EDataType.FLOAT3:
-                case EDataType.FLOAT4:
-                    return new Float32Array(data);
-                    break;
-                
-                //case EDataType.U_FLOAT
-                
-                case EDataType.INT:
-                case EDataType.INT2:
-                case EDataType.INT3:
-                case EDataType.INT4:
-                    return new Int32Array(data);
-                    break;
-                
-                //case EDataType.U_INT
-
-                default:
-                    throw new Error(`Unknown EDataType: ${dataType}`);
-                    break;
-            }
         }
     }
 }

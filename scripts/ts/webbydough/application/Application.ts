@@ -8,8 +8,8 @@ namespace WDOH {
         private mAppLoop : ApplicationLoop;
         private mRenderer : Renderer;
         private mLogger : Logger;
+        private mResourceList : ResourceList;
 
-        // private mDebug : boolean;
         private mRunning : boolean;
         private mFocused : boolean;
 
@@ -21,6 +21,7 @@ namespace WDOH {
             this.mRunning = false;
             this.mFocused = true;
             this.mLogger = new Logger(appName);
+            this.mResourceList = new ResourceList();
         }
 
         public init(/*appSettings : ApplicationSettings*/) : void {
@@ -46,6 +47,11 @@ namespace WDOH {
             Input.get().init(true, true, []);
         }
 
+        public cleanUp() : void {
+            this.mAppLogic.cleanUp();
+            this.mRenderer.cleanUp();
+        }
+
         public run() : void {
             if (!this.mAppLogic.canRun()) {
                 throw new Error("Unable to run, application logic is not able to run.")
@@ -56,7 +62,7 @@ namespace WDOH {
 
         public update(deltaTime : number) : void {
 
-            mContext.clear(mContext.COLOR_BUFFER_BIT);
+            mContext.clear(mContext.COLOR_BUFFER_BIT | mContext.DEPTH_BUFFER_BIT);
 
             this.mAppLogic.update(deltaTime);
         }
@@ -140,11 +146,6 @@ namespace WDOH {
             this.mLogger.infoWDOH("FPS: " + fps);
         }
 
-        private cleanUp() : void {
-            this.mAppLogic.cleanUp();
-            this.mRenderer.cleanUp();
-        }
-
         //-----Setters-----
         public setFocused(focused : boolean) : void {
             this.mFocused = focused;
@@ -163,12 +164,16 @@ namespace WDOH {
             return this.mRunning;
         }
 
+        public isFocused() : boolean {
+            return this.mFocused;
+        }
+
         public getLogger() : Logger {
             return this.mLogger;
         }
 
-        public isFocused() : boolean {
-            return this.mFocused;
+        public getResourceList() : ResourceList {
+            return this.mResourceList;
         }
     }
 }

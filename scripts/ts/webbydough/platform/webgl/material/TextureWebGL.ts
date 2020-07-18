@@ -5,13 +5,14 @@ namespace WDOH {
 
         PNG = "png",
         JPEG = "jpg"
-    } 
+    }
 
     export class TextureWebGL implements ITexture {
 
         private static readonly DEFAULT_MIPMAP_LOD : number = 0;
         private static readonly TEXTURE_PLACEHOLDER_DATA : Uint8Array = new Uint8Array(0);
-
+        
+        private mId : number;
         private mData : HTMLImageElement | null;
         private mHandle : WebGLTexture | null;
         private mBindingPoint : GLenum;
@@ -20,28 +21,42 @@ namespace WDOH {
         private mLoaded : boolean;
         private mFileType : EFileTypeTextureWebGL;
         private mAlphaChannel : boolean;
+        private mInternalFormat : GLenum;
+        private mDataFormat : GLenum;
 
-        public constructor(filePath : string, bindingPoint : ETextureBindingPoint) {
-            this.mLoaded = false;
+        private constructor(id : number, bindingPoint : ETextureBindingPoint) {
+            this.mId = id;
+            this.mId = id;
+            this.mData = null;
+            this.mHandle = null;
+            this.mBindingPoint = TextureWebGL.bindingPointToGLEeum(bindingPoint);
             this.mWidth = 0;
             this.mHeight = 0;
+            this.mLoaded = false;
             this.mFileType = EFileTypeTextureWebGL.NONE;
             this.mAlphaChannel = false;
+            this.mInternalFormat = mContext.NONE;
+            this.mDataFormat = mContext.NONE;
+        }
 
-            this.mBindingPoint = TextureWebGL.bindingPointToGLEeum(bindingPoint);
+        public static loadFromFile(filePath : string, bindingPoint : ETextureBindingPoint) : ITexture {
+            let textureId : number = mApplication.getResourceList().generateUnusedTextureId();
+            let texture : TextureWebGL = new TextureWebGL(textureId, bindingPoint);
+
+            texture.mBindingPoint = TextureWebGL.bindingPointToGLEeum(bindingPoint);
 
             let textureHandle : WebGLTexture | null = mContext.createTexture();
 
             if (textureHandle !== null) {
-                this.mHandle = textureHandle;
+                texture.mHandle = textureHandle;
 
                 //Load data
                 let image : HTMLImageElement = new Image();
                 image.src = filePath;
-                this.mData = image;
-                image.onload = this.onHtmlImageLoad.bind(this, image);
+                texture.mData = image;
+                image.onload = texture.onHtmlImageLoad.bind(this, image);
 
-                this.bind();
+                texture.bind();
 
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_S, mContext.CLAMP_TO_EDGE);
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_T, mContext.CLAMP_TO_EDGE);
@@ -61,12 +76,54 @@ namespace WDOH {
                     TextureWebGL.TEXTURE_PLACEHOLDER_DATA
                 );
 
-                this.mLoaded = true;
-                
+                texture.mLoaded = true;
             } else {
-                this.mHandle = null;
-                this.mData = null;
+                texture.mHandle = null;
+                texture.mData = null;
             }
+
+            return texture;
+        }
+
+        public static generateTexture(width : number, height : number, bindingPoint : ETextureBindingPoint) : ITexture {
+            let textureId : number = mApplication.getResourceList().generateUnusedTextureId();
+            let texture : TextureWebGL = new TextureWebGL(textureId, bindingPoint);
+
+            texture.mWidth = width;
+            texture.mHeight = height;
+            texture.mFileType = EFileTypeTextureWebGL.NONE;
+            texture.mAlphaChannel = true;
+
+            texture.mInternalFormat = mContext.RGBA8;
+		    texture.mDataFormat = mContext.RGBA;
+
+            texture.mHandle = mContext.createTexture();
+
+            texture.bind();
+            mContext.texImage2D(
+                mContext.TEXTURE_2D,
+                TextureWebGL.DEFAULT_MIPMAP_LOD,
+                mContext.RGBA,
+                0,
+                0,
+                0,
+                mContext.RGBA,
+                mContext.UNSIGNED_BYTE,
+                TextureWebGL.TEXTURE_PLACEHOLDER_DATA
+            );
+        
+            mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_S, mContext.CLAMP_TO_EDGE);
+            mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_T, mContext.CLAMP_TO_EDGE);
+            mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_MIN_FILTER, mContext.LINEAR);
+            mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_MAG_FILTER, mContext.NEAREST);
+
+            texture.mLoaded = true;
+
+            return texture;
+        }
+
+        public getId() : number {
+            return this.mId;
         }
 
         public getWidth() : number {
@@ -91,6 +148,21 @@ namespace WDOH {
 
         public unBind() : void {
             mContext.bindTexture(this.mBindingPoint, null);
+        }
+
+        public setData(data : ArrayBufferView) : void {
+            mContext.bindTexture(mContext.TEXTURE_2D, this.mHandle);
+            mContext.texImage2D(
+                mContext.TEXTURE_2D,
+                TextureWebGL.DEFAULT_MIPMAP_LOD,
+                this.mInternalFormat,
+                this.mWidth,
+                this.mHeight,
+                0,
+                this.mDataFormat,
+                mContext.UNSIGNED_BYTE,
+                data
+            );
         }
 
         public delete() : void {

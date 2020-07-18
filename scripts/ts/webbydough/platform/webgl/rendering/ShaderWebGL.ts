@@ -74,18 +74,18 @@ namespace WDOH {
             mContext.linkProgram(program);
             if (!mContext.getProgramParameter(program, mContext.LINK_STATUS)) {
                 
-                mContext.deleteProgram(program);
-
-                let errorMessage : string = "Program failed to link";
-
+                let errorMessage : string = "Program failed to link:";
+                
                 for (let shader of compiledShaders) {
-                    if (mContext.getShaderParameter(shader, mContext.COMPILE_STATUS)) {
-                        errorMessage += "\n\tShader: '" + this.mName + "' failed to compile.";
+                    if (!mContext.getShaderParameter(shader, mContext.COMPILE_STATUS)) {
+                        errorMessage += "\nShader: '" + this.mName + "' failed to compile.\n";
                         errorMessage += mContext.getShaderInfoLog(shader);
                     }
-
+                    
                     mContext.deleteShader(shader);
                 }
+                
+                mContext.deleteProgram(program);
 
                 throw new Error(errorMessage);
             }
@@ -108,7 +108,6 @@ namespace WDOH {
             }
 
             throw new Error("Unknown Shader Type: " + shaderType);
-            return -1;
         }
 
         public createUniform(uniformName: string) : void {
@@ -133,36 +132,45 @@ namespace WDOH {
 
         public setUniformInt(uniformName : string, value : number) : void {
             //Remove decimal value
-            value = Math.floor(value);
+            value = Math.trunc(value);
 
             mContext.uniform1i(this.getUniformLocation(uniformName), value);
         }
 
         public setUniformInt2(uniformName : string, vec : Vector2) : void {
             //Remove decimal value
-            vec.x = Math.floor(vec.x);
-            vec.y = Math.floor(vec.y);
+            vec.x = Math.trunc(vec.x);
+            vec.y = Math.trunc(vec.y);
 
             mContext.uniform2i(this.getUniformLocation(uniformName), vec.x, vec.y);
         }
 
         public setUniformInt3(uniformName : string, vec : Vector3) : void {
             //Remove decimal value
-            vec.x = Math.floor(vec.x);
-            vec.y = Math.floor(vec.y);
-            vec.z = Math.floor(vec.z);
+            vec.x = Math.trunc(vec.x);
+            vec.y = Math.trunc(vec.y);
+            vec.z = Math.trunc(vec.z);
 
             mContext.uniform3i(this.getUniformLocation(uniformName), vec.x, vec.y, vec.z);
         }
 
         public setUniformInt4(uniformName : string, vec : Vector4) : void {
             //Remove decimal value
-            vec.x = Math.floor(vec.x);
-            vec.y = Math.floor(vec.y);
-            vec.z = Math.floor(vec.z);
-            vec.w = Math.floor(vec.w);
+            vec.x = Math.trunc(vec.x);
+            vec.y = Math.trunc(vec.y);
+            vec.z = Math.trunc(vec.z);
+            vec.w = Math.trunc(vec.w);
 
             mContext.uniform4i(this.getUniformLocation(uniformName), vec.x, vec.y, vec.z, vec.w);
+        }
+
+        public setUniformIntArray(uniformName : string, array : number[]) : void {
+            //Remove decimal value
+            for (let i = 0 ; i < array.length; i++) {
+                array[i] = Math.trunc(array[i]);
+            }
+
+            mContext.uniform1iv(this.getUniformLocation(uniformName), array, 0, array.length);
         }
 
         public setUniformFloat(uniformName : string, value : number) : void {

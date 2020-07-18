@@ -5,6 +5,9 @@ namespace WDOH {
         init() : void;
 
         beginScene(camera : ICamera) : void;
+        endScene() : void;
+
+        flush() : void;
 
     }
 }

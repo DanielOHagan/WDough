@@ -4,10 +4,10 @@ namespace WDOH {
         bind() : void;
         unBind() : void;
 
-        addVertexBuffer(vertexBuffer : IVertexBufer) : void;
+        addVertexBuffer(vertexBuffer : IVertexBuffer) : void;
         setIndexBuffer(indexBuffer : IIndexBuffer) : void;
 
-        getVertexBuffers() : IVertexBufer[];
+        getVertexBuffers() : IVertexBuffer[];
         getIndexBuffer() : IIndexBuffer;
 
         cleanUp() : void;
