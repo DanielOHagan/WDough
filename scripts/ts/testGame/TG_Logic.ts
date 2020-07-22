@@ -5,21 +5,21 @@ namespace TestGame {
         private mCanRun : boolean;
 
         private mTestTexture : WDOH.ITexture | null;
-        private mTransparentTexture : WDOH.ITexture | null;
+        private mPartiallyTransparentTexture : WDOH.ITexture | null;
 
         private mOrthoCameraController : WDOH.ICameraController;
 
         private time = 0;
         private mColours : WDOH.Vector4[] = [];
 
-        private readonly mTestGridWidth = 125;
-        private readonly mTestGridHeight = 120;
+        private readonly mTestGridWidth = 100;
+        private readonly mTestGridHeight = 100;
         private readonly mTestGridMinColourIndex : number = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
 
         public constructor(aspectRatio : number) {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
             this.mTestTexture = null;
-            this.mTransparentTexture = null;
+            this.mPartiallyTransparentTexture = null;
             this.mCanRun = false;
         }
 
@@ -30,7 +30,7 @@ namespace TestGame {
                 "res/TG/images/testTexture.png",
                 WDOH.ETextureBindingPoint.TEX_2D
             );
-            this.mTransparentTexture = WDOH.TextureLoader.loadTextureFromFile(
+            this.mPartiallyTransparentTexture = WDOH.TextureLoader.loadTextureFromFile(
                 "res/TG/images/partiallyTransparent.png",
                 WDOH.ETextureBindingPoint.TEX_2D
             );
@@ -61,9 +61,9 @@ namespace TestGame {
                 // new WDOH.Vector4(0, 1, 0, 1)
             // );
 
+            this.time += deltaTime;
             
             {
-                this.time += deltaTime;
 
                 let size : WDOH.Vector2 = new WDOH.Vector2(0.025, 0.025);
 

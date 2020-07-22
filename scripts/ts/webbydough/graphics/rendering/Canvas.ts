@@ -16,6 +16,7 @@ namespace WDOH {
         private mMaxWidth : number;
         private mMinHeight : number;
         private mMaxHeight : number;
+        private mMaxSizeEnabled : boolean;
 
         public constructor(width : number, height : number, canvasId ? : string) {
             this.mCanvasNode = this.createCanvasNode(canvasId);
@@ -23,12 +24,15 @@ namespace WDOH {
             this.mResizable = true;
             this.mMinWidth = 0;
             this.mMinHeight = 0;
-            this.mMaxWidth = 1920;
-            this.mMaxHeight = 1080;
+
+            this.mMaxSizeEnabled = true;
+            this.mMaxWidth = 2560;
+            this.mMaxHeight = 1440;
 
             this.setSizeParameters(
                 this.mMinWidth,
                 this.mMinHeight,
+                null,
                 this.mMaxWidth,
                 this.mMaxHeight
             );
@@ -36,9 +40,11 @@ namespace WDOH {
             if (!this.areSizesValid(width, height)) {
                 throw new Error(
                     `Canvas creation sizes outside of allowed parameters:
-                    Min Width: ${this.mMinWidth}, Min Height: ${this.mMinHeight},
-                    Max Width: ${this.mMaxWidth}, Max Height: ${this.mMaxHeight}.
-                    Given Sizes: Width: ${width}, Height: ${height}`
+                    Min Width: ${this.mMinWidth}, Min Height: ${this.mMinHeight},`
+                    + this.mMaxSizeEnabled ? 
+                    `Max Width: ${this.mMaxWidth}, Max Height: ${this.mMaxHeight}.
+                    Given Sizes: Width: ${width}, Height: ${height}` 
+                    : `Max size not enabeld.`
                 );
             }
 
@@ -108,41 +114,56 @@ namespace WDOH {
         }
 
         public resize(width : number, height : number) : void {
-            if (this.mResizable) {
-                //Check min/max size parameters
-                if (this.areSizesValid(width, height)) {
-                    this.mCanvasNode.width = width;
-                    this.mCanvasNode.height = height;
-                }
-            }
+            this.mCanvasNode.width = width;
+            this.mCanvasNode.height = height;
         }
 
         public setSizeParameters(
             minWidth : number,
             minHeight : number,
+            enableMaxSize : boolean | null,
             maxWidth : number,
             maxHeight : number
         ) : void {
 
+            if (enableMaxSize !== null) {
+                this.mMaxSizeEnabled = enableMaxSize;
+            }
             //TODO:: Run checks when setting these values (e.g. if maxValue is larger than minValue)
 
-            this.mMinWidth = minWidth;
-            this.mMinHeight = minHeight;
-            this.mMaxWidth = maxWidth;
-            this.mMaxHeight = maxHeight;
+            this.setMinSizeParameters(minWidth, minHeight);
 
-            this.mCanvasNode.style.minWidth = minWidth.toString();
-            this.mCanvasNode.style.minHeight = minHeight.toString();
-            this.mCanvasNode.style.maxWidth = maxWidth.toString();
-            this.mCanvasNode.style.maxHeight = maxHeight.toString();
+            if (this.mMaxSizeEnabled) {
+                this.setMaxSizeParameters(maxWidth, maxHeight);
+            }
         }
 
-        private areSizesValid(width : number, height : number) : boolean {
+        public setMinSizeParameters(width : number, height : number) : void {
+            this.mMinWidth = width;
+            this.mMinHeight = height;
+            this.mCanvasNode.style.minWidth = width.toString();
+            this.mCanvasNode.style.minHeight = height.toString();
+        }
+
+        public setMaxSizeParameters(width : number, height : number) : void {
+            this.mMaxWidth = width;
+            this.mMaxHeight = height;
+            this.mCanvasNode.style.maxWidth = width.toString();
+            this.mCanvasNode.style.maxHeight = height.toString();
+        }
+
+        public areSizesValid(width : number, height : number) : boolean {
             return !(
                 width < this.mMinWidth ||
-                width > this.mMaxWidth ||
                 height < this.mMinHeight ||
-                height > this.mMaxHeight
+                
+                (
+                    this.mMaxSizeEnabled &&
+                    (
+                        width > this.mMaxWidth ||
+                        height > this.mMaxHeight
+                    )
+                )
             );
         }
 
@@ -163,6 +184,14 @@ namespace WDOH {
 
         public getCanvasNode() : HTMLCanvasElement {
             return this.mCanvasNode;
+        }
+
+        public isMaxSizeEnabled() : boolean {
+            return this.mMaxSizeEnabled;
+        }
+
+        public enableMaxSize(enable : boolean) : void {
+            this.mMaxSizeEnabled = enable;
         }
     }
 }

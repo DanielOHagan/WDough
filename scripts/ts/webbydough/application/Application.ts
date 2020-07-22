@@ -88,7 +88,6 @@ namespace WDOH {
                 case EEventCatagory.NONE:
                 default:
                     throw new Error("Unrecognised, or NONE, event catagory.");
-                    break;
             }
         }
 
@@ -111,7 +110,6 @@ namespace WDOH {
                 case EEventType.NONE:
                 default:
                     throw new Error("Unrecognised, or NONE, event type.");
-                    break;
             }
         }
 
@@ -125,12 +123,11 @@ namespace WDOH {
                 case EEventType.NONE:
                 default:
                     throw new Error("Unrecognised, or NONE, event type.");
-                    break;
             }
         }
 
         private resizeViewport(resizeEvent : CanvasResizeEvent) : void {
-            if (this.mCanvas.resizable()) {
+            if (this.mCanvas.resizable() && this.mCanvas.areSizesValid(resizeEvent.width, resizeEvent.height)) {
                 //Update canvas node
                 this.mCanvas.resize(resizeEvent.width, resizeEvent.height);
 

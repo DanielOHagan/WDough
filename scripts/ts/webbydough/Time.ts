@@ -9,7 +9,7 @@ namespace WDOH {
         }
 
         public static getCurrentTimeMillis() : number {
-            return Date.now();
+            return performance.now();
         }
     }
 }

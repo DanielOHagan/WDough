@@ -5,7 +5,7 @@ namespace WDOH {
         public static readonly DEFAULT_TARGET_FPS : number = 30;
         public static readonly DEFAULT_TARGET_BACKGROUND_FPS : number = 15;
         
-        private mLastCycleTime : number;
+        private mLastCycleTimePoint : number;
         
         private mRunInBackground : boolean;
         private mFps : number;
@@ -13,8 +13,8 @@ namespace WDOH {
         private mTargetBackgroundFps : number;
         private mFpsCounterTime : number;
         private mPreviousFps : number;
-        private mTargetFrameTime : number;
-        private mCurrentFrameTime : number;
+        private mTargetFrameTimeSpan : number;
+        private mCurrentFrameTimeSpan : number;
 
         public constructor(targetFps : number) {
             this.mFps = 0;
@@ -22,14 +22,14 @@ namespace WDOH {
             this.mTargetBackgroundFps = ApplicationLoop.DEFAULT_TARGET_BACKGROUND_FPS;
             this.mFpsCounterTime = 0;
             this.mPreviousFps = 0;
-            this.mTargetFrameTime = 1 / targetFps;
+            this.mTargetFrameTimeSpan = 1 / targetFps;
             this.mRunInBackground = false;
 
-            this.mCurrentFrameTime = 0;
-            this.mLastCycleTime = Time.getCurrentTimeSeconds();
+            this.mCurrentFrameTimeSpan = 0;
+            this.mLastCycleTimePoint = Time.getCurrentTimeSeconds();
         }
 
-        private mLastFrameExtraTime : number = 0;
+        private mLastFrameExtraTimeSpan : number = 0;
 
         public run() : void {
 
@@ -37,25 +37,24 @@ namespace WDOH {
                 requestAnimationFrame(this.run.bind(this));
                 
                 //Update Delta Time
-                let currentTime : number = Time.getCurrentTimeSeconds();
-                let deltaTime = currentTime - this.mLastCycleTime;
+                let currentTimePoint : number = Time.getCurrentTimeSeconds();
+                let deltaTimeSpan = currentTimePoint - this.mLastCycleTimePoint;
                 
                 //If still in the time slot for previous frame
                 // then don't call mApplication.update
-                this.mCurrentFrameTime += deltaTime;
+                this.mCurrentFrameTimeSpan += deltaTimeSpan;
                 let updateFrame : boolean;
                 
-                if (this.mCurrentFrameTime + this.mLastFrameExtraTime < this.mTargetFrameTime) {
+                if (this.mCurrentFrameTimeSpan + this.mLastFrameExtraTimeSpan < this.mTargetFrameTimeSpan) {
                     updateFrame = false;
                 } else {
-                    this.mLastFrameExtraTime = this.mCurrentFrameTime + this.mLastFrameExtraTime - this.mTargetFrameTime;
+                    this.mLastFrameExtraTimeSpan = this.mCurrentFrameTimeSpan + this.mLastFrameExtraTimeSpan - this.mTargetFrameTimeSpan;
 
-                    this.mCurrentFrameTime = 0;
                     updateFrame = true;
                 }
 
                 //Update frame data each second
-                this.mFpsCounterTime += deltaTime;
+                this.mFpsCounterTime += deltaTimeSpan;
                 if (this.mFpsCounterTime > 1) {
                     this.mPreviousFps = this.mFps;
                     this.mFps = 0;
@@ -71,13 +70,16 @@ namespace WDOH {
 
                 if (updateFrame) {
                     this.mFps++;
-                    mApplication.update(deltaTime);
+
+                    mApplication.update(this.mCurrentFrameTimeSpan);
+
+                    this.mCurrentFrameTimeSpan = 0;
 
                     //To display FPS every FRAME, call displayFps here
                     //mApplication.displayFps(this.mPreviousFps);
                 }
 
-                this.mLastCycleTime = currentTime;
+                this.mLastCycleTimePoint = currentTimePoint;
             } else {
                 mApplication.cleanUp();
             }
@@ -89,9 +91,9 @@ namespace WDOH {
 
         private updateTargetFrameTime(focused : boolean) : void {
             if (focused) {
-                this.mTargetFrameTime = 1 / this.mTargetFps;
+                this.mTargetFrameTimeSpan = 1 / this.mTargetFps;
             } else {
-                this.mTargetFrameTime = 1 / this.mTargetBackgroundFps;
+                this.mTargetFrameTimeSpan = 1 / this.mTargetBackgroundFps;
             }
         }
 

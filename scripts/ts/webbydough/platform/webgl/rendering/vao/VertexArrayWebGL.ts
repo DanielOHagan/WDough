@@ -40,7 +40,7 @@ namespace WDOH {
                 mContext.vertexAttribPointer(
                     this.mVertexBufferIndex,
                     DataType.getComponentCount(element.dataType),
-                    this.dataTypeToGLBaseType(element.dataType),
+                    VertexArrayWebGL.dataTypeToGLBaseType(element.dataType),
                     element.normalised,
                     layout.getStride(),
                     element.offset
@@ -75,7 +75,7 @@ namespace WDOH {
             mContext.deleteVertexArray(this.mVertexArray);
         }
 
-        private dataTypeToGLBaseType(dataType : EDataType) : number {
+        public static dataTypeToGLBaseType(dataType : EDataType) : number {
             switch (dataType) {
                 case EDataType.FLOAT:
                 case EDataType.FLOAT2:
