@@ -98,7 +98,6 @@ namespace WDOH {
         
                 default:
                     throw new Error("Unknown EDataType!");
-                    return mContext.NONE;
             }
         }
     }

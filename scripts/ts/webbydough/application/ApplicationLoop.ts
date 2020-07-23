@@ -4,6 +4,7 @@ namespace WDOH {
         
         public static readonly DEFAULT_TARGET_FPS : number = 30;
         public static readonly DEFAULT_TARGET_BACKGROUND_FPS : number = 15;
+        public static readonly DEFUALT_RUN_IN_BACKROUND : boolean = true;
         
         private mLastCycleTimePoint : number;
         
@@ -15,21 +16,20 @@ namespace WDOH {
         private mPreviousFps : number;
         private mTargetFrameTimeSpan : number;
         private mCurrentFrameTimeSpan : number;
+        private mLastFrameExtraTimeSpan : number = 0;
 
         public constructor(targetFps : number) {
-            this.mFps = 0;
-            this.mTargetFps = targetFps;
             this.mTargetBackgroundFps = ApplicationLoop.DEFAULT_TARGET_BACKGROUND_FPS;
+            this.mRunInBackground = ApplicationLoop.DEFUALT_RUN_IN_BACKROUND;
+            this.mTargetFps = targetFps <= 0 ? ApplicationLoop.DEFAULT_TARGET_FPS : targetFps;
+            this.mFps = 0;
             this.mFpsCounterTime = 0;
             this.mPreviousFps = 0;
             this.mTargetFrameTimeSpan = 1 / targetFps;
-            this.mRunInBackground = false;
 
             this.mCurrentFrameTimeSpan = 0;
             this.mLastCycleTimePoint = Time.getCurrentTimeSeconds();
         }
-
-        private mLastFrameExtraTimeSpan : number = 0;
 
         public run() : void {
 
@@ -49,7 +49,6 @@ namespace WDOH {
                     updateFrame = false;
                 } else {
                     this.mLastFrameExtraTimeSpan = this.mCurrentFrameTimeSpan + this.mLastFrameExtraTimeSpan - this.mTargetFrameTimeSpan;
-
                     updateFrame = true;
                 }
 
@@ -59,6 +58,8 @@ namespace WDOH {
                     this.mPreviousFps = this.mFps;
                     this.mFps = 0;
                     this.mFpsCounterTime = 0;
+
+                    this.mLastFrameExtraTimeSpan = 0;
 
                     //To display FPS every SECOND, call displayFps here
                     mApplication.displayFps(this.mPreviousFps);
@@ -70,7 +71,6 @@ namespace WDOH {
 
                 if (updateFrame) {
                     this.mFps++;
-
                     mApplication.update(this.mCurrentFrameTimeSpan);
 
                     this.mCurrentFrameTimeSpan = 0;
@@ -98,8 +98,13 @@ namespace WDOH {
         }
 
         //When changing mTargetFps USE THIS METHOD
-        public setTargetFps(targetFps : number) : void {
+        public setTargetFps(targetFps : number, matchTargetBackground : boolean) : void {
             this.mTargetFps = targetFps;
+
+            if (matchTargetBackground) {
+                this.mTargetBackgroundFps = targetFps;
+            }
+
             this.updateTargetFrameTime(mApplication.isFocused());
         }
 

@@ -12,8 +12,8 @@ namespace TestGame {
         private time = 0;
         private mColours : WDOH.Vector4[] = [];
 
-        private readonly mTestGridWidth = 100;
-        private readonly mTestGridHeight = 100;
+        private readonly mTestGridWidth = 50;
+        private readonly mTestGridHeight = 50;
         private readonly mTestGridMinColourIndex : number = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
 
         public constructor(aspectRatio : number) {
