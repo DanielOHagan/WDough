@@ -17,6 +17,7 @@ namespace WDOH {
         private mMinHeight : number;
         private mMaxHeight : number;
         private mMaxSizeEnabled : boolean;
+        private mAspectRatio : number;
 
         public constructor(width : number, height : number, canvasId ? : string) {
             this.mCanvasNode = this.createCanvasNode(canvasId);
@@ -28,6 +29,7 @@ namespace WDOH {
             this.mMaxSizeEnabled = true;
             this.mMaxWidth = 2560;
             this.mMaxHeight = 1440;
+            this.mAspectRatio = width / height;
 
             this.setSizeParameters(
                 this.mMinWidth,
@@ -167,15 +169,37 @@ namespace WDOH {
             );
         }
 
+        public convertScreenToWorldSpace(
+            offsetX : number,
+            offsetY : number,
+            screenX : number,
+            screenY : number,
+            // scaleX : number,
+            // scaleY : number,
+            z : number,
+            w : number
+            // rotationRads : number
+        ) : Vector4 {
+
+            let worldX = ((screenX / this.mCanvasNode.clientWidth * 2 - 1) + offsetX / this.mAspectRatio) * this.mAspectRatio;
+            let worldY = (screenY / this.mCanvasNode.clientHeight * -2 + 1) + offsetY;
+
+            return new Vector4(worldX, worldY, z, w);
+        }
+
         private setWindowCallbacks() : void {
             //Set callbacks
             window.onblur = function() {
-                this.mApplication.onEvent(new FocusChangeEvent(false));
+                mApplication.onEvent(new FocusChangeEvent(false));
             }
 
             window.onfocus = function() {
-                this.mApplication.onEvent(new FocusChangeEvent(true));
+                mApplication.onEvent(new FocusChangeEvent(true));
             }
+
+            this.mCanvasNode.addEventListener("mousemove", event => {
+                mApplication.onMouseEvent(new MouseMoveEvent(event.offsetX, event.offsetY));
+            });
         }
 
         public resizable() : boolean {
@@ -186,12 +210,24 @@ namespace WDOH {
             return this.mCanvasNode;
         }
 
+        public getNodeWidth() : number {
+            return this.mCanvasNode.clientWidth;
+        }
+
+        public getNodeHeight() : number {
+            return this.mCanvasNode.clientHeight;
+        }
+
         public isMaxSizeEnabled() : boolean {
             return this.mMaxSizeEnabled;
         }
 
         public enableMaxSize(enable : boolean) : void {
             this.mMaxSizeEnabled = enable;
+        }
+
+        public setAspectRatio(aspectRatio : number) : void {
+            this.mAspectRatio = aspectRatio;
         }
     }
 }

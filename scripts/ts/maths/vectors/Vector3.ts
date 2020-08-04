@@ -36,36 +36,54 @@ namespace WDOH {
             this.mZ = z;
         }
 
-        public addVec2(vec : Vector2) : void {
+        public addVec2(vec : Vector2) : Vector3 {
             this.mX += vec.x;
             this.mY += vec.y;
+
+            return this;
         }
 
-        public addVec3(vec : Vector3) : void {
+        public addVec3(vec : Vector3) : Vector3 {
             this.mX += vec.x;
             this.mY += vec.y;
             this.mZ += vec.z;
+
+            return this;
         }
 
-        public subtractVec2(vec : Vector2) : void {
+        public subtractVec2(vec : Vector2) : Vector3 {
             this.mX -= vec.x;
             this.mY -= vec.y;
+
+            return this;
         }
 
-        public subtractVec3(vec : Vector3) : void {
+        public subtractVec3(vec : Vector3) : Vector3 {
             this.mX -= vec.x;
             this.mY -= vec.y;
             this.mZ -= vec.z;
+
+            return this;
         }
 
-        public cross() : void {
+        public mult(scalar : number) : Vector3 {
+            this.mX *= scalar;
+            this.mY *= scalar;
+            this.mZ *= scalar;
+
+            return this;
+        }
+
+        public cross() : Vector3 {
             //TODO:: This
 
+            return this;
         }
 
-        public dot() : void {
+        public dot() : Vector3 {
             //TODO:: This
             
+            return this;
         }
     }
 }

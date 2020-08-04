@@ -51,50 +51,74 @@ namespace WDOH {
             this.mW = w;
         }
 
-        public addVec2(vec : Vector2) : void {
+        public addVec2(vec : Vector2) : Vector4 {
             this.mX += vec.x;
             this.mY += vec.y;
+
+            return this;
         }
 
-        public addVec3(vec : Vector3) : void {
+        public addVec3(vec : Vector3) : Vector4 {
             this.mX += vec.x;
             this.mY += vec.y;
             this.mZ += vec.z;
+
+            return this;
         }
 
-        public addVec4(vec : Vector4) : void {
+        public addVec4(vec : Vector4) : Vector4 {
             this.mX += vec.x;
             this.mY += vec.y;
             this.mZ += vec.z;
             this.mW += vec.w;
+
+            return this;
         }
 
-        public subtractVec2(vec : Vector2) : void {
+        public subtractVec2(vec : Vector2) : Vector4 {
             this.mX -= vec.x;
             this.mY -= vec.y;
+
+            return this;
         }
 
-        public subtractVec3(vec : Vector3) : void {
+        public subtractVec3(vec : Vector3) : Vector4 {
             this.mX -= vec.x;
             this.mY -= vec.y;
             this.mZ -= vec.z;
+
+            return this;
         }
 
-        public subtractVec4(vec : Vector4) : void {
+        public subtractVec4(vec : Vector4) : Vector4 {
             this.mX -= vec.x;
             this.mY -= vec.y;
             this.mZ -= vec.z;
             this.mW -= vec.w;
+
+            return this;
         }
 
-        public cross() : void {
+        public mult(scalar : number) : Vector4 {
+            this.mX *= scalar;
+            this.mY *= scalar;
+            this.mZ *= scalar;
+            this.mW *= scalar;
+
+            return this;
+        }
+
+        public cross() : Vector4 {
             //TODO:: This
 
+            return this;
         }
 
-        public dot() : void {
+        public dot() : Vector4 {
             //TODO:: This
             
+            
+            return this;
         }
 
         public mulMat4(mat : Matrix4x4) : void {

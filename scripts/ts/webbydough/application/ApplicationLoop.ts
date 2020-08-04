@@ -81,7 +81,7 @@ namespace WDOH {
 
                 this.mLastCycleTimePoint = currentTimePoint;
             } else {
-                mApplication.cleanUp();
+                mApplication.end();
             }
         }
 
@@ -98,10 +98,10 @@ namespace WDOH {
         }
 
         //When changing mTargetFps USE THIS METHOD
-        public setTargetFps(targetFps : number, matchTargetBackground : boolean) : void {
+        public setTargetFps(targetFps : number, includeTargetBackground : boolean) : void {
             this.mTargetFps = targetFps;
 
-            if (matchTargetBackground) {
+            if (includeTargetBackground) {
                 this.mTargetBackgroundFps = targetFps;
             }
 

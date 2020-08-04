@@ -24,7 +24,7 @@ namespace WDOH {
             this.mResourceList = new ResourceList();
         }
 
-        public init(/*appSettings : ApplicationSettings*/) : void {
+        public init(/*initSettings : ApplicationInitialisationSettings, appSettings : ApplicationSettings*/) : void {
 
             //Attach canvas to body
             this.mCanvas.attachCanvas(Canvas.DEFAULT_CANVAS_WRAPPER_ID);
@@ -35,14 +35,19 @@ namespace WDOH {
             this.mRenderer.getRendererAPI().setViewport(
                 0,
                 0,
-                this.mCanvas.getCanvasNode().width,
-                this.mCanvas.getCanvasNode().height
+                this.mCanvas.getNodeWidth(),
+                this.mCanvas.getNodeHeight()
             );
 
             this.mAppLogic.init();
 
             //Rendering context set-up
-            mContext.clearColor(1.0, 0.0, 1.0, 1.0);
+            mContext.clearColor(
+                Renderer.DEFAULT_CLEAR_COLOUR.x,
+                Renderer.DEFAULT_CLEAR_COLOUR.y,
+                Renderer.DEFAULT_CLEAR_COLOUR.z,
+                Renderer.DEFAULT_CLEAR_COLOUR.w,
+            );
 
             Input.get().init(true, true, []);
         }
@@ -58,6 +63,16 @@ namespace WDOH {
             }
             this.mRunning = true;
             this.mAppLoop.run();
+        }
+
+        public end() : void {
+            if (this.mRunning) {
+                this.mRunning = false;
+
+                this.cleanUp();
+            } else {
+                this.mLogger.infoWDOH("Unable to end, application not running.");
+            }
         }
 
         public update(deltaTime : number) : void {
@@ -128,11 +143,13 @@ namespace WDOH {
 
         private resizeViewport(resizeEvent : CanvasResizeEvent) : void {
             if (this.mCanvas.resizable() && this.mCanvas.areSizesValid(resizeEvent.width, resizeEvent.height)) {
+                const aspectRatio : number = resizeEvent.width / resizeEvent.height;
                 //Update canvas node
                 this.mCanvas.resize(resizeEvent.width, resizeEvent.height);
+                this.mCanvas.setAspectRatio(aspectRatio);
 
                 //Update Application
-                this.mAppLogic.onCanvasResize(resizeEvent.width / resizeEvent.height);
+                this.mAppLogic.onCanvasResize(aspectRatio);
 
                 //Update renderer viewport
                 this.mRenderer.getRendererAPI().setViewport(0, 0, resizeEvent.width, resizeEvent.height);
@@ -171,6 +188,10 @@ namespace WDOH {
 
         public getResourceList() : ResourceList {
             return this.mResourceList;
+        }
+
+        public getCanvas() : Canvas {
+            return this.mCanvas;
         }
     }
 }

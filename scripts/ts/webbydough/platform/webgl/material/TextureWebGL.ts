@@ -26,7 +26,6 @@ namespace WDOH {
 
         private constructor(id : number, bindingPoint : ETextureBindingPoint) {
             this.mId = id;
-            this.mId = id;
             this.mData = null;
             this.mHandle = null;
             this.mBindingPoint = TextureWebGL.bindingPointToGLEeum(bindingPoint);
@@ -256,7 +255,6 @@ namespace WDOH {
                 case ETextureBindingPoint.NONE:
                 default:
                     throw new Error("Unknown Bindpoint enum or NONE");
-                    break;
             }
         }
     }

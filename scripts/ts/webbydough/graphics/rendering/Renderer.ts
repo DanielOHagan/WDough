@@ -2,7 +2,7 @@ namespace WDOH {
 
     export class Renderer implements IRenderer {
 
-        public static readonly DEFAULT_CLEAR_COLOUR : Vector4 = new Vector4(1, 0, 1, 1);
+        public static readonly DEFAULT_CLEAR_COLOUR : Vector4 = new Vector4(0.264, 0.328, 0.484, 1.0);
 
         private mRendererAPI : IRendererAPI;
         private mRenderer2d : Renderer2D;

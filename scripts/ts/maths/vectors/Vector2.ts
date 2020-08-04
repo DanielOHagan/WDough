@@ -26,24 +26,37 @@ namespace WDOH {
             this.mY = y;
         }
 
-        public addVec2(vec : Vector2) : void {
+        public addVec2(vec : Vector2) : Vector2 {
             this.mX += vec.x;
             this.mY += vec.y;
+
+            return this;
         }
 
-        public subtractVec2(vec : Vector2) : void {
+        public subtractVec2(vec : Vector2) : Vector2 {
             this.mX -= vec.x;
             this.mY -= vec.y;
+
+            return this;
         }
 
-        public cross() : void {
+        public mult(scalar : number) : Vector2 {
+            this.mX *= scalar;
+            this.mY *= scalar;
+
+            return this;
+        }
+
+        public cross() : Vector2 {
             //TODO:: This
 
+            return this;
         }
 
-        public dot() : void {
+        public dot() : Vector2 {
             //TODO:: This
             
+            return this;
         }
     }
 }
