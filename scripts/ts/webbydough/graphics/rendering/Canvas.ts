@@ -6,8 +6,7 @@ namespace WDOH {
         
         public static readonly DEFAULT_CANVAS_ID = "wdoh-canvas";
         public static readonly DEFAULT_CANVAS_WRAPPER_ID = "defualt-wdoh-canvas-wrapper";
-
-        private readonly mWebGLContext : string = "webgl2";
+        private static readonly WEBGL_2_CONTEXT_STRING : string = "webgl2";
 
         private mCanvasNode : HTMLCanvasElement;
 
@@ -82,7 +81,13 @@ namespace WDOH {
                 throw new Error("Canvas not yet defined, unable to create rendering context.");
             }
 
-            return this.mCanvasNode.getContext(this.mWebGLContext) as WebGL2RenderingContext;
+            let context : WebGL2RenderingContext = this.mCanvasNode.getContext(Canvas.WEBGL_2_CONTEXT_STRING) as WebGL2RenderingContext;
+
+            if (context === null) {
+                throw new Error("Unable to create rendering context, WebGL2 support is required.");
+            }
+
+            return context;
         }
 
         public attachCanvas(nodeId : string = "body") {
@@ -196,10 +201,6 @@ namespace WDOH {
             window.onfocus = function() {
                 mApplication.onEvent(new FocusChangeEvent(true));
             }
-
-            this.mCanvasNode.addEventListener("mousemove", event => {
-                mApplication.onMouseEvent(new MouseMoveEvent(event.offsetX, event.offsetY));
-            });
         }
 
         public resizable() : boolean {

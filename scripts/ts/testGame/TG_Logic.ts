@@ -19,7 +19,6 @@ namespace TestGame {
         private mQuadHoverColour : WDOH.Vector4 = new WDOH.Vector4(1, 0, 1, 1);
 
         private mCursorWorldPos : WDOH.Vector4 = new WDOH.Vector4(0, 0, 0, 0);
-        private mCursorScreenPos : WDOH.Vector2 = new WDOH.Vector2(0, 0);
 
         public constructor(aspectRatio : number) {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
@@ -42,13 +41,13 @@ namespace TestGame {
 
             this.mCanRun = true;
 
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < this.mTestGridHeight; i++) {
                 this.mColours[i] = new WDOH.Vector4(1, 1, 1, 1);
             }
 
             mApplication.getLogger().infoApp("Test grid contains: " + this.mTestGridWidth * this.mTestGridHeight + " Quads.");
 
-            this.populateTestGrid();
+            this.populateTestGrid(this.mTestGridWidth, this.mTestGridHeight);
         }
 
         public canRun() : boolean {
@@ -62,7 +61,7 @@ namespace TestGame {
             mApplication.getRenderer().beginScene(this.mOrthoCameraController.getCamera());
 
             //Update 
-            this.updateCursorWorldPos(this.mCursorScreenPos.x, this.mCursorScreenPos.y);
+            this.updateCursorWorldPos(WDOH.Input.get().getMouseScreenPos().x, WDOH.Input.get().getMouseScreenPos().y);
 
             //Draw coloured quad
             // mApplication.getRenderer().render2D().drawQuad(
@@ -82,7 +81,7 @@ namespace TestGame {
                         let quadIndex : number = x * this.mTestGridWidth + y;
 
                         //Update colours
-                        if (this.mColourChangeTime > 1_000_000_000) {
+                        if (this.mColourChangeTime > 1) {
                             if (ran < 0.2) {
                                 this.mColours[y] = new WDOH.Vector4(0, 1, 0, 1);
                             } else if (ran > 0.2 && ran < 0.3) {
@@ -107,17 +106,15 @@ namespace TestGame {
                         //If cursor is inside quad
                         if (this.mTestGridQuads[quadIndex].isVec2Inside(new WDOH.Vector2(this.mCursorWorldPos.x, this.mCursorWorldPos.y))) {
                             this.mTestGridQuads[quadIndex].mColour = this.mQuadHoverColour;
-                            
-                            //X collision works when the canvas node aspect ratio is 1:1
-
                         } else {
                             this.mTestGridQuads[quadIndex].mColour = this.mColours[y];
                         }
-                        
-                        // console.log(this.mCursorPos)
-                        // console.log(this.mTestGridQuads[quadIndex].mPosition);
 
-                        mApplication.getRenderer().render2D().drawQuad(this.mTestGridQuads[quadIndex].mPosition, this.mTestGridQuads[quadIndex].mSize, this.mTestGridQuads[quadIndex].mColour);
+                        mApplication.getRenderer().render2D().drawQuad(
+                            this.mTestGridQuads[quadIndex].mPosition,
+                            this.mTestGridQuads[quadIndex].mSize,
+                            this.mTestGridQuads[quadIndex].mColour
+                        );
                     }
                 }
             }
@@ -164,7 +161,7 @@ namespace TestGame {
                     this.mCursorWorldPos.y - (cursorQuadSize.y / 2),
                     0
                 );
-                //mApplication.getRenderer().render2D().drawQuad(cursorQuadPos, cursorQuadSize, new WDOH.Vector4(0, 0, 1, 1));
+                mApplication.getRenderer().render2D().drawQuad(cursorQuadPos, cursorQuadSize, new WDOH.Vector4(0, 0, 1, 1));
             }
 
             mApplication.getRenderer().endScene();
@@ -204,10 +201,11 @@ namespace TestGame {
         }
 
         public onMouseEvent(mouseEvent : WDOH.MouseEvent) : void {
-            if (mouseEvent.getType() === WDOH.EEventType.INPUT_MOUSE_MOVE) {
-                this.mCursorScreenPos.x = mouseEvent.getPosX();
-                this.mCursorScreenPos.y = mouseEvent.getPosY();
-            }
+            
+        }
+
+        public onMouseMoveEvent(mouseMoveEvent : WDOH.MouseMoveEvent) : void {
+
         }
 
         public onCanvasResize(aspectRatio : number) : void {
@@ -218,16 +216,22 @@ namespace TestGame {
             
         }
 
-        private populateTestGrid() : void {
+        private populateTestGrid(countX : number, countY : number) : void {
 
             const size : WDOH.Vector2 = new WDOH.Vector2(0.04, 0.04);
+            const quadGapDistanceX : number = (size.x * 1.5);
+            const quadGapDistanceY : number = (size.y * 1.5);
 
             //I think that mouse pos is fine, I think that size is in a 0 - 1 space,
             // e.g the right bound pos is 0.05 (pos.x = 0.00, size.x = 0.05) and in that same position the mouse position is 0.025 (half)
 
-            for (let x = 0; x < this.mTestGridWidth; x++) {
-                for (let y = 0; y < this.mTestGridHeight; y++) {
-                    let pos : WDOH.Vector3 = new WDOH.Vector3(x * 0.06, y * 0.06, 0.0);
+            for (let i = 0; i < this.mTestGridQuads.length; i++) {
+                this.mTestGridQuads[i];
+            }
+
+            for (let x = 0; x < countX; x++) {
+                for (let y = 0; y < countY; y++) {
+                    let pos : WDOH.Vector3 = new WDOH.Vector3(x * quadGapDistanceX, y * quadGapDistanceY, 0.0);
                     pos.x -= 0.5;
                     pos.y -= 0.5;
 

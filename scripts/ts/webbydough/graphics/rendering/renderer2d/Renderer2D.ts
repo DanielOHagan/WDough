@@ -2,9 +2,7 @@ namespace WDOH {
 
     export class Renderer2D implements IRenderer {
 
-        public constructor() {
-
-        }
+        public constructor() {}
         
         public init() : void {
             Renderer2DStorage.init();
@@ -28,7 +26,7 @@ namespace WDOH {
             } else {
                 Renderer2DStorage.checkShadersLoaded();
 
-                //Attempt to re-initialise required shaders if they all are loaded
+                //Attempt to re-initialise required shaders if all are loaded but not initialised
                 if (!Renderer2DStorage.mRequiredShadersInitialised && Renderer2DStorage.mRequiredShadersLoaded) {
                     Renderer2DStorage.initShaders();
                 }
@@ -50,14 +48,16 @@ namespace WDOH {
                 if (texture?.hasLoaded()) {
                     texture.bind();
                     texture.activate(i);
-
-                    // console.log(i + " " + texture.getId());
                 }
             }
 
-            //TEMP:
-            //mApplication.getLogger().infoWDOH("Renderer Batch Texture Count: " + Renderer2DStorage.mBatchTextureSlots.size);
-            //mApplication.getLogger().infoWDOH("Renderer Batch Texture Slot index: " + Renderer2DStorage.mBatchTextureSlotIndex);
+            //Set unused texture slots to white texture
+            if (Renderer2DStorage.mBatchTextureSlotIndex <= Renderer2DStorage.BATCH_MAX_TEXTURE_SLOT_INDEX) {
+                for (let i = Renderer2DStorage.mBatchTextureSlotIndex; i <= Renderer2DStorage.BATCH_MAX_TEXTURE_SLOT_INDEX; i++) {
+                    Renderer2DStorage.mWhiteTexture.bind();
+                    Renderer2DStorage.mWhiteTexture.activate(i);
+                }
+            }
 
             mApplication.getRenderer().getRendererAPI().drawIndexed(Renderer2DStorage.mQuadIndexCount);
 
@@ -126,8 +126,6 @@ namespace WDOH {
                         Renderer2DStorage.mCurrentBatchTextureIds[Renderer2DStorage.mCurrentBatchTextureIds.length] = texture.getId();
 
                         Renderer2DStorage.mBatchTextureSlotIndex = texIndex;
-
-                        // console.log(texIndex);
                     } else {
                         mApplication.getLogger().errWDOH("Can't draw textured quad, max amount of batch texture slots used.");
                     }

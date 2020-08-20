@@ -24,6 +24,8 @@ namespace WDOH {
         private mPossibleKeyInputs : EKeyInputCode[] = [];
 
         private mPressedKeys : Map<EKeyInputCode, boolean> = new Map();
+        // private mPressedMouseButtons : Map<EMouseInputCode, boolean> = new Map();
+        private mMouseScreenPos : Vector2 = new Vector2(0, 0);
 
         private Input() {}
 
@@ -69,13 +71,12 @@ namespace WDOH {
             mApplication.onKeyEvent(new KeyEvent(keyBoardEvent, EEventType.INPUT_KEY_UP));
         }
 
-    
-
-        public onMouseMove(mouseEvent : MouseEvent) : void {
-
+        public onMouseMove(mouseMoveEvent : MouseMoveEvent) : void {
+            this.mMouseScreenPos.x = mouseMoveEvent.getPosX();
+            this.mMouseScreenPos.y = mouseMoveEvent.getPosY();
         }
 
-        public static onMouseScroll() : void {
+        public onMouseScroll() : void {
 
         }
 
@@ -89,7 +90,7 @@ namespace WDOH {
                 window.addEventListener("keypress", Input.get().onKeyPress);
                 window.addEventListener("keyup", Input.get().onKeyUp);
 
-                console.log("Added key event listeners");
+                mApplication.getLogger().infoWDOH("Added key event listeners");
 
                 Input.get().mKeyEventListeners = !Input.get().mKeyEventListeners;
             }
@@ -98,10 +99,10 @@ namespace WDOH {
         public removeKeyEventListeners() : void {
             if (Input.get().mKeyEventListeners) {
                 window.removeEventListener("keydown", Input.get().onKeyDown);
-                window.addEventListener("keypress", Input.get().onKeyPress);
+                window.removeEventListener("keypress", Input.get().onKeyPress);
                 window.removeEventListener("keyup", Input.get().onKeyUp);
 
-                console.log("Removed key event listeners");
+                mApplication.getLogger().infoWDOH("Removed key event listeners");
 
                 Input.get().mKeyEventListeners = !Input.get().mKeyEventListeners;
             }
@@ -109,9 +110,14 @@ namespace WDOH {
 
         public addMouseEventListeners() : void {
             if (!Input.get().mMouseEventListeners) {
-                console.log("Added mouse event listeners");
+                mApplication.getLogger().infoWDOH("Added mouse event listeners");
 
-                //TODO:: This
+                window.addEventListener("mousemove", event => {
+                    mApplication.onMouseEvent(new MouseMoveEvent(event.offsetX, event.offsetY));
+                });
+                window.addEventListener("mousewheel", Input.get().onMouseScroll)
+
+                //TODO:: MouseButtons
 
                 Input.get().mMouseEventListeners = !Input.get().mMouseEventListeners;
             }
@@ -119,9 +125,11 @@ namespace WDOH {
 
         public removeMouseEventListeners() : void {
             if (Input.get().mMouseEventListeners) {
-                console.log("Removed mouse event listeners");
+                mApplication.getLogger().infoWDOH("Removed mouse event listeners");
 
-                //TODO:: This
+                window.removeEventListener("mousemove", event =>{});
+                window.removeEventListener("mousewheel", Input.get().onMouseScroll);
+                //TODO:: MouseButtons
 
                 Input.get().mMouseEventListeners = !Input.get().mMouseEventListeners;
             }
@@ -158,6 +166,10 @@ namespace WDOH {
         public isKeyPressedImpl(keyCode : EKeyInputCode) : boolean {
             let pressed : boolean | undefined = Input.get().mPressedKeys.get(keyCode);
             return pressed !== undefined && pressed;
+        }
+
+        public getMouseScreenPos() : Vector2 {
+            return this.mMouseScreenPos;
         }
     }
 }

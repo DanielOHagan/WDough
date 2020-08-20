@@ -42,12 +42,7 @@ namespace WDOH {
             this.mAppLogic.init();
 
             //Rendering context set-up
-            mContext.clearColor(
-                Renderer.DEFAULT_CLEAR_COLOUR.x,
-                Renderer.DEFAULT_CLEAR_COLOUR.y,
-                Renderer.DEFAULT_CLEAR_COLOUR.z,
-                Renderer.DEFAULT_CLEAR_COLOUR.w,
-            );
+            this.mRenderer.getRendererAPI().setClearColour(Renderer.DEFAULT_CLEAR_COLOUR);
 
             Input.get().init(true, true, []);
         }
@@ -77,7 +72,7 @@ namespace WDOH {
 
         public update(deltaTime : number) : void {
 
-            mContext.clear(mContext.COLOR_BUFFER_BIT | mContext.DEPTH_BUFFER_BIT);
+            this.mRenderer.getRendererAPI().clear();
 
             this.mAppLogic.update(deltaTime);
         }
@@ -113,7 +108,22 @@ namespace WDOH {
         }
 
         public onMouseEvent(mouseEvent : WDOH.MouseEvent) : void {
-            this.mAppLogic.onMouseEvent(mouseEvent);
+            switch (mouseEvent.getType()) {
+                case EEventType.INPUT_MOUSE_MOVE:
+                    Input.get().onMouseMove(mouseEvent as MouseMoveEvent);
+                    this.mAppLogic.onMouseEvent(mouseEvent);
+                    break;
+                case EEventType.INPUT_MOUSE_BUTTON:
+                    // Input.get().onMouseButton(mouseEvent as MouseButtonEvent);        
+                    break;
+                case EEventType.INPUT_MOUSE_SCROLL:
+                    // Input.get().onMouseScroll(mouseEvent as MouseScrollEvent);        
+                    break;
+
+                default:
+                    
+                    break;
+            }
         }
 
         public onCanvasEvent(event : AEvent) : void {

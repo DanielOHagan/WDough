@@ -37,8 +37,6 @@ namespace WDOH {
 
                 return shader;
             }
-
-            return null;
         }
 
         public add(name : string, shader : IShader) : void {

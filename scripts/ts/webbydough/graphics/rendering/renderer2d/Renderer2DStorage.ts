@@ -89,7 +89,7 @@ namespace WDOH {
                 textureShader.createUniform(Renderer2DStorage.UNIFORM_NAME_TEXTURE_ARRAY);
                 textureShader.createUniform(Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT);
 
-                textureShader.setUniformIntArray("uTextures", samplerIndexes);
+                textureShader.setUniformIntArray(Renderer2DStorage.UNIFORM_NAME_TEXTURE_ARRAY, samplerIndexes);
 
                 Renderer2DStorage.mRequiredShadersInitialised = true;
             } else {

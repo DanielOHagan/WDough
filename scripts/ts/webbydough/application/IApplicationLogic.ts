@@ -9,9 +9,13 @@ namespace WDOH {
 
         update(deltaTime : number) : void;
 
+        //Events
         onEvent(event : AEvent) : void;
+        
         onKeyEvent(keyEvent : KeyEvent) : void;
-        onMouseEvent(mouseEvent : WDOH.MouseEvent) : void;
+
+        onMouseEvent(mouseEvent : MouseEvent) : void;
+        onMouseMoveEvent(mouseMoveEvent : MouseMoveEvent) : void;
 
         //An application would typically update camera projections and/or views
         onCanvasResize(aspectRatio : number) : void;

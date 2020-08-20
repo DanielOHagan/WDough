@@ -45,9 +45,7 @@ namespace WDOH {
             let compiledShadersIndex : number = 0;
 
             for(let shaderType of sources.keys()) {
-                let shader : WebGLShader | null = mContext.createShader(
-                    this.shaderTypeToGLShaderType(shaderType)
-                )
+                let shader : WebGLShader | null = mContext.createShader(this.shaderTypeToGLShaderType(shaderType));
 
                 if (shader === null) {
                     throw new Error(
@@ -60,9 +58,9 @@ namespace WDOH {
                 if (shaderSrc === undefined) {
                     throw new Error("Unable to get shader source for type: " +
                         (shaderType === mContext.VERTEX_SHADER ? "Vertex" : "Fragment")
-                    )
+                    );
                 }
-                mContext.shaderSource(shader, shaderSrc)
+                mContext.shaderSource(shader, shaderSrc);
 
                 mContext.compileShader(shader);
                 mContext.attachShader(program, shader);
