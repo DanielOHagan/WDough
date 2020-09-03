@@ -1,18 +1,5 @@
 namespace WDOH {
 
-    //This class is used just to outline the contents of a single QuadVertex for the batch renderer
-    abstract class QuadVertex {
-
-        public static readonly BYTE_SIZE : number = 10 * 4;
-        
-        private static readonly mPosition : Vector3;
-        private static readonly mColour : Vector4;
-        private static readonly mTexCoord : Vector2;
-        private static readonly mTexIndex : number;
-
-        private constructor() {}
-    }
-
     export class Renderer2DStorage {
 
         //TODO:: Go through this and make most of it none-static, I really should have done it that way from the start
@@ -27,27 +14,24 @@ namespace WDOH {
         public static readonly UNIFORM_NAME_TEXTURE_ARRAY : string = "uTextures";
         
         
-        public static readonly BATCH_MAX_QUAD_COUNT = 15_000;
-        public static readonly BATCH_MAX_VERTICES = Renderer2DStorage.BATCH_MAX_QUAD_COUNT * 4;
-        public static readonly BATCH_MAX_INDICES = Renderer2DStorage.BATCH_MAX_QUAD_COUNT * 6;
         public static readonly BATCH_MAX_TEXTURE_SLOT_INDEX : number = 7;
         
         //Shaders
         public static mShaderLibrary : ShaderLibrary;
-
+        
         //Quad
         public static mQuadVao : IVertexArray;
         public static mQuadVbo : IVertexBuffer;
-        public static mQuadIndexCount : number;
+        
         //Batch Objects
-        public static mCurrentQuadBatch : number[];
-        public static mCurrentQuadBatchIndex : number;
-        public static mCurrentBatchTextureIds : number[];
+        public static mRenderBatchQuadArray : RenderBatchQuad[];
+        public static mRenderBatchQuadIndex : number;
+        public static mRenderBatchMaxQuadCount : number;
+        public static mRenderBatchQuadMaxVertices : number = Renderer2DStorage.mRenderBatchMaxQuadCount * 4;
+        public static mRenderBatchQuadMaxIndices = Renderer2DStorage.mRenderBatchMaxQuadCount * 6;
 
         //Textures
         public static mWhiteTexture : ITexture;
-        public static mBatchTextureSlots : Map<number, ITexture>;
-        public static mBatchTextureSlotIndex : number;
 
         public static mRequiredShadersLoaded : boolean;
         public static mRequiredShadersInitialised : boolean;
@@ -55,10 +39,13 @@ namespace WDOH {
         private constructor() {}
         
         public static init() : void {
-            Renderer2DStorage.mCurrentQuadBatchIndex = 0;
-            Renderer2DStorage.mCurrentBatchTextureIds = [];
+            Renderer2DStorage.mRenderBatchQuadArray = [];
             Renderer2DStorage.mRequiredShadersLoaded = false;
             Renderer2DStorage.mRequiredShadersInitialised = false;
+            Renderer2DStorage.mRenderBatchQuadIndex = -1; //Init to -1 so first "createNewQuadBatch" increments to 0 on first call
+            Renderer2DStorage.mRenderBatchMaxQuadCount = 5000;
+            Renderer2DStorage.mRenderBatchQuadMaxVertices = Renderer2DStorage.mRenderBatchMaxQuadCount * 4;
+            Renderer2DStorage.mRenderBatchQuadMaxIndices = Renderer2DStorage.mRenderBatchMaxQuadCount * 6;
 
             Renderer2DStorage.loadShaders();
             Renderer2DStorage.initVertexArrays();
@@ -101,7 +88,7 @@ namespace WDOH {
             //-----Quad Start-----
             Renderer2DStorage.mQuadVao = new VertexArrayWebGL();
             Renderer2DStorage.mQuadVbo = VertexBufferWebGL.createDynamicBuffer(
-                Renderer2DStorage.BATCH_MAX_VERTICES * QuadVertex.BYTE_SIZE,
+                Renderer2DStorage.mRenderBatchQuadMaxVertices * RenderBatchQuad.BYTE_SIZE,
                 EDataType.FLOAT
             );
             Renderer2DStorage.mQuadVbo.setBufferLayout(new BufferLayout([
@@ -112,11 +99,9 @@ namespace WDOH {
             ]));
             Renderer2DStorage.mQuadVao.addVertexBuffer(Renderer2DStorage.mQuadVbo);
 
-            Renderer2DStorage.mCurrentQuadBatch = [];
-
             let quadIndices : number[] = [];
             let offset : number = 0;
-            for (let i = 0; i < Renderer2DStorage.BATCH_MAX_INDICES; i += 6) {
+            for (let i = 0; i < Renderer2DStorage.mRenderBatchQuadMaxIndices; i += 6) {
                 quadIndices[i + 0] = offset + 0;
                 quadIndices[i + 1] = offset + 1;
                 quadIndices[i + 2] = offset + 2;
@@ -127,7 +112,7 @@ namespace WDOH {
 
                 offset += 4;
             }
-            let quadIb : IIndexBuffer = new IndexBufferWebGL(quadIndices, Renderer2DStorage.BATCH_MAX_INDICES);
+            let quadIb : IIndexBuffer = new IndexBufferWebGL(quadIndices, Renderer2DStorage.mRenderBatchQuadMaxIndices);
             Renderer2DStorage.mQuadVao.setIndexBuffer(quadIb);
             //-----Quad End-----
         }
@@ -139,8 +124,6 @@ namespace WDOH {
                 new Uint8Array([255, 255, 255, 255]),
                 ETextureBindingPoint.TEX_2D
             );
-            Renderer2DStorage.mBatchTextureSlots = new Map();
-
         }
 
         public static isReady() : boolean {
@@ -170,7 +153,7 @@ namespace WDOH {
                 
                 if (allRequiredShadersLoaded === true) {
                     break;
-                } 
+                }
             }
 
             Renderer2DStorage.mRequiredShadersLoaded = allRequiredShadersLoaded;
@@ -180,11 +163,27 @@ namespace WDOH {
             return Renderer2DStorage.mRequiredShadersInitialised;
         }
 
+        public static createNewQuadBatch(quad : Quad | null, textureSlotIndex : number | null) : void {
+            Renderer2DStorage.mRenderBatchQuadIndex++;
+            Renderer2DStorage.mRenderBatchQuadArray[Renderer2DStorage.mRenderBatchQuadIndex] = new RenderBatchQuad(Renderer2DStorage.mRenderBatchMaxQuadCount);
+
+            if (quad !== null) {
+                if (quad.mTexture !== null) {
+                    Renderer2DStorage.mRenderBatchQuadArray[Renderer2DStorage.mRenderBatchQuadIndex].addTextured(quad);
+                } else {
+                    Renderer2DStorage.mRenderBatchQuadArray[Renderer2DStorage.mRenderBatchQuadIndex].add(quad, textureSlotIndex);
+                }
+            }
+        }
+
         public static cleanUp() : void {
+            //Batches
+            Renderer2DStorage.mRenderBatchQuadArray = [];
+            Renderer2DStorage.mRenderBatchQuadIndex = -1;
+
             //Quad
             Renderer2DStorage.mQuadVao.cleanUp();
             Renderer2DStorage.mQuadVbo.cleanUp();
-            Renderer2DStorage.mQuadIndexCount = 0;
 
             //Textures
             Renderer2DStorage.mWhiteTexture.cleanUp();

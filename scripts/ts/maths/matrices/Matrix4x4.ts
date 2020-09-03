@@ -1,6 +1,6 @@
 namespace WDOH {
 
-    export class Matrix4x4 {
+    export class Matrix4x4 implements IMatrix<Matrix4x4> {
 
         /*
             m00  m01  m02  m03
@@ -36,20 +36,39 @@ namespace WDOH {
             this.m30 = this.m31 = this.m32 = 0;
         }
 
-        public identity() : void {
+        public identity() : Matrix4x4 {
             this.m00 = this.m11 = this.m22 = this.m33 = 1;
 
             this.m01 = this.m02 = this.m03 =
             this.m10 = this.m12 = this.m13 =
             this.m20 = this.m21 = this.m23 =
             this.m30 = this.m31 = this.m32 = 0;
+
+            return this;
         }
 
-        public mulNum(num : number) :void {
-            //TODO:: This
+        public mulNum(num : number) : Matrix4x4 {
+            this.m00 *= num;
+            this.m01 *= num;
+            this.m02 *= num;
+            this.m03 *= num;
+            this.m10 *= num;
+            this.m11 *= num;
+            this.m12 *= num;
+            this.m13 *= num;
+            this.m20 *= num;
+            this.m21 *= num;
+            this.m22 *= num;
+            this.m23 *= num;
+            this.m30 *= num;
+            this.m31 *= num;
+            this.m32 *= num;
+            this.m33 *= num;
+
+            return this;
         }
 
-        public mulMat4x4(mat : Matrix4x4) : void {
+        public mulMat4x4(mat : Matrix4x4) : Matrix4x4 {
             let dest : Matrix4x4 = new Matrix4x4();
 
             dest.m00 = (mat.m00 * this.m00) + (mat.m01 * this.m10) + (mat.m02 * this.m20) + (mat.m03 * this.m30);
@@ -73,6 +92,8 @@ namespace WDOH {
             dest.m33 = (mat.m30 * this.m03) + (mat.m31 * this.m13) + (mat.m32 * this.m23) + (mat.m33 * this.m33);
 
             this.set(dest);
+
+            return this;
         }
 
         public ortho(
@@ -82,7 +103,7 @@ namespace WDOH {
             top : number,
             nearZ : number,
             farZ : number
-        ) : void {
+        ) : Matrix4x4 {
             this.m00 = 2 / (right - left);
             this.m11 = 2 / (top - bottom);
             this.m22 = -2 / (farZ - nearZ);
@@ -91,21 +112,27 @@ namespace WDOH {
             this.m31 = (top + bottom) / (top - bottom);
             this.m32 = (farZ + nearZ) / (farZ - nearZ);
             this.m33 = 1;
+
+            return this;
         }
 
-        public translateVec2(vec : Vector2) : void {
+        public translateVec2(vec : Vector2) : Matrix4x4 {
             this.m30 = vec.x;
             this.m31 = vec.y;
+
+            return this;
         }
 
-        public translateVec3(vec : Vector3) : void {
+        public translateVec3(vec : Vector3) : Matrix4x4 {
             this.m30 = vec.x;
             this.m31 = vec.y;
             this.m32 = vec.z;
+
+            return this;
         }
 
 
-        public invert() : void {
+        public invert() : Matrix4x4 {
             let mat : Matrix4x4 = new Matrix4x4();
 
             //Determinant calculation
@@ -144,9 +171,11 @@ namespace WDOH {
             mat.m33 = ((this.m20 * d) - (this.m21 * b) + (this.m22 * a)) * determinant;
 
             this.set(mat);
+
+            return this;
         }
 
-        public rotateRads(angleRads : number, axis : Vector3) : void {
+        public rotateRads(angleRads : number, axis : Vector3) : Matrix4x4 {
             let sin = Math.sin(angleRads);
             let cos = Math.cos(angleRads);
             let C = 1 - cos;
@@ -193,13 +222,17 @@ namespace WDOH {
             mat.m33 = this.m33;
 
             this.set(mat);
+
+            return this;
         }
         
-        public scaleScalar(scale : number) : void {
+        public scaleScalar(scale : number) : Matrix4x4 {
             this.scaleXYZ(scale, scale, scale);
+
+            return this;
         }
 
-        public scaleXYZ(x : number, y : number, z : number) : void {
+        public scaleXYZ(x : number, y : number, z : number) : Matrix4x4 {
             this.m00 *= x;
             this.m01 *= x;
             this.m02 *= x;
@@ -214,6 +247,8 @@ namespace WDOH {
             this.m21 *= z;
             this.m22 *= z;
             this.m23 *= z;
+
+            return this;
         }
 
         public asArray() : number[] {

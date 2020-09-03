@@ -18,14 +18,20 @@ namespace WDOH {
         private mMaxSizeEnabled : boolean;
         private mAspectRatio : number;
 
-        public constructor(width : number, height : number, canvasId ? : string) {
+        public constructor(
+            width : number,
+            height : number,
+            resizable : boolean = true,
+            maxSizeEnable : boolean = true,
+            canvasId ? : string
+        ) {
             this.mCanvasNode = this.createCanvasNode(canvasId);
 
-            this.mResizable = true;
+            this.mResizable = resizable;
             this.mMinWidth = 0;
             this.mMinHeight = 0;
 
-            this.mMaxSizeEnabled = true;
+            this.mMaxSizeEnabled = maxSizeEnable;
             this.mMaxWidth = 2560;
             this.mMaxHeight = 1440;
             this.mAspectRatio = width / height;

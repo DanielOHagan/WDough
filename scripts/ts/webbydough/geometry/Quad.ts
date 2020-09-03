@@ -1,15 +1,27 @@
 namespace WDOH {
 
-    export class Quad {
-        public mPosition : Vector3; //Bottom Left of Quad
-        public mSize : Vector2;
+    export class Quad extends AGeometry {
+        
         public mColour : Vector4;
-        //rotation
+        public mRotation : number;
+        public mTexture : ITexture | null;
+        public mTextureCoordsU : number[];
+        public mTextureCoordsV : number[];
 
-        public constructor(pos : Vector3, size : Vector2, colour : Vector4) {
+        public constructor(
+            pos : Vector3,
+            size : Vector2,
+            colour : Vector4,
+            texture : ITexture | null
+        ) {
+            super(pos, size);
             this.mPosition = pos;
             this.mSize = size;
             this.mColour = colour;
+            this.mTexture = texture;
+            this.mRotation = 0;
+            this.mTextureCoordsU = [0, 1, 1, 0];
+            this.mTextureCoordsV = [0, 0, 1, 1];
         }
 
         public isVec2Inside(vec2 : Vector2) : boolean {

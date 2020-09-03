@@ -1,6 +1,6 @@
 namespace WDOH {
 
-    export class Vector4 {
+    export class Vector4 implements IVector<Vector4> {
 
         private mX : number;
         private mY : number;
@@ -99,11 +99,20 @@ namespace WDOH {
             return this;
         }
 
-        public mult(scalar : number) : Vector4 {
-            this.mX *= scalar;
-            this.mY *= scalar;
-            this.mZ *= scalar;
-            this.mW *= scalar;
+        public mult(multiplier : number) : Vector4 {
+            this.mX *= multiplier;
+            this.mY *= multiplier;
+            this.mZ *= multiplier;
+            this.mW *= multiplier;
+
+            return this;
+        }
+
+        public divide(div : number) : Vector4 {
+            this.mX /= div;
+            this.mY /= div;
+            this.mZ /= div;
+            this.mW /= div;
 
             return this;
         }
@@ -121,11 +130,13 @@ namespace WDOH {
             return this;
         }
 
-        public mulMat4(mat : Matrix4x4) : void {
+        public mulMat4(mat : Matrix4x4) : Vector4 {
             this.x = (this.x * mat.m00Val) + (this.y * mat.m01Val) + (this.z * mat.m02Val) + (this.w * mat.m03Val);
             this.y = (this.x * mat.m10Val) + (this.y * mat.m11Val) + (this.z * mat.m12Val) + (this.w * mat.m13Val);
             this.z = (this.x * mat.m20Val) + (this.y * mat.m21Val) + (this.z * mat.m22Val) + (this.w * mat.m23Val);
             this.w = (this.x * mat.m30Val) + (this.y * mat.m31Val) + (this.z * mat.m32Val) + (this.w * mat.m33Val);
+
+            return this;
         }
     }
 }

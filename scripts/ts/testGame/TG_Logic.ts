@@ -12,13 +12,14 @@ namespace TestGame {
         private mColourChangeTime = 0;
         private mColours : WDOH.Vector4[] = [];
 
-        private readonly mTestGridWidth = 50;
-        private readonly mTestGridHeight = 50;
-        private readonly mTestGridMinColourIndex : number = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
+        private mTestGridWidth = 10;
+        private mTestGridHeight = 5;
+        private mTestGridMinColourIndex : number = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
         private mTestGridQuads : WDOH.Quad[] = [];
         private mQuadHoverColour : WDOH.Vector4 = new WDOH.Vector4(1, 0, 1, 1);
 
         private mCursorWorldPos : WDOH.Vector4 = new WDOH.Vector4(0, 0, 0, 0);
+        private mCursorQuad : WDOH.Quad = new WDOH.Quad(new WDOH.Vector3(0, 0, 0), new WDOH.Vector2(0.02, 0.02), new WDOH.Vector4(0, 0, 1, 1), null);
 
         public constructor(aspectRatio : number) {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
@@ -63,20 +64,13 @@ namespace TestGame {
             //Update 
             this.updateCursorWorldPos(WDOH.Input.get().getMouseScreenPos().x, WDOH.Input.get().getMouseScreenPos().y);
 
-            //Draw coloured quad
-            // mApplication.getRenderer().render2D().drawQuad(
-                // new WDOH.Vector3(0, 0, 0),
-                // new WDOH.Vector2(1, 1),
-                // new WDOH.Vector4(0, 1, 0, 1)
-            // );
-
             this.mColourChangeTime += deltaTime;
 
             {
                 for (let x = 0; x < this.mTestGridWidth; x++) {
 
-                    for (let y = 0; y < this.mTestGridHeight; y++) {                        
-                        
+                    for (let y = 0; y < this.mTestGridHeight; y++) {
+
                         let ran = Math.random();
                         let quadIndex : number = x * this.mTestGridWidth + y;
 
@@ -110,11 +104,7 @@ namespace TestGame {
                             this.mTestGridQuads[quadIndex].mColour = this.mColours[y];
                         }
 
-                        mApplication.getRenderer().render2D().drawQuad(
-                            this.mTestGridQuads[quadIndex].mPosition,
-                            this.mTestGridQuads[quadIndex].mSize,
-                            this.mTestGridQuads[quadIndex].mColour
-                        );
+                        mApplication.getRenderer().render2D().drawQuad(this.mTestGridQuads[quadIndex]);
                     }
                 }
             }
@@ -122,18 +112,14 @@ namespace TestGame {
             // mApplication.getRenderer().render2D().drawQuad(new WDOH.Vector3(-0.6, -0.3, 0), new WDOH.Vector2(0.4, 0.4), new WDOH.Vector4(0, 0, 1, 1));
 
             // if (this.mTestTexture !== null) {
-                // mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Vector3(0, 0, 0), new WDOH.Vector2(0.4, 0.4), this.mTestTexture);
-                // mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Vector3(-1.6, -0.3, 0), new WDOH.Vector2(0.4, 0.4), this.mTestTexture);
+            //     mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Quad(new WDOH.Vector3(0, 0, 1), new WDOH.Vector2(0.4, 0.4), new WDOH.Vector4(1.0, 0.0, 1.0, 1.0), this.mTestTexture));
+            //     mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Quad(new WDOH.Vector3(-1.6, -0.3, 0), new WDOH.Vector2(0.4, 0.4), new WDOH.Vector4(0, 1, 0, 1), this.mTestTexture));
             // }
 
             // if (this.mTransparentTexture !== null) {
                 // mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Vector3(0.6, 0.3, 0), new WDOH.Vector2(0.1, 0.3), this.mTransparentTexture)
                 // mApplication.getRenderer().render2D().drawTexturedQuad(new WDOH.Vector3(0.9, 0.8, 0), new WDOH.Vector2(0.05, 0.03), this.mTransparentTexture)
-            // }
-            
-            // if (this.mTransparentTexture !== null) {
-            // }
-            
+            // }            
 
             //Draw textures
             // if (this.mTestTexture !== null && this.mTransparentTexture !== null) {
@@ -156,12 +142,10 @@ namespace TestGame {
             {
                 const cursorQuadSize : WDOH.Vector2 = new WDOH.Vector2(0.02, 0.02);
                 //Place in centre of Quad
-                let cursorQuadPos : WDOH.Vector3 = new WDOH.Vector3(
-                    this.mCursorWorldPos.x - (cursorQuadSize.x / 2),
-                    this.mCursorWorldPos.y - (cursorQuadSize.y / 2),
-                    0
-                );
-                mApplication.getRenderer().render2D().drawQuad(cursorQuadPos, cursorQuadSize, new WDOH.Vector4(0, 0, 1, 1));
+                this.mCursorQuad.mPosition.x = this.mCursorWorldPos.x - (cursorQuadSize.x / 2);
+                this.mCursorQuad.mPosition.y = this.mCursorWorldPos.y - (cursorQuadSize.y / 2);
+
+                mApplication.getRenderer().render2D().drawQuad(this.mCursorQuad);
             }
 
             mApplication.getRenderer().endScene();
@@ -172,6 +156,30 @@ namespace TestGame {
         }
 
         public onKeyEvent(keyEvent : WDOH.KeyEvent) : void {
+
+            if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_G && keyEvent.getType() === WDOH.EEventType.INPUT_KEY_PRESS) {
+                this.mTestGridWidth++;
+                this.mTestGridMinColourIndex = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
+
+                this.populateTestGrid(this.mTestGridWidth, this.mTestGridHeight);
+            } else if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_H && keyEvent.getType() === WDOH.EEventType.INPUT_KEY_PRESS) {
+                this.mTestGridWidth--;
+                this.mTestGridMinColourIndex = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
+
+                this.populateTestGrid(this.mTestGridWidth, this.mTestGridHeight);
+            }
+
+            if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_B && keyEvent.getType() === WDOH.EEventType.INPUT_KEY_PRESS) {
+                this.mTestGridHeight++;
+                this.mTestGridMinColourIndex = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
+
+                this.populateTestGrid(this.mTestGridWidth, this.mTestGridHeight);
+            } else if (keyEvent.getInputCode() === WDOH.EKeyInputCode.KEY_N && keyEvent.getType() === WDOH.EEventType.INPUT_KEY_PRESS) {
+                this.mTestGridHeight--;
+                this.mTestGridMinColourIndex = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
+
+                this.populateTestGrid(this.mTestGridWidth, this.mTestGridHeight);
+            }
 
             //Camera Translation
 
@@ -237,7 +245,7 @@ namespace TestGame {
 
                     let rotation : number = Math.random() < 0.02 ? 45 : 0;
                     
-                    this.mTestGridQuads[x * this.mTestGridWidth + y] = new WDOH.Quad(pos, size, this.mColours[y]);
+                    this.mTestGridQuads[x * this.mTestGridWidth + y] = new WDOH.Quad(pos, size, this.mColours[y], null);
                 }
             }
         }

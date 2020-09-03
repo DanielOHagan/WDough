@@ -1,6 +1,6 @@
 namespace WDOH {
 
-    export class Vector3 {
+    export class Vector3 implements IVector<Vector3> {
 
         private mX : number;
         private mY : number;
@@ -70,6 +70,14 @@ namespace WDOH {
             this.mX *= scalar;
             this.mY *= scalar;
             this.mZ *= scalar;
+
+            return this;
+        }
+
+        public divide(div : number) : Vector3 {
+            this.mX /= div;
+            this.mY /= div;
+            this.mZ /= div;
 
             return this;
         }

@@ -7,7 +7,5 @@ namespace WDOH {
         beginScene(camera : ICamera) : void;
         endScene() : void;
 
-        flush() : void;
-
     }
 }

@@ -33,10 +33,6 @@ namespace WDOH {
             this.mRenderer2d.endScene();
         }
 
-        public flush() : void {
-            this.mRenderer2d.flush();
-        }
-
         public submitShader(
             shader : IShader,
             vertexArray : IVertexArray,
