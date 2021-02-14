@@ -1,28 +1,36 @@
 namespace WDOH {
 
-    export abstract class ARenderBatch<T extends AGeometry> {
+    export abstract class ARenderBatch<T extends AGeometry2D> {
+
+        public static readonly DEFUALT_WHITE_TEXTURE_SLOT : number = 0;
 
         public readonly MAX_GEOMETRY_COUNT : number;
         public readonly MAX_VERTEX_COUNT : number;
         public readonly MAX_INDEX_COUNT  : number;
+        public readonly MAX_TEXTURE_SLOT_INDEX : number;
 
         protected mData : number[];
         protected mDataIndex : number;
         protected mTextureSlots : Map<number, ITexture>;
-        protected mTextureSlotIndex : number;
+        protected mNextTextureSlotIndex : number;
         protected mVertexCount : number;
         protected mIndexCount : number;
 
-        protected constructor(maxGeometryCount : number) {
+        //TODO:: Maybe add a bounding box that includes all AGeo in this batch,
+        // which can be checked before rendering if any are in the displayed area.
+        // When adding a quad, check if the pos + or - size is greater or less than the current bounding box.
+
+        protected constructor(maxGeometryCount : number, maxVertexCount : number, maxIndexCount : number, maxTexSlotIndex : number) {
             this.MAX_GEOMETRY_COUNT = maxGeometryCount;
-            this.MAX_VERTEX_COUNT = maxGeometryCount * 4;
-            this.MAX_INDEX_COUNT = maxGeometryCount * 6;
+            this.MAX_VERTEX_COUNT = maxVertexCount;
+            this.MAX_INDEX_COUNT = maxIndexCount;
+            this.MAX_TEXTURE_SLOT_INDEX = maxTexSlotIndex;
 
             this.mData = [];
             this.mDataIndex = 0;
             this.mTextureSlots = new Map();
-            this.mTextureSlots.set(0, Renderer2DStorage.mWhiteTexture);
-            this.mTextureSlotIndex = 1;
+            this.mTextureSlots.set(ARenderBatch.DEFUALT_WHITE_TEXTURE_SLOT, Renderer2DStorage.mWhiteTexture);
+            this.mNextTextureSlotIndex = 1;
             this.mVertexCount = 0;
             this.mIndexCount = 0;
         }
@@ -55,7 +63,7 @@ namespace WDOH {
          *  geometry could not be added to batch due to lack of space or 
          *  another reason
          */
-        public abstract addAll(geometryArray : T[]) : boolean;
+        public abstract addAll(geometryArray : T[], textureSlotIndex : number) : boolean;
 
         /**
          * Set the values of this batch to those of the one passed as an argument.
@@ -76,13 +84,18 @@ namespace WDOH {
             this.mData = [];
             this.mDataIndex = 0;
             this.mTextureSlots.clear();
-            this.mTextureSlots.set(0, Renderer2DStorage.mWhiteTexture);
-            this.mTextureSlotIndex = 1;
+            this.mTextureSlots.set(ARenderBatch.DEFUALT_WHITE_TEXTURE_SLOT, Renderer2DStorage.mWhiteTexture);
+            this.mNextTextureSlotIndex = 1;
         }
 
+        /**
+         * Checks if the texture is being stored in batch.
+         * @param textureId Id of the texture.
+         * @returns True if texture is found, false if not.
+         */
         public hasTextureId(textureId : number) : boolean {
-            for (let id of this.mTextureSlots.keys()) {
-                if (textureId === id) {
+            for (let texture of this.mTextureSlots.values()) {
+                if (textureId === texture.getId()) {
                     return true;
                 }
             }
@@ -90,18 +103,47 @@ namespace WDOH {
             return false;
         }
 
+        /**
+         * Get the texture slot index of the given texture.
+         * This method assumes that the texture is already stored in mTextureSlots
+         * @param textureId Id of the texture.
+         * @returns Texture slot index of the texture, or -1 if not found
+         */
         public getTextureSlotIndex(textureId : number) : number {
             let textureSlotIndex : number = 0;
             
             for (let texture of this.mTextureSlots.values()) {
-                textureSlotIndex++;
-
+                if (texture === null || texture.getId() === Renderer2DStorage.mWhiteTexture.getId()) {
+                    textureSlotIndex++;
+                    continue;   
+                }
+                
                 if (textureId === texture.getId()) {
                     return textureSlotIndex;
                 }
+
+                textureSlotIndex++;
             }
 
-            return textureSlotIndex;
+            mApplication.getLogger().warnApp("TexId: " + textureId + " not found in batch");
+
+            return -1;
+        }
+
+        /**
+         * Returns true/false if batch has enough space for given number
+         *  of vertices.
+         * Logs error if given vertexCount is negative.
+         * @param vertexCount 
+         * @returns Boolean for if batch has enough space for vertexCount
+         */
+        public hasSpace(vertexCount : number) : boolean {
+            if (vertexCount < 0) {
+                mApplication.getLogger().errWDOH("batch.hasSpace() given negative argument.");
+                return false;
+            }
+
+            return this.mVertexCount + vertexCount <= this.MAX_VERTEX_COUNT;
         }
 
         public getData() : number[] {
@@ -114,6 +156,10 @@ namespace WDOH {
 
         public getIndexCount() : number {
             return this.mIndexCount;
+        }
+
+        public hasTextureSlotsAvailable() : boolean {
+            return this.mNextTextureSlotIndex <= this.MAX_TEXTURE_SLOT_INDEX;
         }
     }
 }

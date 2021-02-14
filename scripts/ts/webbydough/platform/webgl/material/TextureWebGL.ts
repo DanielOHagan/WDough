@@ -53,7 +53,7 @@ namespace WDOH {
                 let image : HTMLImageElement = new Image();
                 image.src = filePath;
                 texture.mData = image;
-                image.onload = texture.onHtmlImageLoad.bind(this, image);
+                image.onload = texture.onHtmlImageLoad.bind(this, texture, image);
 
                 texture.bind();
 
@@ -74,8 +74,6 @@ namespace WDOH {
                     mContext.UNSIGNED_BYTE,
                     TextureWebGL.TEXTURE_PLACEHOLDER_DATA
                 );
-
-                texture.mLoaded = true;
             } else {
                 texture.mHandle = null;
                 texture.mData = null;
@@ -119,6 +117,10 @@ namespace WDOH {
             texture.mLoaded = true;
 
             return texture;
+        }
+
+        public isDefined() : boolean {
+            return this.mHandle !== null;
         }
 
         public getId() : number {
@@ -178,43 +180,43 @@ namespace WDOH {
             this.delete();
         }
 
-        private onHtmlImageLoad(htmlImage : HTMLImageElement) : void {
-            if (this.mData !== null) {
+        private onHtmlImageLoad(thisTexture : TextureWebGL, htmlImage : HTMLImageElement) : void {
+            if (thisTexture.mData !== null) {
                 //Get data from the image element
-                this.mWidth = htmlImage.width;
-                this.mHeight = htmlImage.height;
+                thisTexture.mWidth = htmlImage.width;
+                thisTexture.mHeight = htmlImage.height;
 
                 //Determine file type
                 let extension : string | undefined = htmlImage.src.split('.').pop()?.toLowerCase();
 
                 if (extension === undefined) {
-                    this.mFileType = EFileTypeTextureWebGL.NONE
+                    thisTexture.mFileType = EFileTypeTextureWebGL.NONE
                 }
 
                 switch(extension) {
                     case EFileTypeTextureWebGL.JPEG:
-                        this.mFileType = EFileTypeTextureWebGL.JPEG;
-                        this.mAlphaChannel = false;
+                        thisTexture.mFileType = EFileTypeTextureWebGL.JPEG;
+                        thisTexture.mAlphaChannel = false;
                         break;
                     case EFileTypeTextureWebGL.PNG:
-                        this.mFileType = EFileTypeTextureWebGL.PNG;
-                        this.mAlphaChannel = true;
+                        thisTexture.mFileType = EFileTypeTextureWebGL.PNG;
+                        thisTexture.mAlphaChannel = true;
                         break;
                 }
                 
-                if (this.mFileType === EFileTypeTextureWebGL.NONE) {
+                if (thisTexture.mFileType === EFileTypeTextureWebGL.NONE) {
                     let msg : string = "Unable to determine image type. Src: " + htmlImage.src;
-                    this.cleanUp();
+                    thisTexture.cleanUp();
                     throw new Error(msg);
                 }
                 
                 //Bind and upload data
-                this.bind();
+                thisTexture.bind();
 
                 let internalFormat : GLint;
                 let format : GLint;
 
-                if (this.mAlphaChannel) {
+                if (thisTexture.mAlphaChannel) {
                     internalFormat = mContext.RGBA;
                     format = mContext.RGBA;
                 } else {
@@ -226,12 +228,12 @@ namespace WDOH {
                     mContext.TEXTURE_2D,
                     TextureWebGL.DEFAULT_MIPMAP_LOD,
                     internalFormat,
-                    this.mWidth,
-                    this.mHeight,
+                    thisTexture.mWidth,
+                    thisTexture.mHeight,
                     0,
                     format,
                     mContext.UNSIGNED_BYTE,
-                    this.mData
+                    thisTexture.mData
                 );
                 
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_S, mContext.CLAMP_TO_EDGE);
@@ -239,9 +241,9 @@ namespace WDOH {
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_MIN_FILTER, mContext.LINEAR);
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_MAG_FILTER, mContext.NEAREST);
 
-                this.mLoaded = true;
+                thisTexture.mLoaded = true;
             } else {
-                this.mLoaded = false;
+                thisTexture.mLoaded = false;
             }
         }
 

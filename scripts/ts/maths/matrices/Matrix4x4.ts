@@ -69,29 +69,29 @@ namespace WDOH {
         }
 
         public mulMat4x4(mat : Matrix4x4) : Matrix4x4 {
-            let dest : Matrix4x4 = new Matrix4x4();
+            let temp : Matrix4x4 = new Matrix4x4();
 
-            dest.m00 = (mat.m00 * this.m00) + (mat.m01 * this.m10) + (mat.m02 * this.m20) + (mat.m03 * this.m30);
-            dest.m01 = (mat.m00 * this.m01) + (mat.m01 * this.m11) + (mat.m02 * this.m21) + (mat.m03 * this.m31);
-            dest.m02 = (mat.m00 * this.m02) + (mat.m01 * this.m12) + (mat.m02 * this.m22) + (mat.m03 * this.m32);
-            dest.m03 = (mat.m00 * this.m03) + (mat.m01 * this.m13) + (mat.m02 * this.m23) + (mat.m03 * this.m33);
+            temp.m00 = (mat.m00 * this.m00) + (mat.m01 * this.m10) + (mat.m02 * this.m20) + (mat.m03 * this.m30);
+            temp.m01 = (mat.m00 * this.m01) + (mat.m01 * this.m11) + (mat.m02 * this.m21) + (mat.m03 * this.m31);
+            temp.m02 = (mat.m00 * this.m02) + (mat.m01 * this.m12) + (mat.m02 * this.m22) + (mat.m03 * this.m32);
+            temp.m03 = (mat.m00 * this.m03) + (mat.m01 * this.m13) + (mat.m02 * this.m23) + (mat.m03 * this.m33);
 
-            dest.m10 = (mat.m10 * this.m00) + (mat.m11 * this.m10) + (mat.m12 * this.m20) + (mat.m13 * this.m30);
-            dest.m11 = (mat.m10 * this.m01) + (mat.m11 * this.m11) + (mat.m12 * this.m21) + (mat.m13 * this.m31);
-            dest.m12 = (mat.m10 * this.m02) + (mat.m11 * this.m12) + (mat.m12 * this.m22) + (mat.m13 * this.m32);
-            dest.m13 = (mat.m10 * this.m03) + (mat.m11 * this.m13) + (mat.m12 * this.m23) + (mat.m13 * this.m33);
+            temp.m10 = (mat.m10 * this.m00) + (mat.m11 * this.m10) + (mat.m12 * this.m20) + (mat.m13 * this.m30);
+            temp.m11 = (mat.m10 * this.m01) + (mat.m11 * this.m11) + (mat.m12 * this.m21) + (mat.m13 * this.m31);
+            temp.m12 = (mat.m10 * this.m02) + (mat.m11 * this.m12) + (mat.m12 * this.m22) + (mat.m13 * this.m32);
+            temp.m13 = (mat.m10 * this.m03) + (mat.m11 * this.m13) + (mat.m12 * this.m23) + (mat.m13 * this.m33);
 
-            dest.m20 = (mat.m20 * this.m00) + (mat.m21 * this.m10) + (mat.m22 * this.m20) + (mat.m23 * this.m30);
-            dest.m21 = (mat.m20 * this.m01) + (mat.m21 * this.m11) + (mat.m22 * this.m21) + (mat.m23 * this.m31);
-            dest.m22 = (mat.m20 * this.m02) + (mat.m21 * this.m12) + (mat.m22 * this.m22) + (mat.m23 * this.m32);
-            dest.m23 = (mat.m20 * this.m03) + (mat.m21 * this.m13) + (mat.m22 * this.m23) + (mat.m23 * this.m33);
+            temp.m20 = (mat.m20 * this.m00) + (mat.m21 * this.m10) + (mat.m22 * this.m20) + (mat.m23 * this.m30);
+            temp.m21 = (mat.m20 * this.m01) + (mat.m21 * this.m11) + (mat.m22 * this.m21) + (mat.m23 * this.m31);
+            temp.m22 = (mat.m20 * this.m02) + (mat.m21 * this.m12) + (mat.m22 * this.m22) + (mat.m23 * this.m32);
+            temp.m23 = (mat.m20 * this.m03) + (mat.m21 * this.m13) + (mat.m22 * this.m23) + (mat.m23 * this.m33);
 
-            dest.m30 = (mat.m30 * this.m00) + (mat.m31 * this.m10) + (mat.m32 * this.m20) + (mat.m33 * this.m30);
-            dest.m31 = (mat.m30 * this.m01) + (mat.m31 * this.m11) + (mat.m32 * this.m21) + (mat.m33 * this.m31);
-            dest.m32 = (mat.m30 * this.m02) + (mat.m31 * this.m12) + (mat.m32 * this.m22) + (mat.m33 * this.m32);
-            dest.m33 = (mat.m30 * this.m03) + (mat.m31 * this.m13) + (mat.m32 * this.m23) + (mat.m33 * this.m33);
+            temp.m30 = (mat.m30 * this.m00) + (mat.m31 * this.m10) + (mat.m32 * this.m20) + (mat.m33 * this.m30);
+            temp.m31 = (mat.m30 * this.m01) + (mat.m31 * this.m11) + (mat.m32 * this.m21) + (mat.m33 * this.m31);
+            temp.m32 = (mat.m30 * this.m02) + (mat.m31 * this.m12) + (mat.m32 * this.m22) + (mat.m33 * this.m32);
+            temp.m33 = (mat.m30 * this.m03) + (mat.m31 * this.m13) + (mat.m32 * this.m23) + (mat.m33 * this.m33);
 
-            this.set(dest);
+            this.set(temp);
 
             return this;
         }
@@ -203,25 +203,25 @@ namespace WDOH {
             let nm12 = (this.m02 * rm10) + (this.m12 * rm11) + (this.m22 * rm12);
             let nm13 = (this.m03 * rm10) + (this.m13 * rm11) + (this.m23 * rm12);
 
-            let mat : Matrix4x4 = new Matrix4x4();
-            mat.m00 = nm00;
-            mat.m01 = nm01;
-            mat.m02 = nm02;
-            mat.m03 = nm03;
-            mat.m10 = nm10;
-            mat.m11 = nm11;
-            mat.m12 = nm12;
-            mat.m13 = nm13;
-            mat.m20 = this.m00 * rm20 + this.m10 * rm21 + this.m20 * rm22;
-            mat.m21 = this.m01 * rm20 + this.m11 * rm21 + this.m21 * rm22;
-            mat.m22 = this.m02 * rm20 + this.m12 * rm21 + this.m22 * rm22;
-            mat.m23 = this.m03 * rm20 + this.m13 * rm21 + this.m23 * rm22;
-            mat.m30 = this.m30;
-            mat.m31 = this.m31;
-            mat.m32 = this.m32;
-            mat.m33 = this.m33;
+            let temp : Matrix4x4 = new Matrix4x4();
+            temp.m00 = nm00;
+            temp.m01 = nm01;
+            temp.m02 = nm02;
+            temp.m03 = nm03;
+            temp.m10 = nm10;
+            temp.m11 = nm11;
+            temp.m12 = nm12;
+            temp.m13 = nm13;
+            temp.m20 = this.m00 * rm20 + this.m10 * rm21 + this.m20 * rm22;
+            temp.m21 = this.m01 * rm20 + this.m11 * rm21 + this.m21 * rm22;
+            temp.m22 = this.m02 * rm20 + this.m12 * rm21 + this.m22 * rm22;
+            temp.m23 = this.m03 * rm20 + this.m13 * rm21 + this.m23 * rm22;
+            temp.m30 = this.m30;
+            temp.m31 = this.m31;
+            temp.m32 = this.m32;
+            temp.m33 = this.m33;
 
-            this.set(mat);
+            this.set(temp);
 
             return this;
         }

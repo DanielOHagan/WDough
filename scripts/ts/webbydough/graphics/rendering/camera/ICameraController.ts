@@ -16,6 +16,7 @@ namespace WDOH {
         setRotation(rotation : number) : void;
         getRotation() : number;
 
+        getZoomLevel() : number;
         setZoomScale(scale : number) : void;
         getZoomScale() : number;
         setZoomMax(maxZoom : number) : void;

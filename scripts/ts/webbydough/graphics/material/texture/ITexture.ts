@@ -2,6 +2,8 @@ namespace WDOH {
 
     export interface ITexture {
 
+        isDefined() : boolean;
+
         getId() : number;
 
         getWidth() : number;

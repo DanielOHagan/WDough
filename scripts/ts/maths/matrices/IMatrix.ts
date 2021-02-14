@@ -1,6 +1,5 @@
 namespace WDOH {
 
-
     export interface IMatrix<T> {
 
         identity() : T;

@@ -1,6 +1,6 @@
 namespace WDOH {
 
-    export abstract class AGeometry {
+    export abstract class AGeometry2D {
 
         public mPosition : Vector3;
         public mSize : Vector2;

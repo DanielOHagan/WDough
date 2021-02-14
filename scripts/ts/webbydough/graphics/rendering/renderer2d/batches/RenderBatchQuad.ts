@@ -4,14 +4,14 @@ namespace WDOH {
 
         public static readonly BYTE_SIZE : number = 10 * 4;
 
-        public constructor(maxGeometryCount : number) {
-            super(maxGeometryCount);
+        public constructor(maxGeometryCount : number, maxTextSlotIndex : number) {
+            super(maxGeometryCount, maxGeometryCount * 4, maxGeometryCount * 6, maxTextSlotIndex);
         }
 
-        public add(quad : Quad, textureSlotIndex : number | null) : boolean {
+        public add(quad : Quad, textureSlotIndex : number) : boolean {
+            //Add data to batch buffer
             if (this.mVertexCount + 4 < this.MAX_VERTEX_COUNT) {
                 let texCoordsIndex : number = 0;
-                let texIndex : number = textureSlotIndex !== null ? textureSlotIndex : 0;
 
                 this.addQuadVertexToBatch(
                     quad.mPosition.x,
@@ -23,7 +23,7 @@ namespace WDOH {
                     quad.mColour.w,
                     quad.mTextureCoordsU[texCoordsIndex],
                     quad.mTextureCoordsV[texCoordsIndex],
-                    texIndex
+                    textureSlotIndex
                 );
                 texCoordsIndex++;
                 
@@ -37,7 +37,7 @@ namespace WDOH {
                     quad.mColour.w,
                     quad.mTextureCoordsU[texCoordsIndex],
                     quad.mTextureCoordsV[texCoordsIndex],
-                    texIndex
+                    textureSlotIndex
                 );
                 texCoordsIndex++;
 
@@ -51,7 +51,7 @@ namespace WDOH {
                     quad.mColour.w,
                     quad.mTextureCoordsU[texCoordsIndex],
                     quad.mTextureCoordsV[texCoordsIndex],
-                    texIndex
+                    textureSlotIndex
                 );
                 texCoordsIndex++;
 
@@ -65,7 +65,7 @@ namespace WDOH {
                     quad.mColour.w,
                     quad.mTextureCoordsU[texCoordsIndex],
                     quad.mTextureCoordsV[texCoordsIndex],
-                    texIndex
+                    textureSlotIndex
                 );
 
                 this.mVertexCount += 4;
@@ -78,28 +78,97 @@ namespace WDOH {
             }
         }
 
-        public addTextured(quad : Quad) : boolean {
-            if (this.mTextureSlots.size < Renderer2DStorage.BATCH_MAX_TEXTURE_SLOT_INDEX) {
-                let textureSlotIndex : number | null = null;
+        public addAll(quadArray : Quad[], textureSlotIndex : number) : boolean {
+            if (this.mVertexCount + (quadArray.length * 4) < this.MAX_VERTEX_COUNT) {
+                for (let quad of quadArray) {
+                    let texCoordsIndex : number = 0;
 
-                if (quad.mTexture !== null) {
-                    textureSlotIndex = this.getTextureSlotIndex(quad.mTexture.getId());
+                    this.addQuadVertexToBatch(
+                        quad.mPosition.x,
+                        quad.mPosition.y,
+                        quad.mPosition.z,
+                        quad.mColour.x,
+                        quad.mColour.y,
+                        quad.mColour.z,
+                        quad.mColour.w,
+                        quad.mTextureCoordsU[texCoordsIndex],
+                        quad.mTextureCoordsV[texCoordsIndex],
+                        textureSlotIndex
+                    );
+                    texCoordsIndex++;
+                    
+                    this.addQuadVertexToBatch(
+                        quad.mPosition.x + quad.mSize.x,
+                        quad.mPosition.y,
+                        quad.mPosition.z,
+                        quad.mColour.x,
+                        quad.mColour.y,
+                        quad.mColour.z,
+                        quad.mColour.w,
+                        quad.mTextureCoordsU[texCoordsIndex],
+                        quad.mTextureCoordsV[texCoordsIndex],
+                        textureSlotIndex
+                    );
+                    texCoordsIndex++;
+
+                    this.addQuadVertexToBatch(
+                        quad.mPosition.x + quad.mSize.x,
+                        quad.mPosition.y + quad.mSize.y,
+                        quad.mPosition.z,
+                        quad.mColour.x,
+                        quad.mColour.y,
+                        quad.mColour.z,
+                        quad.mColour.w,
+                        quad.mTextureCoordsU[texCoordsIndex],
+                        quad.mTextureCoordsV[texCoordsIndex],
+                        textureSlotIndex
+                    );
+                    texCoordsIndex++;
+
+                    this.addQuadVertexToBatch(
+                        quad.mPosition.x,
+                        quad.mPosition.y + quad.mSize.y,
+                        quad.mPosition.z,
+                        quad.mColour.x,
+                        quad.mColour.y,
+                        quad.mColour.z,
+                        quad.mColour.w,
+                        quad.mTextureCoordsU[texCoordsIndex],
+                        quad.mTextureCoordsV[texCoordsIndex],
+                        textureSlotIndex
+                    );
+                    
+                    this.mVertexCount += 4;
+                    this.mIndexCount += 6;
                 }
 
-                return this.add(quad, textureSlotIndex);
+                return true;
             }
 
             return false;
         }
 
-        public addAll(quadArray : Quad[]) : boolean {
-            //TODO:: Sort into those with the same texture so the texIndex doesn't have to be
-            //  querried each time.
+        public addTextured(quad : Quad) : boolean {
+            if (quad.mTexture !== null) { 
 
+                let texSlotIndex : number = this.hasTextureId(quad.mTexture.getId()) ?
+                    this.getTextureSlotIndex(quad.mTexture.getId()) : this.addNewTexture(quad.mTexture);
+
+                if (texSlotIndex === -1) {
+                    return false;
+                }
+
+                return this.add(quad, texSlotIndex);
+            }
+
+            return false;
+        }
+        
+        public addAllTextured(quadArray : Quad[]) : boolean {
             if (this.mVertexCount + (quadArray.length * 4) < this.MAX_VERTEX_COUNT) {
                 for (let quad of quadArray) {
                     let texCoordsIndex : number = 0;
-                    let texIndex : number = quad.mTexture !== null ? this.getTextureSlotIndex(quad.mTexture.getId()) : 0;
+                    let texIndex = quad.mTexture !== null ? this.getTextureSlotIndex(quad.mTexture.getId()) : 0;
 
                     this.addQuadVertexToBatch(
                         quad.mPosition.x,
@@ -161,10 +230,126 @@ namespace WDOH {
                 }
 
                 return true;
-
-            } else {
-                return false;
             }
+
+            return false;
+        }
+
+        public addAllWithSameTexture(quadArray : Quad[]) : boolean {
+            if (quadArray[0].mTexture !== null) { 
+
+                let texSlotIndex : number = -1;
+                if (!this.hasTextureId(quadArray[0].mTexture.getId())) {
+                    texSlotIndex = this.addNewTexture(quadArray[0].mTexture);
+
+                    if (texSlotIndex === -1) {
+                        return false;
+                    }
+                }
+
+                return this.addAll(quadArray, texSlotIndex)
+            }
+
+            return false;
+        }
+
+        // public addAllWithSameTexture(quadArray : Quad[]) : boolean {
+        //     if (this.mVertexCount + (quadArray.length * 4) < this.MAX_VERTEX_COUNT && quadArray[0].mTexture !== null) {
+        //         let texIndex : number = this.getTextureSlotIndex(quadArray[0].mTexture.getId());
+
+        //         for (let quad of quadArray) {
+        //             let texCoordsIndex : number = 0;
+    
+        //             this.addQuadVertexToBatch(
+        //                     quad.mPosition.x,
+        //                     quad.mPosition.y,
+        //                     quad.mPosition.z,
+        //                     quad.mColour.x,
+        //                     quad.mColour.y,
+        //                     quad.mColour.z,
+        //                     quad.mColour.w,
+        //                     quad.mTextureCoordsU[texCoordsIndex],
+        //                     quad.mTextureCoordsV[texCoordsIndex],
+        //                     texIndex
+        //                 );
+        //             texCoordsIndex++;
+                        
+        //             this.addQuadVertexToBatch(
+        //                 quad.mPosition.x + quad.mSize.x,
+        //                 quad.mPosition.y,
+        //                 quad.mPosition.z,
+        //                 quad.mColour.x,
+        //                 quad.mColour.y,
+        //                 quad.mColour.z,
+        //                 quad.mColour.w,
+        //                 quad.mTextureCoordsU[texCoordsIndex],
+        //                 quad.mTextureCoordsV[texCoordsIndex],
+        //                 texIndex
+        //             );
+        //             texCoordsIndex++;
+    
+        //             this.addQuadVertexToBatch(
+        //                 quad.mPosition.x + quad.mSize.x,
+        //                 quad.mPosition.y + quad.mSize.y,
+        //                 quad.mPosition.z,
+        //                 quad.mColour.x,
+        //                 quad.mColour.y,
+        //                 quad.mColour.z,
+        //                 quad.mColour.w,
+        //                 quad.mTextureCoordsU[texCoordsIndex],
+        //                 quad.mTextureCoordsV[texCoordsIndex],
+        //                 texIndex
+        //             );
+        //             texCoordsIndex++;
+    
+        //             this.addQuadVertexToBatch(
+        //                 quad.mPosition.x,
+        //                 quad.mPosition.y + quad.mSize.y,
+        //                 quad.mPosition.z,
+        //                 quad.mColour.x,
+        //                 quad.mColour.y,
+        //                 quad.mColour.z,
+        //                 quad.mColour.w,
+        //                 quad.mTextureCoordsU[texCoordsIndex],
+        //                 quad.mTextureCoordsV[texCoordsIndex],
+        //                 texIndex
+        //             );
+                        
+        //             this.mVertexCount += 4;
+        //             this.mIndexCount += 6;
+        //         }
+    
+        //         return true;
+        //     }
+
+        //     return false;
+        // }
+
+        public addNewTexture(texture : ITexture) : number {
+            if (this.hasTextureSlotsAvailable()) {
+
+                //if (texture !== null) {
+                    // textureSlotIndex = this.getTextureSlotIndex(texture.getId());
+                    //Add new texture
+                    // if (textureSlotIndex === -1) {
+                        let texSlotIndex : number = this.mNextTextureSlotIndex.valueOf();
+
+                        this.mTextureSlots.set(texSlotIndex, texture);
+                        // textureSlotIndex = this.mNextTextureSlotIndex.valueOf();
+                        this.mNextTextureSlotIndex++;
+
+                        return texSlotIndex;
+                    // }
+
+                    // mApplication.getLogger().infoWDOH("New tex");
+
+                    
+                // } else {
+                //     return -1;
+                // }
+            }
+
+            return -1;
         }
 
         public copy(copy : ARenderBatch<Quad>) : void {
@@ -172,25 +357,14 @@ namespace WDOH {
         }
 
         public bind() : void {
-            let slotIndex : number = 0;
+            let index : number = 0;
+            for (let texture of this.mTextureSlots.values()) {
+                if (texture === null) continue;
 
-            for (let texture of this.mTextureSlots.values()) {                
-                if (texture?.hasLoaded()) {
-                    texture.bind();
-                    texture.activate(slotIndex);
-                } else {
-                    //Set unused texture slots to white texture
-                    Renderer2DStorage.mWhiteTexture.bind();
-                    Renderer2DStorage.mWhiteTexture.activate(slotIndex);
-                }
+                texture.activate(index);
+                texture.bind();
 
-                slotIndex++;
-            }
-
-            for (let i = this.mTextureSlotIndex; i < Renderer2DStorage.BATCH_MAX_TEXTURE_SLOT_INDEX; i++) {
-                //Set unused texture slots to white texture
-                Renderer2DStorage.mWhiteTexture.bind();
-                Renderer2DStorage.mWhiteTexture.activate(i);
+                index++;
             }
         }
 

@@ -112,6 +112,10 @@ namespace TestGame {
             return this.mRotation;
         }
 
+        public getZoomLevel() : number {
+            return this.mZoomLevel;
+        }
+
         public setZoomScale(zoomScale : number) : void {
             this.mZoomScale = zoomScale;
         }
@@ -144,12 +148,15 @@ namespace TestGame {
             this.mZoomLevel -= zoomAmount * this.mZoomScale;
 
             //Clamp mZoomLevel
-            if (this.mZoomLevel > this.mZoomMax) {
-                this.mZoomLevel = this.mZoomMax;
-            } else if (this.mZoomLevel < this.mZoomMin) {
-                this.mZoomLevel = this.mZoomMin;
-            }
+            // if (this.mZoomLevel > this.mZoomMax) {
+            //     this.mZoomLevel = this.mZoomMax;
+            // } else if (this.mZoomLevel < this.mZoomMin) {
+            //     this.mZoomLevel = this.mZoomMin;
+            // }
+            WDOH.MathsWDOH.clamp(this.mZoomLevel, this.mZoomMin, this.mZoomMax);
     
+            //TODO:: Possible optimisation, even if the zoom is clamped and stays at the same min / max value, the projection mat is still re-calculated.
+            // Maybe add a check to see if the zoom level changes then perform the updating.
             this.updateProjection();
         }
 

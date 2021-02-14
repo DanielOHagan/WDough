@@ -4,8 +4,8 @@ namespace WDOH {
 
     export class Canvas {
         
-        public static readonly DEFAULT_CANVAS_ID = "wdoh-canvas";
-        public static readonly DEFAULT_CANVAS_WRAPPER_ID = "defualt-wdoh-canvas-wrapper";
+        public static readonly DEFAULT_CANVAS_ID : string = "wdoh-canvas";
+        public static readonly DEFAULT_CANVAS_WRAPPER_ID : string = "defualt-wdoh-canvas-wrapper";
         private static readonly WEBGL_2_CONTEXT_STRING : string = "webgl2";
 
         private mCanvasNode : HTMLCanvasElement;
@@ -168,11 +168,8 @@ namespace WDOH {
         public areSizesValid(width : number, height : number) : boolean {
             return !(
                 width < this.mMinWidth ||
-                height < this.mMinHeight ||
-                
-                (
-                    this.mMaxSizeEnabled &&
-                    (
+                height < this.mMinHeight || (
+                    this.mMaxSizeEnabled && (
                         width > this.mMaxWidth ||
                         height > this.mMaxHeight
                     )
@@ -180,20 +177,21 @@ namespace WDOH {
             );
         }
 
-        public convertScreenToWorldSpace(
+        //TODO:: Have multiple methods for more specific calculations that return smaller vectors (vec2 and vec3 instead of it always being a vec4)
+        public convertScreenToCanvasSpace(
             offsetX : number,
             offsetY : number,
             screenX : number,
             screenY : number,
-            // scaleX : number,
-            // scaleY : number,
+            scaleX : number,
+            scaleY : number,
             z : number,
             w : number
-            // rotationRads : number
+            // rotationRads : number //NOTE:: Not sure if rotation should be done here as this returns a position vector.
         ) : Vector4 {
 
-            let worldX = ((screenX / this.mCanvasNode.clientWidth * 2 - 1) + offsetX / this.mAspectRatio) * this.mAspectRatio;
-            let worldY = (screenY / this.mCanvasNode.clientHeight * -2 + 1) + offsetY;
+            let worldX = ((((screenX / this.mCanvasNode.clientWidth) * 2) - 1) + ((offsetX / scaleX) / this.mAspectRatio)) * this.mAspectRatio * scaleX;
+            let worldY = ((((screenY / this.mCanvasNode.clientHeight) * -2) + 1) + ((offsetY / scaleY * this.mAspectRatio) / this.mAspectRatio)) * scaleY;
 
             return new Vector4(worldX, worldY, z, w);
         }

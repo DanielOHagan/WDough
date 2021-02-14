@@ -5,7 +5,7 @@ namespace WDOH {
         public static loadTextureFromFile(filePath : string, bindingPoint : ETextureBindingPoint) : ITexture {
             let texture : ITexture = TextureWebGL.loadFromFile(filePath, bindingPoint);
 
-            if (texture.hasLoaded()) {
+            if (texture.isDefined()) {
                 return texture;
             } else {
                 throw new Error(`Failed to load texture: ${filePath}`);

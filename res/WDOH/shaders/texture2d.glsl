@@ -36,12 +36,15 @@ in float vTexIndex;
 out vec4 fragColour;
 
 vec4 getFragColour() {
-    vec4 fragColour = vec4(1, 1, 1, 1);
+    vec4 fragColour;
+
+    //Add Colour
+    // fragColour = vColour;
 
     //Add Texture Colour
     switch (int(vTexIndex)) {
         case 0: //White Texture
-            fragColour = texture(uTextures[0], vTexCoord);
+            fragColour = vColour * texture(uTextures[0], vTexCoord);
             break;
         case 1:
             fragColour = texture(uTextures[1], vTexCoord);
@@ -65,9 +68,6 @@ vec4 getFragColour() {
             fragColour = texture(uTextures[7], vTexCoord);
             break;
     }
-
-    //Add Colour
-    fragColour = fragColour * vColour;
 
     return fragColour;
 }

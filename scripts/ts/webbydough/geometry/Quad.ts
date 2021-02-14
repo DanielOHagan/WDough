@@ -1,6 +1,6 @@
 namespace WDOH {
 
-    export class Quad extends AGeometry {
+    export class Quad extends AGeometry2D {
         
         public mColour : Vector4;
         public mRotation : number;
@@ -12,30 +12,24 @@ namespace WDOH {
             pos : Vector3,
             size : Vector2,
             colour : Vector4,
+            rotation : number,
             texture : ITexture | null
         ) {
             super(pos, size);
             this.mPosition = pos;
             this.mSize = size;
             this.mColour = colour;
+            this.mRotation = rotation;
             this.mTexture = texture;
             this.mRotation = 0;
             this.mTextureCoordsU = [0, 1, 1, 0];
-            this.mTextureCoordsV = [0, 0, 1, 1];
+            this.mTextureCoordsV = [1, 1, 0, 0];
         }
 
         public isVec2Inside(vec2 : Vector2) : boolean {
-            //TODO:: Shorten this to one return line
-            let leftBound = this.mPosition.x;
-            let rightBound = this.mPosition.x + this.mSize.x;
-            let topBound = this.mPosition.y + this.mSize.y;
-            let bottomBound = this.mPosition.y;
-
-            if (vec2.x > rightBound || vec2.x < leftBound) return false;
-
-            if (vec2.y < bottomBound || vec2.y > topBound) return false;
-
-            return true;
+            return !(vec2.y < this.mPosition.y) &&
+                !(vec2.y > this.mPosition.y + this.mSize.y) &&
+                !(vec2.x > this.mPosition.x + this.mSize.x || vec2.x < this.mPosition.x);
         }
     }
 }
