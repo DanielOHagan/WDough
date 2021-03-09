@@ -87,20 +87,39 @@ namespace WDOH {
 
         public drawAllQuads(quadArray : Quad[]) : void {
             if (Renderer2DStorage.isReady()) {
-                let index : number = 0;
-                for (let batch of Renderer2DStorage.mRenderBatchQuadArray) {
-                    if (batch.addAll(quadArray, RenderBatchQuad.DEFUALT_WHITE_TEXTURE_SLOT)) {
-                        break;
-                    }
+                
+                //TODO:: This could maybe be optimised better
+                //Split source array into smaller ones to fit into batches
+                let splitQuadArray : Array<Quad[]> = [];
+                let sourceArrayLength : number = quadArray.length;
+                let splitCount : number = 0;
+                
+                while(sourceArrayLength > Renderer2DStorage.mRenderBatchMaxQuadCount) {
+                    splitQuadArray.push(quadArray.slice(
+                        splitCount * Renderer2DStorage.mRenderBatchMaxQuadCount,
+                        Renderer2DStorage.mRenderBatchMaxQuadCount
+                    ));
+                }
 
-                    //If at last batch then create new badge 
-                    if (index === Renderer2DStorage.mRenderBatchQuadIndex) {
-                        //Add to new batch
-                        Renderer2DStorage.createNewQuadBatch(quadArray);
-                        break;
-                    }
+                //Add quad array if no splits were made
+                if (splitQuadArray.length < 1) splitQuadArray.push(quadArray);
 
-                    index++;
+                for (let quads of splitQuadArray) {
+                    let index : number = 0;
+                    for (let batch of Renderer2DStorage.mRenderBatchQuadArray) {
+                        if (batch.addAll(quads, RenderBatchQuad.DEFUALT_WHITE_TEXTURE_SLOT)) {
+                            break;
+                        }
+                        
+                        //If at last batch then create new badge 
+                        if (index === Renderer2DStorage.mRenderBatchQuadIndex) {
+                            //Add to new batch
+                            Renderer2DStorage.createNewQuadBatch(quads);
+                            break;
+                        }
+                        
+                        index++;
+                    }
                 }
             }
         }
@@ -143,44 +162,18 @@ namespace WDOH {
             }
         }
 
-        // public drawAllTexturedQuads(quadArray : Quad[]) : void {
-        //     if (Renderer2DStorage.isReady()) {
+        public drawAllTexturedQuads(quadArray : Quad[]) : void {
+            if (Renderer2DStorage.isReady()) {
 
-        //         if (quad.mRotation !== 0) {
-        //             //TODO:: apply rotation to Quad position
-        //         }
+            }
+        }
 
-        //         //If none exist then create the first RenderBatchQuad and make it empty
-        //         if (Renderer2DStorage.mRenderBatchQuadArray.length < 1) {
-        //             Renderer2DStorage.createNewQuadBatch(null, null);
-        //         }
+        public drawAllSameTexturedQuads(quadArray : Quad[]) : void {
+            if (Renderer2DStorage.isReady()) {
 
-        //         //If textured search for texture in batches
-        //         if (quad.mTexture !== null) {
 
-        //             let index : number = 0;
-        //             for (let batch of Renderer2DStorage.mRenderBatchQuadArray) {
-        //                 if (batch.hasTextureId(quad.mTexture.getId()) || batch.hasTextureSlotsAvailable()) {
-        //                     //Added to a batch that contains the same texture or has texture slots available
-        //                     if (batch.addTextured(quad)) {
-        //                         break;
-        //                     }
-        //                 }
-
-        //                 index++;
-
-        //                 //If at last batch then create new badge 
-        //                 if (index === Renderer2DStorage.mRenderBatchQuadIndex) {
-        //                     //Add to new batch
-        //                     Renderer2DStorage.createNewQuadBatch(quad, null);
-        //                     break;
-        //                 }
-        //             }
-        //         } else {
-        //             mApplication.getLogger().warnApp("Texture is null, cannot draw.");
-        //         }
-        //     }
-        // }
+            }
+        }
         
         public cleanUp() : void {
             Renderer2DStorage.cleanUp();

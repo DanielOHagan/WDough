@@ -67,7 +67,7 @@ namespace WDOH {
 
                 //Upload texture sampler indexes
                 let samplerIndexes : number[] = [];
-                for (let i = 0; i <= Renderer2DStorage.mRenderBatchQuadMaxTextureSlotIndex; i++) {
+                for (let i = 0; i < Renderer2DStorage.mRenderBatchQuadMaxTextureSlotIndex + 1; i++) {
                     samplerIndexes[i] = i;
                 }
 

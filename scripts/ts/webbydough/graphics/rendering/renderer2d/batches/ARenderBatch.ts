@@ -65,6 +65,16 @@ namespace WDOH {
          */
         public abstract addAll(geometryArray : T[], textureSlotIndex : number) : boolean;
 
+        // /**
+        //  * Attempt to add items to array and return array of objects not added.
+        //  * 
+        //  * @param geometryArray The geometry objects attempting to be added to batch
+        //  * 
+        //  * @returns The remaining items in the array that were unable to be added to batch.
+        //  *  Or null if all items were added successfully.
+        //  */
+        // public abstract addAllPossible(geometryArray : T[]) : T[] | null;
+
         /**
          * Set the values of this batch to those of the one passed as an argument.
          * 

@@ -148,6 +148,13 @@ namespace WDOH {
             return false;
         }
 
+        // public addAllPossible(quadArray : Quad[]) : Quad[] | null {
+        //     let leftOverQuads : Quad[] | null = null;
+            
+
+        //     return leftOverQuads;
+        // }
+
         public addTextured(quad : Quad) : boolean {
             if (quad.mTexture !== null) { 
 
@@ -253,6 +260,7 @@ namespace WDOH {
             return false;
         }
 
+        //TODO:: Do I need this?
         // public addAllWithSameTexture(quadArray : Quad[]) : boolean {
         //     if (this.mVertexCount + (quadArray.length * 4) < this.MAX_VERTEX_COUNT && quadArray[0].mTexture !== null) {
         //         let texIndex : number = this.getTextureSlotIndex(quadArray[0].mTexture.getId());

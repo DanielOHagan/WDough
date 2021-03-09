@@ -227,9 +227,7 @@ namespace WDOH {
         }
         
         public scaleScalar(scale : number) : Matrix4x4 {
-            this.scaleXYZ(scale, scale, scale);
-
-            return this;
+            return this.scaleXYZ(scale, scale, scale);
         }
 
         public scaleXYZ(x : number, y : number, z : number) : Matrix4x4 {

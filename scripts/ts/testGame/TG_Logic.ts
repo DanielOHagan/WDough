@@ -12,8 +12,8 @@ namespace TestGame {
         private mColourChangeTime = 0;
         private mColours : WDOH.Vector4[] = [];
 
-        private mTestGridWidth = 21;
-        private mTestGridHeight = 21;
+        private mTestGridWidth = 100;
+        private mTestGridHeight = 500;
         private mTestGridMinColourIndex : number = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
         private mTestGridQuads : WDOH.Quad[] = [];
         private mQuadHoverColour : WDOH.Vector4 = new WDOH.Vector4(1, 0, 1, 1);
@@ -111,7 +111,6 @@ namespace TestGame {
                         }
                         
                         //this.mTestGridQuads[quadIndex].mTexture = this.mNumTextures[y + 1];
-                        // mApplication.getRenderer().render2D().drawQuad(this.mTestGridQuads[quadIndex]);
                         // mApplication.getRenderer().render2D().drawQuad(this.mTestGridQuads[quadIndex]);
                     }
                 }
