@@ -13,13 +13,18 @@ namespace TestGame {
         private mColours : WDOH.Vector4[] = [];
 
         private mTestGridWidth = 100;
-        private mTestGridHeight = 500;
+        private mTestGridHeight = 100;
         private mTestGridMinColourIndex : number = Math.min(this.mTestGridWidth - 1, this.mTestGridHeight - 1);
         private mTestGridQuads : WDOH.Quad[] = [];
+        private TESTING_testGridQuad2dArray = true;
+        private mTestGridQuads2dArray : WDOH.Quad[][] = [];
         private mQuadHoverColour : WDOH.Vector4 = new WDOH.Vector4(1, 0, 1, 1);
 
+        private mNumberTextures : WDOH.ITexture[] = [];
+        private mNumTexturesCount : number = 21;
+
         private mCursorWorldPos : WDOH.Vector4 = new WDOH.Vector4(0, 0, 0, 0);
-        private mCursorQuad : WDOH.Quad = new WDOH.Quad(new WDOH.Vector3(0, 0, 0.01), new WDOH.Vector2(0.025, 0.025), new WDOH.Vector4(0, 0, 1, 1), 0, null);
+        private mCursorQuad : WDOH.Quad = new WDOH.Quad(new WDOH.Vector3(0, 0, 1), new WDOH.Vector2(0.025, 0.025), new WDOH.Vector4(0, 0, 1, 1), 0, null);
 
         public constructor(aspectRatio : number) {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
@@ -45,7 +50,18 @@ namespace TestGame {
                 this.mColours[i] = new WDOH.Vector4(1, 1, 1, 1);
             }
 
-            this.populateTestGrid(this.mTestGridWidth, this.mTestGridHeight);
+            for (let i : number = 0; i < this.mNumTexturesCount; i++) {
+                this.mNumberTextures[i] = WDOH.TextureLoader.loadTextureFromFile(
+                    "res/TG/images/numTextures/texture" + i + ".png",
+                    WDOH.ETextureBindingPoint.TEX_2D
+                );
+            }
+
+            if (this.TESTING_testGridQuad2dArray) {
+                this.populateTestGrid2dArray(this.mTestGridWidth, this.mTestGridHeight);
+            } else {
+                this.populateTestGrid(this.mTestGridWidth, this.mTestGridHeight);
+            }
 
             //Once everything has loaded flag as ready to run
             this.mCanRun = true;
@@ -63,7 +79,7 @@ namespace TestGame {
 
             //Update 
             this.updateCursorWorldPos(WDOH.Input.get().getMouseScreenPos().x, WDOH.Input.get().getMouseScreenPos().y);
-
+            
             this.mColourChangeTime += deltaTime;
 
             //Draw test grid
@@ -102,40 +118,37 @@ namespace TestGame {
                         // this.mTestGridQuads[quadIndex].mTexture = this.mTestTexture;
 
                         //If cursor is inside quad
-                        if (this.mTestGridQuads[quadIndex].isVec2Inside(new WDOH.Vector2(this.mCursorWorldPos.x, this.mCursorWorldPos.y))) {
-                            this.mTestGridQuads[quadIndex].mColour = this.mQuadHoverColour;
-                            // mApplication.getRenderer().render2D().drawQuad(this.mTestGridQuads[quadIndex]);
-                        } else {
-                            this.mTestGridQuads[quadIndex].mColour = this.mColours[y];
-                            // mApplication.getRenderer().render2D().drawTexturedQuad(this.mTestGridQuads[quadIndex]);
+                        if (!this.TESTING_testGridQuad2dArray) {
+                            if (this.mTestGridQuads[quadIndex].isVec2Inside(new WDOH.Vector2(this.mCursorWorldPos.x, this.mCursorWorldPos.y))) {
+                                this.mTestGridQuads[quadIndex].mColour = this.mQuadHoverColour;
+                                // mApplication.getRenderer().render2D().drawQuad(this.mTestGridQuads[quadIndex]);
+                            } else {
+                                this.mTestGridQuads[quadIndex].mColour = this.mColours[y];
+                                // mApplication.getRenderer().render2D().drawTexturedQuad(this.mTestGridQuads[quadIndex]);
+                            }
                         }
-                        
-                        //this.mTestGridQuads[quadIndex].mTexture = this.mNumTextures[y + 1];
-                        // mApplication.getRenderer().render2D().drawQuad(this.mTestGridQuads[quadIndex]);
+                    }
+
+                    if (this.TESTING_testGridQuad2dArray) {
+                        //If you know that some textures are the same then rendering like this is A LOT faster than just drawAllTextured
+                        mApplication.getRenderer().render2D().drawAllSameTexturedQuads(this.mTestGridQuads2dArray[x]);
+
+                        //This is slower but requires less batches
+                        //mApplication.getRenderer().render2D().drawAllSameTexturedQuadsFillEmpty(this.mTestGridQuads2dArray[x]);
                     }
                 }
-                mApplication.getRenderer().render2D().drawAllQuads(this.mTestGridQuads);
-                // mApplication.getRenderer().render2D().drawAllTexturedQuads(this.mTestGridQuads);
+                
+                if (!this.TESTING_testGridQuad2dArray) {
+                    mApplication.getRenderer().render2D().drawAllTexturedQuads(this.mTestGridQuads);
+                }
 
-
-                let testTextureQuad : WDOH.Quad = new WDOH.Quad(new WDOH.Vector3(0.9, 0.9, 0.2), new WDOH.Vector2(0.3, 0.3), new WDOH.Vector4(0, 1, 0, 1), 0, this.mTestTexture);
+                let testTextureQuad : WDOH.Quad = new WDOH.Quad(new WDOH.Vector3(0.9, 0.9, 0.9), new WDOH.Vector2(0.3, 0.3), new WDOH.Vector4(0, 1, 0, 1), 0, this.mTestTexture);
 
                 mApplication.getRenderer().render2D().drawTexturedQuad(testTextureQuad);
-
-                // mApplication.getRenderer().render2D().drawAllTexturedQuads(this.mTestGridQuads);
-                // mApplication.getRenderer().render2D().drawAllQuads(this.mTestGridQuads);
             }
 
             //Draw cursor quad (this is drawn last because the cursor is typically "on top" of everything else)
-            {
-                const cursorQuadSize : WDOH.Vector2 = this.mCursorQuad.mSize;
-                //Place in centre of Quad
-                this.mCursorQuad.mPosition.x = this.mCursorWorldPos.x - (cursorQuadSize.x / 2);
-                this.mCursorQuad.mPosition.y = this.mCursorWorldPos.y - (cursorQuadSize.y / 2);
-
-                mApplication.getRenderer().render2D().drawTexturedQuad(this.mCursorQuad);
-                //mApplication.getRenderer().render2D().drawQuad(this.mCursorQuad);
-            }
+            this.drawCursor();
 
             mApplication.getRenderer().endScene();
         }
@@ -189,7 +202,6 @@ namespace TestGame {
         }
 
         private populateTestGrid(countX : number, countY : number) : void {
-
             mApplication.getLogger().infoApp("Test grid contains: " + countX * countY + " Quads.");
 
             const size : WDOH.Vector2 = new WDOH.Vector2(0.04, 0.04);
@@ -204,8 +216,30 @@ namespace TestGame {
 
                     let rotation : number = Math.random() < 0.02 ? 45 : 0;
                     
-                    this.mTestGridQuads[x * this.mTestGridWidth + y] = new WDOH.Quad(pos, size, this.mColours[y], rotation, null);
+                    this.mTestGridQuads[x * this.mTestGridWidth + y] = new WDOH.Quad(pos, size, this.mColours[y], rotation, this.mNumberTextures[y % this.mNumTexturesCount]);
                 }
+            }
+        }
+
+        public populateTestGrid2dArray(countX : number, countY : number) : void {
+            mApplication.getLogger().infoApp("Test grid contains: " + countX * countY + " Quads.");
+
+            const size : WDOH.Vector2 = new WDOH.Vector2(0.04, 0.04);
+            const quadGapDistanceX : number = (size.x * 1.5);
+            const quadGapDistanceY : number = (size.y * 1.5);
+
+            for (let y = 0; y < countY; y++) {
+                let xQuads : WDOH.Quad[] = [];
+                for (let x = 0; x < countX; x++) {
+                    let pos : WDOH.Vector3 = new WDOH.Vector3(x * quadGapDistanceX, y * quadGapDistanceY, 0.5);
+                    pos.x -= 0.5;
+                    pos.y -= 0.5;
+
+                    let rotation : number = Math.random() < 0.02 ? 45 : 0;
+                    
+                    xQuads.push(new WDOH.Quad(pos, size, this.mColours[y], rotation, this.mNumberTextures[y % this.mNumTexturesCount]))
+                }
+                this.mTestGridQuads2dArray.push(xQuads);
             }
         }
 
@@ -221,6 +255,16 @@ namespace TestGame {
                 0,
                 // this.mOrthoCameraController.getRotation()
             );
+        }
+
+        private drawCursor() {
+            const cursorQuadSize : WDOH.Vector2 = this.mCursorQuad.mSize;
+            //Centre quad at cursor point
+            this.mCursorQuad.mPosition.x = this.mCursorWorldPos.x - (cursorQuadSize.x / 2);
+            this.mCursorQuad.mPosition.y = this.mCursorWorldPos.y - (cursorQuadSize.y / 2);
+
+            mApplication.getRenderer().render2D().drawTexturedQuad(this.mCursorQuad);
+            //mApplication.getRenderer().render2D().drawQuad(this.mCursorQuad);
         }
     }
 }

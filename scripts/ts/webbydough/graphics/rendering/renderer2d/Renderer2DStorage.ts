@@ -197,11 +197,17 @@ namespace WDOH {
             }
         }
 
-        public static createNewWithSameTextureQuadBatch(quadArray : Quad[]) : void {
+        public static createNewSameTexturedQuadBatch(quadArray : Quad[]) : void {
             Renderer2DStorage.instantiateNewQuadBatch();
 
-            Renderer2DStorage.mRenderBatchQuadArray[Renderer2DStorage.mRenderBatchQuadIndex]
-                .addAllWithSameTexture(quadArray);
+            if (quadArray[0].mTexture !== null) {
+                Renderer2DStorage.mRenderBatchQuadArray[Renderer2DStorage.mRenderBatchQuadIndex]
+                    .addAll(
+                        quadArray,
+                        Renderer2DStorage.mRenderBatchQuadArray[Renderer2DStorage.mRenderBatchQuadIndex]
+                            .addNewTexture(quadArray[0].mTexture)
+                    );
+            }
         }
 
         public static cleanUp() : void {

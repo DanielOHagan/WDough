@@ -65,16 +65,6 @@ namespace WDOH {
          */
         public abstract addAll(geometryArray : T[], textureSlotIndex : number) : boolean;
 
-        // /**
-        //  * Attempt to add items to array and return array of objects not added.
-        //  * 
-        //  * @param geometryArray The geometry objects attempting to be added to batch
-        //  * 
-        //  * @returns The remaining items in the array that were unable to be added to batch.
-        //  *  Or null if all items were added successfully.
-        //  */
-        // public abstract addAllPossible(geometryArray : T[]) : T[] | null;
-
         /**
          * Set the values of this batch to those of the one passed as an argument.
          * 
@@ -111,6 +101,25 @@ namespace WDOH {
             }
 
             return false;
+        }
+
+        /**
+         * Add a texture that can be used by this batch
+         * 
+         * @param texture The texture object to be added
+         * @returns Index of newly added texture slot or -1 if not added
+         */
+        public addNewTexture(texture : ITexture) : number {
+            if (this.hasTextureSlotsAvailable()) {
+                let texSlotIndex : number = this.mNextTextureSlotIndex.valueOf();
+
+                this.mTextureSlots.set(texSlotIndex, texture);
+                this.mNextTextureSlotIndex++;
+
+                return texSlotIndex;
+            }
+
+            return -1;
         }
 
         /**
@@ -154,6 +163,15 @@ namespace WDOH {
             }
 
             return this.mVertexCount + vertexCount <= this.MAX_VERTEX_COUNT;
+        }
+
+        /**
+         * Returns number of vertices that the batch has space for.
+         * 
+         * @returns Number of vertices the batch has space for
+         */
+        public getRemainingSpace() : number {
+            return this.MAX_VERTEX_COUNT - this.mVertexCount;
         }
 
         public getData() : number[] {

@@ -4,7 +4,7 @@ namespace WDOH {
         
         public static readonly DEFAULT_TARGET_FPS : number = 30;
         public static readonly DEFAULT_TARGET_BACKGROUND_FPS : number = 15;
-        public static readonly DEFUALT_RUN_IN_BACKROUND : boolean = true;
+        public static readonly DEFAULT_RUN_IN_BACKGROUND : boolean = true;
         
         private mLastCycleTimePoint : number;
         
@@ -20,7 +20,7 @@ namespace WDOH {
 
         public constructor(targetFps : number) {
             this.mTargetBackgroundFps = ApplicationLoop.DEFAULT_TARGET_BACKGROUND_FPS;
-            this.mRunInBackground = ApplicationLoop.DEFUALT_RUN_IN_BACKROUND;
+            this.mRunInBackground = ApplicationLoop.DEFAULT_RUN_IN_BACKGROUND;
             this.mTargetFps = targetFps <= 0 ? ApplicationLoop.DEFAULT_TARGET_FPS : targetFps;
             this.mFps = 0;
             this.mFpsCounterTime = 0;
@@ -86,7 +86,7 @@ namespace WDOH {
         }
 
         public onFocusChange(focused : boolean) : void {
-            this.updateTargetFrameTime(focused)
+            this.updateTargetFrameTime(focused);
         }
 
         private updateTargetFrameTime(focused : boolean) : void {
