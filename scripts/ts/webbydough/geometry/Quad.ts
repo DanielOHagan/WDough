@@ -1,9 +1,11 @@
 namespace WDOH {
 
     export class Quad extends AGeometry2D {
+
+        public static readonly DEFAULT_TEXTURE_COORDS_U : number[] = [0, 1, 1, 0];
+        public static readonly DEFAULT_TEXTURE_COORDS_V : number[] = [1, 1, 0, 0];
         
         public mColour : Vector4;
-        public mRotation : number;
         public mTexture : ITexture | null;
         public mTextureCoordsU : number[];
         public mTextureCoordsV : number[];
@@ -15,21 +17,13 @@ namespace WDOH {
             rotation : number,
             texture : ITexture | null
         ) {
-            super(pos, size);
+            super(pos, size, rotation);
             this.mPosition = pos;
             this.mSize = size;
             this.mColour = colour;
-            this.mRotation = rotation;
             this.mTexture = texture;
-            this.mRotation = 0;
-            this.mTextureCoordsU = [0, 1, 1, 0];
-            this.mTextureCoordsV = [1, 1, 0, 0];
-        }
-
-        public isVec2Inside(vec2 : Vector2) : boolean {
-            return !(vec2.y < this.mPosition.y) &&
-                !(vec2.y > this.mPosition.y + this.mSize.y) &&
-                !(vec2.x > this.mPosition.x + this.mSize.x || vec2.x < this.mPosition.x);
+            this.mTextureCoordsU = Quad.DEFAULT_TEXTURE_COORDS_U;
+            this.mTextureCoordsV = Quad.DEFAULT_TEXTURE_COORDS_V;
         }
     }
 }

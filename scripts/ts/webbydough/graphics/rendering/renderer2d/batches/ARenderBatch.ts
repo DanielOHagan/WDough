@@ -104,7 +104,7 @@ namespace WDOH {
         }
 
         /**
-         * Add a texture that can be used by this batch
+         * Add a texture that can be used by this batch.
          * 
          * @param texture The texture object to be added
          * @returns Index of newly added texture slot or -1 if not added

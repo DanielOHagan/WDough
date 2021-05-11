@@ -148,6 +148,30 @@ namespace WDOH {
         }
 
         /**
+         * Draw a quad if the texture class member is not null
+         * 
+         * @param quad The Quad to draw
+         */
+        public drawIfTextured(quad : Quad) : void {
+            if (quad.mTexture !== null) {
+                this.drawTexturedQuad(quad);
+            } else {
+                this.drawQuad(quad);
+            }
+        }
+
+        /**
+         * Draw an array of quads if their texture class member is not null.
+         * 
+         * @param quadArray Array quads to draw.
+         */
+        public drawAllIfTextured(quadArray : Quad[]) : void {
+            for (let quad of quadArray) {
+                this.drawIfTextured(quad);
+            }
+        }
+
+        /**
          * Draw quads using the same texture.
          * Adds array to first batch with space for whole array, if none available a new
          * batch is created.

@@ -23,9 +23,10 @@ namespace WDOH {
             height : number,
             resizable : boolean = true,
             maxSizeEnable : boolean = true,
+            disableContextMenu : boolean = false,
             canvasId ? : string
         ) {
-            this.mCanvasNode = this.createCanvasNode(canvasId);
+            this.mCanvasNode = this.createCanvasNode(disableContextMenu, canvasId);
 
             this.mResizable = resizable;
             this.mMinWidth = 0;
@@ -65,7 +66,7 @@ namespace WDOH {
             this.setWindowCallbacks();
         }
 
-        private createCanvasNode(canvasId ? : string) : HTMLCanvasElement {
+        private createCanvasNode(disableContextMenu : boolean, canvasId ? : string) : HTMLCanvasElement {
             let canvasNode : HTMLCanvasElement;
 
             if (canvasId === undefined) {
@@ -77,6 +78,11 @@ namespace WDOH {
 
             if (canvasNode === undefined || canvasNode === null) {
                 throw new Error("Unable to create node");
+            }
+
+            if (disableContextMenu) {
+                //Disable context menu (right click menu)
+                canvasNode.oncontextmenu = function(event) {event.preventDefault(), event.stopPropagation()};
             }
 
             return canvasNode;
@@ -178,6 +184,7 @@ namespace WDOH {
         }
 
         //TODO:: Have multiple methods for more specific calculations that return smaller vectors (vec2 and vec3 instead of it always being a vec4)
+        //TODO:: ROTATION!!!
         public convertScreenToCanvasSpace(
             offsetX : number,
             offsetY : number,
@@ -187,7 +194,7 @@ namespace WDOH {
             scaleY : number,
             z : number,
             w : number
-            // rotationRads : number //NOTE:: Not sure if rotation should be done here as this returns a position vector.
+            // rotationRads : number
         ) : Vector4 {
 
             let worldX = ((((screenX / this.mCanvasNode.clientWidth) * 2) - 1) + ((offsetX / scaleX) / this.mAspectRatio)) * this.mAspectRatio * scaleX;

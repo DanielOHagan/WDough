@@ -16,15 +16,20 @@ namespace WDOH {
             EKeyInputCode.KEY_5, EKeyInputCode.KEY_6, EKeyInputCode.KEY_7, EKeyInputCode.KEY_8, EKeyInputCode.KEY_9
         ];
 
+        public static readonly DEFUALT_MOUSE_INPUT_CODES : EMouseInputCode[] = [
+            EMouseInputCode.BUTTON_MAIN, EMouseInputCode.BUTTON_AUXILIARY, EMouseInputCode.BUTTON_SECONDARY
+        ];
+
         private static INSTANCE : Input = new Input();
 
         private mKeyEventListeners : boolean = false;
         private mMouseEventListeners : boolean = false;
 
         private mPossibleKeyInputs : EKeyInputCode[] = [];
+        private mPossibleMouseInputs : EMouseInputCode[] = [];
 
         private mPressedKeys : Map<EKeyInputCode, boolean> = new Map();
-        // private mPressedMouseButtons : Map<EMouseInputCode, boolean> = new Map();
+        private mPressedMouseButtons : Map<EMouseInputCode, boolean> = new Map();
         private mMouseScreenPos : Vector2 = new Vector2(0, 0);
 
         private Input() {}
@@ -45,6 +50,7 @@ namespace WDOH {
             Input.get().mKeyEventListeners = enableKeyEvents;
             Input.get().mMouseEventListeners = enableMouseEvents;
             Input.get().mPossibleKeyInputs = possibleKeyInputs;
+            Input.get().mPossibleMouseInputs = Input.DEFUALT_MOUSE_INPUT_CODES;
 
             if (possibleKeyInputs.length > 1) {
                 for (let keyCode of possibleKeyInputs) {
@@ -69,15 +75,6 @@ namespace WDOH {
 
         public onKeyUp(keyBoardEvent : KeyboardEvent) : void {
             mApplication.onKeyEvent(new KeyEvent(keyBoardEvent, EEventType.INPUT_KEY_UP));
-        }
-
-        public onMouseMove(mouseMoveEvent : MouseMoveEvent) : void {
-            this.mMouseScreenPos.x = mouseMoveEvent.getPosX();
-            this.mMouseScreenPos.y = mouseMoveEvent.getPosY();
-        }
-
-        public onMouseScroll() : void {
-
         }
 
         public setKeyPressedFlag(keyCode : EKeyInputCode, pressed : boolean) {
@@ -113,11 +110,29 @@ namespace WDOH {
                 mApplication.getLogger().infoWDOH("Added mouse event listeners");
 
                 window.addEventListener("mousemove", event => {
+                    this.mMouseScreenPos.x = event.offsetX;
+                    this.mMouseScreenPos.y = event.offsetY;
+
                     mApplication.onMouseEvent(new MouseMoveEvent(event.offsetX, event.offsetY));
                 });
-                window.addEventListener("mousewheel", Input.get().onMouseScroll)
+                window.addEventListener("mousedown", event => {
+                    mApplication.onMouseEvent(new MouseButtonDownEvent(
+                        event.offsetX,
+                        event.offsetY,
+                        this.mouseButtonAsInputCode(event.button)
+                    ));
+                });
+                window.addEventListener("mouseup", event => {
+                    mApplication.onMouseEvent(new MouseButtonUpEvent(
+                        event.offsetX,
+                        event.offsetY,
+                        this.mouseButtonAsInputCode(event.button)
+                    ));
+                });
 
-                //TODO:: MouseButtons
+                window.addEventListener("wheel", event => {
+                    mApplication.onMouseEvent(new MouseScrollEvent(event.offsetX, event.offsetY, event.deltaY));
+                });
 
                 Input.get().mMouseEventListeners = !Input.get().mMouseEventListeners;
             }
@@ -128,16 +143,15 @@ namespace WDOH {
                 mApplication.getLogger().infoWDOH("Removed mouse event listeners");
 
                 window.removeEventListener("mousemove", event =>{});
-                window.removeEventListener("mousewheel", Input.get().onMouseScroll);
-                //TODO:: MouseButtons
+                window.removeEventListener("mousedown", event =>{});
+                window.removeEventListener("mouseup", event =>{});
+                window.removeEventListener("mousewheel", event =>{});
 
                 Input.get().mMouseEventListeners = !Input.get().mMouseEventListeners;
             }
         }
 
-
         public keyStringAsInputCode(keyString : string) : EKeyInputCode {
-            
             //If key inputs have not been limited
             if (Input.get().mPossibleKeyInputs.length < 1) {
                 for (let keyCode of Input.DEFAULT_KEY_INPUT_CODES) {
@@ -159,12 +173,43 @@ namespace WDOH {
             return EKeyInputCode.INGORED;
         }
 
+        public mouseButtonAsInputCode(mouseButton : number) : EMouseInputCode {
+            //If key inputs have not been limited
+            if (Input.get().mPossibleMouseInputs.length < 1) {
+                for (let mouseCode of Input.DEFUALT_MOUSE_INPUT_CODES) {
+                    if (mouseButton === mouseCode) {
+                        return mouseCode;
+                    }
+                }
+
+                return EMouseInputCode.UNKNOWN;
+            }
+
+            //If limits have been placed on which keys can be pressed
+            for (let mouseCode of Input.get().mPossibleMouseInputs) {
+                if (mouseButton === mouseCode.valueOf()) {
+                    return mouseCode;
+                }
+            }
+
+            return EMouseInputCode.INGORED;
+        }
+
         public static isKeyPressed(keyCode : EKeyInputCode) : boolean {
             return Input.get().isKeyPressedImpl(keyCode)
         }
 
         public isKeyPressedImpl(keyCode : EKeyInputCode) : boolean {
             let pressed : boolean | undefined = Input.get().mPressedKeys.get(keyCode);
+            return pressed !== undefined && pressed;
+        }
+
+        public static isMouseButtonPressed(buttonCode : EMouseInputCode) : boolean {
+            return Input.get().isMouseButtonPressedImpl(buttonCode);
+        }
+
+        public isMouseButtonPressedImpl(buttonCode : EMouseInputCode) : boolean {
+            let pressed : boolean | undefined = Input.get().mPressedMouseButtons.get(buttonCode);
             return pressed !== undefined && pressed;
         }
 

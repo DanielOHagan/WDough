@@ -74,9 +74,6 @@ namespace WDOH {
                     mApplication.update(this.mCurrentFrameTimeSpan);
 
                     this.mCurrentFrameTimeSpan = 0;
-
-                    //To display FPS every FRAME, call displayFps here
-                    //mApplication.displayFps(this.mPreviousFps);
                 }
 
                 this.mLastCycleTimePoint = currentTimePoint;

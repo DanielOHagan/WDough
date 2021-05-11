@@ -97,7 +97,8 @@ namespace WDOH {
                     break;
                 case EEventCatagory.NONE:
                 default:
-                    throw new Error("Unrecognised, or NONE, event catagory.");
+                    mApplication.getLogger().errWDOH("Unrecognised, or NONE, event catagory.");
+                    break;
             }
         }
 
@@ -107,22 +108,9 @@ namespace WDOH {
             }
         }
 
-        public onMouseEvent(mouseEvent : WDOH.MouseEvent) : void {
-            switch (mouseEvent.getType()) {
-                case EEventType.INPUT_MOUSE_MOVE:
-                    Input.get().onMouseMove(mouseEvent as MouseMoveEvent);
-                    this.mAppLogic.onMouseEvent(mouseEvent);
-                    break;
-                case EEventType.INPUT_MOUSE_BUTTON:
-                    // Input.get().onMouseButton(mouseEvent as MouseButtonEvent);        
-                    break;
-                case EEventType.INPUT_MOUSE_SCROLL:
-                    // Input.get().onMouseScroll(mouseEvent as MouseScrollEvent);        
-                    break;
-
-                default:
-                    
-                    break;
+        public onMouseEvent(mouseEvent : MouseEvent) : void {
+            if (!mouseEvent.shouldIgnore()) {
+                this.mAppLogic.onMouseEvent(mouseEvent);
             }
         }
 

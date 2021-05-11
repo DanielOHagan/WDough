@@ -11,7 +11,8 @@ namespace WDOH {
         INPUT_KEY_PRESS,
         INPUT_KEY_UP,
 
-        INPUT_MOUSE_BUTTON,
+        INPUT_MOUSE_BUTTON_DOWN,
+        INPUT_MOUSE_BUTTON_UP,
         INPUT_MOUSE_SCROLL,
         INPUT_MOUSE_MOVE
     }
