@@ -9,7 +9,7 @@ namespace WDOH {
 
         clear() : void;
 
-        drawIndexed(count : number) : void;
+        drawIndexed(count : number, drawMode? : number) : void;
 
     }
 }

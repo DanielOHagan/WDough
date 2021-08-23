@@ -1,7 +1,7 @@
 namespace WDOH {
 
     export class VertexBufferWebGL implements IVertexBuffer {
-        
+
         private mBufferLayout : BufferLayout | null;
         private mBuffer : WebGLBuffer | null;
 
@@ -73,10 +73,10 @@ namespace WDOH {
             if (this.mBufferLayout === null) {
                 throw new Error("Buffer Layout has not been set.");
             }
-            
+
             return this.mBufferLayout;
         }
-        
+
         public setBufferLayout(bufferLayout : BufferLayout) : void {
             this.mBufferLayout = bufferLayout;
         }

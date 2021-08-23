@@ -5,7 +5,7 @@ namespace WDOH {
         /**
          * This describes the data stored in a Buffer
          * 
-         * Float is data type of the a single component of the data,
+         * Float is the data type of the a single component of the data,
          * the corresponding number is the number of components,
          * no number means that it is a single compnent.
          */
@@ -35,6 +35,12 @@ namespace WDOH {
         //Prevent initialisation
         private constructor() {}
 
+        /**
+         * 
+         * @param dataType 
+         * @returns 
+         * @throws 
+         */
         public static getComponentCount(dataType : EDataType) : number {
             switch (dataType) {
                 case EDataType.FLOAT: return 1;
@@ -50,11 +56,16 @@ namespace WDOH {
                 case EDataType.BOOL: return 1;
             }
 
-            throw new Error(`Unrecognised Data Type: ${EDataType}`);
-
+            mApplication.throwError(`Unrecognised Data Type: ${dataType}`);
             return EDataType.NONE;
         }
 
+        /**
+         * 
+         * @param dataType 
+         * @returns 
+         * @throws
+         */
         public static getDataTypeSize(dataType : EDataType) : number {
             switch (dataType) {
                 case EDataType.FLOAT: return 4;
@@ -70,8 +81,7 @@ namespace WDOH {
                 case EDataType.BOOL: return 1;
             }
 
-            throw new Error(`Unrecognised Data Type: ${EDataType}`);
-
+            mApplication.throwError(`Unrecognised Data Type: ${dataType}`);
             return EDataType.NONE;
         }
     }

@@ -1,13 +1,11 @@
 namespace WDOH {
-    
+
     export class ApplicationLoop {
-        
-        public static readonly DEFAULT_TARGET_FPS : number = 30;
+
+        public static readonly DEFAULT_TARGET_FPS : number = 60;
         public static readonly DEFAULT_TARGET_BACKGROUND_FPS : number = 15;
         public static readonly DEFAULT_RUN_IN_BACKGROUND : boolean = true;
-        
-        private mLastCycleTimePoint : number;
-        
+
         private mRunInBackground : boolean;
         private mFps : number;
         private mTargetFps : number;
@@ -16,7 +14,8 @@ namespace WDOH {
         private mPreviousFps : number;
         private mTargetFrameTimeSpan : number;
         private mCurrentFrameTimeSpan : number;
-        private mLastFrameExtraTimeSpan : number = 0;
+        private mLastFrameExtraTimeSpan : number;
+        private mLastCycleTimePoint : number;
 
         public constructor(targetFps : number) {
             this.mTargetBackgroundFps = ApplicationLoop.DEFAULT_TARGET_BACKGROUND_FPS;
@@ -26,25 +25,24 @@ namespace WDOH {
             this.mFpsCounterTime = 0;
             this.mPreviousFps = 0;
             this.mTargetFrameTimeSpan = 1 / targetFps;
-
             this.mCurrentFrameTimeSpan = 0;
+            this.mLastFrameExtraTimeSpan = 0;
             this.mLastCycleTimePoint = Time.getCurrentTimeSeconds();
         }
 
         public run() : void {
-
             if (mApplication.isRunning()) {
                 requestAnimationFrame(this.run.bind(this));
-                
+
                 //Update Delta Time
                 let currentTimePoint : number = Time.getCurrentTimeSeconds();
                 let deltaTimeSpan = currentTimePoint - this.mLastCycleTimePoint;
-                
+
                 //If still in the time slot for previous frame
                 // then don't call mApplication.update
                 this.mCurrentFrameTimeSpan += deltaTimeSpan;
                 let updateFrame : boolean;
-                
+
                 if (this.mCurrentFrameTimeSpan + this.mLastFrameExtraTimeSpan < this.mTargetFrameTimeSpan) {
                     updateFrame = false;
                 } else {
@@ -58,13 +56,12 @@ namespace WDOH {
                     this.mPreviousFps = this.mFps;
                     this.mFps = 0;
                     this.mFpsCounterTime = 0;
-
                     this.mLastFrameExtraTimeSpan = 0;
 
                     //To display FPS every SECOND, call displayFps here
                     mApplication.displayFps(this.mPreviousFps);
                 }
-                
+
                 if (updateFrame) {
                     updateFrame = mApplication.isFocused() || this.mRunInBackground;
                 }
@@ -72,7 +69,6 @@ namespace WDOH {
                 if (updateFrame) {
                     this.mFps++;
                     mApplication.update(this.mCurrentFrameTimeSpan);
-
                     this.mCurrentFrameTimeSpan = 0;
                 }
 
@@ -94,7 +90,6 @@ namespace WDOH {
             }
         }
 
-        //When changing mTargetFps USE THIS METHOD
         public setTargetFps(targetFps : number, includeTargetBackground : boolean) : void {
             this.mTargetFps = targetFps;
 

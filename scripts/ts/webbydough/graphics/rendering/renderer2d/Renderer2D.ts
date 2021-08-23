@@ -3,7 +3,7 @@ namespace WDOH {
     export class Renderer2D implements IRenderer {
 
         public constructor() {}
-        
+
         public init() : void {
             Renderer2DStorage.init();
         }
@@ -14,13 +14,15 @@ namespace WDOH {
                 let textureShader : IShader | null = Renderer2DStorage.mShaderLibrary.get(Renderer2DStorage.TEXTURE_SHADER);
 
                 if (textureShader === null) {
-                    throw new Error("Texture Shader is null");
+                    mApplication.throwError("Texture Shader is null.");
+                    return;
                 }
 
                 textureShader.bind();
                 textureShader.setUniformMat4(Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT, camera.getProjectionViewMatrix());
 
-                //TODO:: (One Optimisation could be to set scene data for what batches are going to be used until the end of the scene so the renderer knows what that to initialise)
+                //TODO:: One Optimisation could be to set scene data for what batches are going to be used until the end of the scene so the renderer knows what that to initialise.
+                //      e.g: HUD, Background, Player
                 //Create first Quad Batch if none exist
                 if (Renderer2DStorage.mRenderBatchQuadIndex < 0) {
                     Renderer2DStorage.createNewQuadBatch(null);
@@ -43,7 +45,7 @@ namespace WDOH {
             for (let batchIndex : number = 0; batchIndex <= Renderer2DStorage.mRenderBatchQuadIndex; batchIndex++) {
                 let batch : ARenderBatch<AGeometry2D> = Renderer2DStorage.mRenderBatchQuadArray[batchIndex];
                 Renderer2DStorage.mQuadVbo.setData(batch.getData(), 0);
-                
+
                 //Draw batch
                 batch.bind();
                 mApplication.getRenderer().getRendererAPI().drawIndexed(batch.getIndexCount());
@@ -87,7 +89,7 @@ namespace WDOH {
         public drawAllQuads(quadArray : Quad[]) : void {
             //TODO:: This could maybe be optimised better
             //Split source array into smaller ones to fit into batches
-            let splitQuadArray : Array<Quad[]> = [];
+            let splitQuadArray : Quad[][] = [];
             let sourceArrayLength : number = quadArray.length;
             let splitCount : number = 0;
 
@@ -106,14 +108,14 @@ namespace WDOH {
                     if (batch.addAll(quads, RenderBatchQuad.DEFUALT_WHITE_TEXTURE_SLOT)) {
                         break;
                     }
-                    
+
                     //If at last batch then create new badge 
                     if (index === Renderer2DStorage.mRenderBatchQuadIndex) {
                         //Add to new batch
                         Renderer2DStorage.createNewQuadBatch(quads);
                         break;
                     }
-                    
+
                     index++;
                 }
             }
@@ -225,7 +227,7 @@ namespace WDOH {
             let addedCount : number = 0;
             let availableSpace : number = -1;
             let firstBatchWithSpaceIndex : number = -1;
-            
+
             let index : number = 0;
             for (let batch of Renderer2DStorage.mRenderBatchQuadArray) {
                 if (batch.hasTextureId(texId)) {
@@ -258,9 +260,13 @@ namespace WDOH {
                 }
             }
         }
-        
+
         public cleanUp() : void {
             Renderer2DStorage.cleanUp();
+        }
+
+        public isReady() : boolean {
+            return Renderer2DStorage.isReady();
         }
     }
 }

@@ -16,14 +16,16 @@ namespace WDOH {
             let splitFilePath : string[] = filePath.split('.');
             let extension : string = splitFilePath[splitFilePath.length - 1];
             if (extension !== ShaderReader.GLSL_FILE_EXTENSION) {
-                throw new Error("Shader file type not supported. Extension found: " + extension);
+                mApplication.throwError(`Shader file type not supported. Extension found: ${extension}`);
+                return;
             }
 
             let usingForwardSlash : boolean = filePath.includes('/');
 
             let fileName = splitFilePath[0].substring(splitFilePath[0].lastIndexOf(usingForwardSlash ? '/' : '\\') + 1).toLowerCase();
             if (fileName === null) {
-                throw new Error("Unable to determine file name from file: " + filePath);
+                mApplication.throwError(`Unable to determine file name from file: ${filePath}`)
+                return;
             }
 
             let request : XMLHttpRequest = new XMLHttpRequest();
@@ -36,10 +38,11 @@ namespace WDOH {
             let fileContent : string | null = null;
 
             fileContent = request.responseText;
-            
+
             if (fileContent === null) {
                 ShaderReader.mShaderLoadList.set(fileName, false);
-                throw new Error("File content not readable from file: " + fileName);
+                mApplication.throwError(`File content not readable from file: ${fileName}`);
+                return;
             }
 
             let shaderSrcMap : Map<EShaderType, string> = this.generateShaderSrcMapFromFileContent(fileName, fileContent);
@@ -64,19 +67,22 @@ namespace WDOH {
                         fragmentShaderSrc = "#" + splitContent[i + 1];
                     } else {
                         ShaderReader.mShaderLoadList.set(fileName, false);
-                        throw new Error("Unknown type: " + type);
+                        mApplication.throwError(`Unknown type: ${type}`);
+                        return new Map();
                     }
                 }
             }
 
             if (vertexShaderSrc === null) {
                 ShaderReader.mShaderLoadList.set(fileName, false);
-                throw new Error("Failed to load Vertex shader from file: " + fileName);
+                mApplication.throwError(`Failed to load Vertex shader from file: ${fileName}`);
+                return new Map();
             }
-            
+
             if (fragmentShaderSrc === null) {
                 ShaderReader.mShaderLoadList.set(fileName, false);
-                throw new Error("Failed to load Fragment shader from file: " + fileName);
+                mApplication.throwError(`Failed to load fragment shader from file: ${fileName}`);
+                return new Map();
             }
 
             shaderSourceMap.set(EShaderType.VERTEX, vertexShaderSrc);

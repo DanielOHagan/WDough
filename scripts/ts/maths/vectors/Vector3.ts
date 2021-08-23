@@ -90,7 +90,19 @@ namespace WDOH {
 
         public dot() : Vector3 {
             //TODO:: This
-            
+
+            return this;
+        }
+
+        public rotateZ(radians : number) : Vector3 {
+            const sin : number = Math.sin(radians);
+            const cos : number = Math.sin(radians + 1.5707963267948966);
+            const x : number = this.x.valueOf();
+            const y : number = this.y.valueOf();
+
+            this.x = x * cos - y * sin;
+            this.y = x * sin + y * cos;
+
             return this;
         }
     }

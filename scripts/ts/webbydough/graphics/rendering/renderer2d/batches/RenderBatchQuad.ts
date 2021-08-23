@@ -26,7 +26,7 @@ namespace WDOH {
                     textureSlotIndex
                 );
                 texCoordsIndex++;
-                
+
                 this.addQuadVertexToBatch(
                     quad.mPosition.x + quad.mSize.x,
                     quad.mPosition.y,
@@ -96,7 +96,7 @@ namespace WDOH {
                         textureSlotIndex
                     );
                     texCoordsIndex++;
-                    
+
                     this.addQuadVertexToBatch(
                         quad.mPosition.x + quad.mSize.x,
                         quad.mPosition.y,
@@ -137,7 +137,7 @@ namespace WDOH {
                         quad.mTextureCoordsV[texCoordsIndex],
                         textureSlotIndex
                     );
-                    
+
                     this.mVertexCount += 4;
                     this.mIndexCount += 6;
                 }
@@ -163,7 +163,7 @@ namespace WDOH {
 
             return false;
         }
-        
+
         public addAllTextured(quadArray : Quad[]) : boolean {
             if (this.mVertexCount + (quadArray.length * 4) < this.MAX_VERTEX_COUNT) {
                 for (let quad of quadArray) {
@@ -183,7 +183,7 @@ namespace WDOH {
                         texIndex
                     );
                     texCoordsIndex++;
-                    
+
                     this.addQuadVertexToBatch(
                         quad.mPosition.x + quad.mSize.x,
                         quad.mPosition.y,
@@ -224,7 +224,7 @@ namespace WDOH {
                         quad.mTextureCoordsV[texCoordsIndex],
                         texIndex
                     );
-                    
+
                     this.mVertexCount += 4;
                     this.mIndexCount += 6;
                 }
@@ -255,7 +255,7 @@ namespace WDOH {
                         texIndex
                     );
                     texCoordsIndex++;
-                    
+
                     this.addQuadVertexToBatch(
                         quad.mPosition.x + quad.mSize.x,
                         quad.mPosition.y,
@@ -296,7 +296,7 @@ namespace WDOH {
                         quad.mTextureCoordsV[texCoordsIndex],
                         texIndex
                     );
-                    
+
                     this.mVertexCount += 4;
                     this.mIndexCount += 6;
                 }
@@ -349,7 +349,7 @@ namespace WDOH {
             this.mDataIndex++;
             this.mData[this.mDataIndex] = colourA;
             this.mDataIndex++;
-         
+
             this.mData[this.mDataIndex] = texCoordU;
             this.mDataIndex++;
             this.mData[this.mDataIndex] = texCoordV;

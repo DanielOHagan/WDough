@@ -62,7 +62,7 @@ namespace WDOH {
 
         public dot() : Vector2 {
             //TODO:: This
-            
+
             return this;
         }
     }

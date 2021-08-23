@@ -30,5 +30,4 @@ namespace WDOH {
 
         set(mat : T) : void;
     }
-
 }

@@ -4,7 +4,7 @@ namespace WDOH {
 
         public static readonly DEFAULT_TEXTURE_COORDS_U : number[] = [0, 1, 1, 0];
         public static readonly DEFAULT_TEXTURE_COORDS_V : number[] = [1, 1, 0, 0];
-        
+
         public mColour : Vector4;
         public mTexture : ITexture | null;
         public mTextureCoordsU : number[];

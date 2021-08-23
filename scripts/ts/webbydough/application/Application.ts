@@ -1,4 +1,3 @@
-
 namespace WDOH {
 
     export class Application {
@@ -9,6 +8,7 @@ namespace WDOH {
         private mRenderer : Renderer;
         private mLogger : Logger;
         private mResourceList : ResourceList;
+        private mAppName : string | null;
 
         private mRunning : boolean;
         private mFocused : boolean;
@@ -22,10 +22,10 @@ namespace WDOH {
             this.mFocused = true;
             this.mLogger = new Logger(appName);
             this.mResourceList = new ResourceList();
+            this.mAppName = appName;
         }
 
         public init(/*initSettings : ApplicationInitialisationSettings, appSettings : ApplicationSettings*/) : void {
-
             //Attach canvas to body
             this.mCanvas.attachCanvas(Canvas.DEFAULT_CANVAS_WRAPPER_ID);
 
@@ -45,6 +45,8 @@ namespace WDOH {
             this.mRenderer.getRendererAPI().setClearColour(Renderer.DEFAULT_CLEAR_COLOUR);
 
             Input.get().init(true, true, []);
+
+            this.mCanvas.updateTitle();
         }
 
         public cleanUp() : void {
@@ -54,7 +56,7 @@ namespace WDOH {
 
         public run() : void {
             if (!this.mAppLogic.canRun()) {
-                throw new Error("Unable to run, application logic is not able to run.")
+                _Logger().errWDOH("Applicaiton Logic can not run.");
             }
             this.mRunning = true;
             this.mAppLoop.run();
@@ -66,21 +68,25 @@ namespace WDOH {
 
                 this.cleanUp();
             } else {
-                this.mLogger.infoWDOH("Unable to end, application not running.");
+                _Logger().infoWDOH("Unable to end, application not running.");
             }
         }
 
         public update(deltaTime : number) : void {
-
             this.mRenderer.getRendererAPI().clear();
-
             this.mAppLogic.update(deltaTime);
         }
 
+        public throwError(errMsg : string) : void {
+            //TODO:: Create an "Error" object containing Message, Origin, Timestamp, etc....
+            _Logger().errWDOH(`Throwing Error & stopping execution: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+
         //-----Events-----
-        //This is primarily a 'catch all' event for any AEvent instances
+        //This is primarily a 'catch all' event for any AEvent instances.
         //It is faster and recommended to call the specific on____Event() methods when
-        // it is known which events will be passed
+        // it is known which events will be passed.
         public onEvent(event : AEvent) : void {
             switch (event.getCatagory()) {
                 case EEventCatagory.INPUT_KEY:
@@ -97,7 +103,7 @@ namespace WDOH {
                     break;
                 case EEventCatagory.NONE:
                 default:
-                    mApplication.getLogger().errWDOH("Unrecognised, or NONE, event catagory.");
+                    _Logger().errWDOH("Unrecognised, or NONE, event catagory.");
                     break;
             }
         }
@@ -122,7 +128,7 @@ namespace WDOH {
 
                 case EEventType.NONE:
                 default:
-                    throw new Error("Unrecognised, or NONE, event type.");
+                    this.throwError("Unrecognised, or NONE, event type.")
             }
         }
 
@@ -135,7 +141,7 @@ namespace WDOH {
 
                 case EEventType.NONE:
                 default:
-                    throw new Error("Unrecognised, or NONE, event type.");
+                    this.throwError("Unrecognised, or NONE, event type.")
             }
         }
 
@@ -155,7 +161,7 @@ namespace WDOH {
         }
 
         public displayFps(fps : number) : void {
-            this.mLogger.infoWDOH("FPS: " + fps);
+            _Logger().infoWDOH(`FPS: ${fps}`);
         }
 
         //-----Setters-----
@@ -182,6 +188,10 @@ namespace WDOH {
 
         public getLogger() : Logger {
             return this.mLogger;
+        }
+
+        public getAppName() : string | null {
+            return this.mAppName;
         }
 
         public getResourceList() : ResourceList {

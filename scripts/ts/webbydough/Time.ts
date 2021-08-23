@@ -1,7 +1,7 @@
 namespace WDOH {
 
     export class Time {
-        
+
         private constructor() {}
 
         public static getCurrentTimeSeconds() : number {

@@ -9,10 +9,10 @@ namespace WDOH {
                 case EDataType.FLOAT3:
                 case EDataType.FLOAT4:
                     return new Float32Array(data);
-                
+
                 case EDataType.BYTE:
                     return new ArrayBuffer(data.length);
-                
+
                 case EDataType.INT:
                 case EDataType.INT2:
                 case EDataType.INT3:
@@ -31,15 +31,15 @@ namespace WDOH {
                 case EDataType.FLOAT3:
                 case EDataType.FLOAT4:
                     return new Float32Array(size);
-                
+
                 //case EDataType.U_FLOAT
-                
+
                 case EDataType.INT:
                 case EDataType.INT2:
                 case EDataType.INT3:
                 case EDataType.INT4:
                     return new Int32Array(size);
-                
+
                 //case EDataType.U_INT
 
                 default:

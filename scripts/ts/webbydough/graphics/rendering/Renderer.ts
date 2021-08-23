@@ -20,8 +20,11 @@ namespace WDOH {
             this.mRenderer2d.init();
         }
 
+        public isReady() : boolean {
+            return this.mRenderer2d.isReady();
+        }
+
         public beginScene(camera : ICamera) : void {
-            
             camera.updateProjectionViewMatrix();
 
             this.mProjectionViewMatrix = camera.getProjectionViewMatrix();
@@ -30,7 +33,9 @@ namespace WDOH {
         }
 
         public endScene() : void {
-            this.mRenderer2d.endScene();
+            if (this.isReady()) {
+                this.mRenderer2d.endScene();
+            }
         }
 
         public submitShader(
@@ -60,7 +65,6 @@ namespace WDOH {
 
         public cleanUp() : void {
             this.mRenderer2d.cleanUp();
-
             ShaderReader.cleanUp();
         }
     }

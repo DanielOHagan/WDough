@@ -1,4 +1,8 @@
-# Files
+#Files
+#TODO:: Remove package-lock.json when npm packages are being used in project.
+package-lock.json
+
+# File Types
 *.js
 *.bat
 

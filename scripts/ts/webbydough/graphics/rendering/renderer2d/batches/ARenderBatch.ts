@@ -130,13 +130,13 @@ namespace WDOH {
          */
         public getTextureSlotIndex(textureId : number) : number {
             let textureSlotIndex : number = 0;
-            
+
             for (let texture of this.mTextureSlots.values()) {
                 if (texture === null || texture.getId() === Renderer2DStorage.mWhiteTexture.getId()) {
                     textureSlotIndex++;
                     continue;   
                 }
-                
+
                 if (textureId === texture.getId()) {
                     return textureSlotIndex;
                 }

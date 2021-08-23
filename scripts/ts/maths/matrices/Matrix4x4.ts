@@ -2,13 +2,15 @@ namespace WDOH {
 
     export class Matrix4x4 implements IMatrix<Matrix4x4> {
 
+        private static readonly DECIMAL_PRECISION : number = 6;
+
         /*
             m00  m01  m02  m03
             m10  m11  m12  m13
             m20  m21  m22  m23
             m30  m31  m32  m33
         */
-        
+
         private m00 : number;
         private m01 : number;
         private m02 : number;
@@ -225,7 +227,7 @@ namespace WDOH {
 
             return this;
         }
-        
+
         public scaleScalar(scale : number) : Matrix4x4 {
             return this.scaleXYZ(scale, scale, scale);
         }
@@ -276,13 +278,13 @@ namespace WDOH {
             this.m32 = mat.m32;
             this.m33 = mat.m33;
         }
-        
+
         public printToConsole() : void {
             console.log(`------------------------------------------------------`);
-            console.log(`| ${this.m00} | ${this.m01} | ${this.m02} | ${this.m03} |`);
-            console.log(`| ${this.m10} | ${this.m11} | ${this.m12} | ${this.m13} |`);
-            console.log(`| ${this.m20} | ${this.m21} | ${this.m22} | ${this.m23} |`);
-            console.log(`| ${this.m30} | ${this.m31} | ${this.m32} | ${this.m33} |`);
+            console.log(`| ${this.m00.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m01.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m02.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m03.toPrecision(Matrix4x4.DECIMAL_PRECISION)} |`);
+            console.log(`| ${this.m10.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m11.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m12.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m13.toPrecision(Matrix4x4.DECIMAL_PRECISION)} |`);
+            console.log(`| ${this.m20.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m21.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m22.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m23.toPrecision(Matrix4x4.DECIMAL_PRECISION)} |`);
+            console.log(`| ${this.m30.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m31.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m32.toPrecision(Matrix4x4.DECIMAL_PRECISION)} | ${this.m33.toPrecision(Matrix4x4.DECIMAL_PRECISION)} |`);
             console.log(`------------------------------------------------------`);
         }
 

@@ -33,7 +33,7 @@ namespace WDOH {
             this.mViewMatrix.rotateRads(this.mRotation, new Vector3(0, 0, 1));
             this.mViewMatrix.invert();
         }
-        
+
         public updateProjectionViewMatrix() : void {
             this.updateViewMatrix();
 
@@ -41,7 +41,7 @@ namespace WDOH {
             this.mProjectionViewMatrix.mulMat4x4(this.mProjectionMatrix);
             this.mProjectionViewMatrix.mulMat4x4(this.mViewMatrix);
         }
-        
+
         public setPosition(pos : Vector3) : void {
             this.mPosition = pos;
         }
@@ -49,7 +49,7 @@ namespace WDOH {
         public getPosition() : Vector3 {
             return this.mPosition;
         }
-        
+
         public resetPosition() : void {
             this.setPosition(new Vector3(0, 0, 0));
         }
@@ -65,11 +65,11 @@ namespace WDOH {
         public resetRotation() : void {
             this.setRotation(0);
         }
-        
+
         public getProjectionMatrix() : Matrix4x4 {
             return this.mProjectionMatrix;
         }
-        
+
         public getViewMatrix() : Matrix4x4 {
             return this.mViewMatrix;
         }

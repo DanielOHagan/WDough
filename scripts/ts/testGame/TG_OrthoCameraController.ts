@@ -3,7 +3,7 @@ namespace TestGame {
     export class TG_OrthoCameraController implements WDOH.ICameraController {
 
         private mAspectRatio : number;
-        
+
         private mZoomMax : number;
         private mZoomMin : number;
         private mZoomLevel : number;
@@ -35,7 +35,6 @@ namespace TestGame {
         }
 
         public onUpdate(deltaTime : number) : void {
-
             //Input Polling exmaple
             if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_W)) {
                 this.translatePosition(new WDOH.Vector3(0, 4 * deltaTime, 0));
@@ -146,15 +145,8 @@ namespace TestGame {
 
         private zoom(zoomAmount : number) : void {
             this.mZoomLevel -= zoomAmount * this.mZoomScale;
+            this.mZoomLevel = WDOH.MathsWDOH.clamp(this.mZoomLevel, this.mZoomMin, this.mZoomMax);
 
-            //Clamp mZoomLevel
-            // if (this.mZoomLevel > this.mZoomMax) {
-            //     this.mZoomLevel = this.mZoomMax;
-            // } else if (this.mZoomLevel < this.mZoomMin) {
-            //     this.mZoomLevel = this.mZoomMin;
-            // }
-            WDOH.MathsWDOH.clamp(this.mZoomLevel, this.mZoomMin, this.mZoomMax);
-    
             //TODO:: Possible optimisation, even if the zoom is clamped and stays at the same min / max value, the projection mat is still re-calculated.
             // Maybe add a check to see if the zoom level changes then perform the updating.
             this.updateProjection();

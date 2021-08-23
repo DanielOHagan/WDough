@@ -11,7 +11,7 @@ namespace WDOH {
 
         private static readonly DEFAULT_MIPMAP_LOD : number = 0;
         private static readonly TEXTURE_PLACEHOLDER_DATA : Uint8Array = new Uint8Array(0);
-        
+
         private mId : number;
         private mData : HTMLImageElement | null;
         private mHandle : WebGLTexture | null;
@@ -108,7 +108,7 @@ namespace WDOH {
                 mContext.UNSIGNED_BYTE,
                 TextureWebGL.TEXTURE_PLACEHOLDER_DATA
             );
-        
+
             mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_S, mContext.CLAMP_TO_EDGE);
             mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_T, mContext.CLAMP_TO_EDGE);
             mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_MIN_FILTER, mContext.LINEAR);
@@ -139,10 +139,10 @@ namespace WDOH {
             return this.mHandle;
         }
 
-        public activate(textureSlot : number) : void {            
+        public activate(textureSlot : number) : void {
             mContext.activeTexture(mContext.TEXTURE0 + textureSlot);
         }
-        
+
         public bind() : void {
             mContext.bindTexture(this.mBindingPoint, this.mHandle);
         }
@@ -203,13 +203,13 @@ namespace WDOH {
                         thisTexture.mAlphaChannel = true;
                         break;
                 }
-                
+
                 if (thisTexture.mFileType === EFileTypeTextureWebGL.NONE) {
                     let msg : string = "Unable to determine image type. Src: " + htmlImage.src;
                     thisTexture.cleanUp();
                     throw new Error(msg);
                 }
-                
+
                 //Bind and upload data
                 thisTexture.bind();
 
@@ -235,7 +235,7 @@ namespace WDOH {
                     mContext.UNSIGNED_BYTE,
                     thisTexture.mData
                 );
-                
+
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_S, mContext.CLAMP_TO_EDGE);
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_WRAP_T, mContext.CLAMP_TO_EDGE);
                 mContext.texParameteri(mContext.TEXTURE_2D, mContext.TEXTURE_MIN_FILTER, mContext.LINEAR);

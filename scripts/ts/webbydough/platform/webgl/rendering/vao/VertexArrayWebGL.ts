@@ -22,7 +22,7 @@ namespace WDOH {
         public bind() : void {
             mContext.bindVertexArray(this.mVertexArray);
         }
-        
+
         public unBind() : void {
             for ( ; this.mVertexBufferIndex > 0; this.mVertexBufferIndex--) {
                 mContext.disableVertexAttribArray(this.mVertexBufferIndex);
@@ -32,7 +32,7 @@ namespace WDOH {
 
         public addVertexBuffer(vertexBuffer : IVertexBuffer) : void {
             mContext.bindVertexArray(this.mVertexArray);
-            vertexBuffer.bind();            
+            vertexBuffer.bind();
 
             let layout : BufferLayout = vertexBuffer.getBufferLayout();
             for (let element of layout.getBufferElements()) {
@@ -67,7 +67,7 @@ namespace WDOH {
             if (this.mIndexBuffer === null) {
                 throw new Error("Index Buffer not set.");
             }
-            
+
             return this.mIndexBuffer;
         }
 
@@ -95,7 +95,7 @@ namespace WDOH {
 
                 case EDataType.BOOL:
                     return mContext.BOOL;
-        
+
                 default:
                     throw new Error("Unknown EDataType!");
             }

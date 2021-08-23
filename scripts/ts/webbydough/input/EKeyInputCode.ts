@@ -6,7 +6,7 @@ namespace WDOH {
 
         //For key events of keys not in the given array of possible keys
         INGORED = "IGNORED",
-        
+
         //Alpabet
         KEY_A = "a",
         KEY_B = "b",

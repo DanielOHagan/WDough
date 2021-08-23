@@ -3,9 +3,10 @@ namespace WDOH {
     export var mContext : WebGL2RenderingContext;
 
     export class Canvas {
-        
+
         public static readonly DEFAULT_CANVAS_ID : string = "wdoh-canvas";
         public static readonly DEFAULT_CANVAS_WRAPPER_ID : string = "defualt-wdoh-canvas-wrapper";
+        private static readonly WEBGL_CONTEXT_STRING : string = "webgl";
         private static readonly WEBGL_2_CONTEXT_STRING : string = "webgl2";
 
         private mCanvasNode : HTMLCanvasElement;
@@ -24,6 +25,7 @@ namespace WDOH {
             resizable : boolean = true,
             maxSizeEnable : boolean = true,
             disableContextMenu : boolean = false,
+            hideNativeCursor : boolean = false,
             canvasId ? : string
         ) {
             this.mCanvasNode = this.createCanvasNode(disableContextMenu, canvasId);
@@ -57,13 +59,21 @@ namespace WDOH {
             }
 
             mContext = this.createRenderingContext();
-            
+
             this.mCanvasNode.width = width;
             this.mCanvasNode.height = height;
             this.enableResizeEvents(this.mResizable);
             this.resize(width, height);
 
             this.setWindowCallbacks();
+            this.hideNativeCursor(hideNativeCursor);
+        }
+
+        public updateTitle() : void {
+            const appName : string | null = mApplication.getAppName();
+            if (appName !== null) {
+                document.title = appName + " - WebbyDough";
+            }
         }
 
         private createCanvasNode(disableContextMenu : boolean, canvasId ? : string) : HTMLCanvasElement {
@@ -108,23 +118,23 @@ namespace WDOH {
                 document.body.appendChild(this.mCanvasNode);
             } else {
                 //Attach to specified node
-                let node = document.getElementById(nodeId);
+                let node : HTMLElement | null = document.getElementById(nodeId);
 
                 if (node === null) {
-                    throw new Error("Unable to find node with ID: " + nodeId);
+                    mApplication.throwError(`Unable to find the node with ID: ${nodeId}`);
+                } else {
+                    node.appendChild(this.mCanvasNode);
                 }
-
-                node.appendChild(this.mCanvasNode);
             }
         }
 
         public enableResizeEvents(resizable : boolean) : void {
             this.mResizable = resizable;
-            
+
             if (this.mResizable) {
                 //Set resize event
                 window.onresize = function() {
-                    this.mApplication.onEvent(new CanvasResizeEvent(window.innerWidth, window.innerHeight));
+                    mApplication.onEvent(new CanvasResizeEvent(window.innerWidth, window.innerHeight));
                 }
             } else {
                 //Remove resize event 
@@ -193,14 +203,47 @@ namespace WDOH {
             scaleX : number,
             scaleY : number,
             z : number,
-            w : number
-            // rotationRads : number
+            w : number,
+            rotationRadians : number
         ) : Vector4 {
+            // let worldX = ((((screenX / this.mCanvasNode.clientWidth) * 2) - 1) + ((offsetX / scaleX) / this.mAspectRatio)) * this.mAspectRatio * scaleX;
+            // let worldY = ((((screenY / this.mCanvasNode.clientHeight) * -2) + 1) + ((offsetY / scaleY * this.mAspectRatio) / this.mAspectRatio)) * scaleY;
 
-            let worldX = ((((screenX / this.mCanvasNode.clientWidth) * 2) - 1) + ((offsetX / scaleX) / this.mAspectRatio)) * this.mAspectRatio * scaleX;
-            let worldY = ((((screenY / this.mCanvasNode.clientHeight) * -2) + 1) + ((offsetY / scaleY * this.mAspectRatio) / this.mAspectRatio)) * scaleY;
+            let screenPos : Vector4 = new Vector4(0, 0, z, w);
 
-            return new Vector4(worldX, worldY, z, w);
+            screenPos.x = (((screenX / this.mCanvasNode.clientWidth) * 2) - 1) * this.mAspectRatio * scaleX;
+            screenPos.y = (((screenY / this.mCanvasNode.clientHeight) * -2) + 1) * scaleY;
+
+            const x1 : number = screenPos.x;
+            const y1 : number = screenPos.y;
+
+            // screenPos.rotateZ(rotationRadians);
+            //_Renderer2D().drawQuad(new Quad(new Vector3(screenPos.x, screenPos.y, screenPos.z), new Vector2(0.06, 0.06), new Vector4(0, 1, 0, 1), 0, null));
+
+            // let worldX = ((((screenX / this.mCanvasNode.clientWidth) * 2) - 1) + ((offsetX / scaleX) / this.mAspectRatio)) * this.mAspectRatio * scaleX;
+            // let worldY = (((screenY / this.mCanvasNode.clientHeight) * -2) + 1) + ((offsetY / scaleY * this.mAspectRatio) / this.mAspectRatio) * scaleY;
+
+            let offsetPos : Vector4 = new Vector4(
+                (((offsetX / scaleX) / this.mAspectRatio)) * this.mAspectRatio * scaleX,
+                ((offsetY / scaleY * this.mAspectRatio) / this.mAspectRatio) * scaleY,
+                z,
+                w
+            );
+
+            const x2 : number = offsetPos.x;
+            const y2 : number = offsetPos.y;
+
+
+            // _Renderer2D().drawQuad(new Quad(new Vector3(offsetPos.x, offsetPos.y, offsetPos.z), new Vector2(0.06, 0.06), new Vector4(1, 0, 1, 1), 0, null));
+
+            let pos : Vector4 = new Vector4(x1 + x2, y1 + y2, z, w);
+            // let pos : Vector4 = new Vector4(screenPos.x + offsetPos.x, screenPos.y + offsetPos.y, z, w);
+            pos.rotateZ(rotationRadians);
+
+
+            return pos;
+            // return new Vector4(worldX, worldY, z, w).rotateZ(rotationRadians);
+            // return new Vector4(worldX, worldY, z, w);
         }
 
         private setWindowCallbacks() : void {
@@ -212,6 +255,10 @@ namespace WDOH {
             window.onfocus = function() {
                 mApplication.onEvent(new FocusChangeEvent(true));
             }
+        }
+
+        public hideNativeCursor(hideNativeCursor : boolean) : void {
+            this.mCanvasNode.style.cursor = hideNativeCursor ? "none" : "auto";
         }
 
         public resizable() : boolean {

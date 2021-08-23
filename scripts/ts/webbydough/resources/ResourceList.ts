@@ -2,7 +2,7 @@ namespace WDOH {
 
     /**
      * A ResourceList instance holds an Application's resource IDs in different arrays.
-     *  Each array corresponds to a respective type; Texture, Sound, etc.
+     * Each array corresponds to a respective type; Texture, Audio, etc....
      */
     export class ResourceList {
 

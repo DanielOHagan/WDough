@@ -117,16 +117,33 @@ namespace WDOH {
             return this;
         }
 
-        public cross() : Vector4 {
-            //TODO:: This
+        public cross(vec : Vector4) : Vector4 {
+            const newX : number = this.y * vec.x - this.z * vec.y;
+            const newY : number = this.z * vec.x - this.x * vec.z;
+            const newZ : number = this.x * vec.y - this.y * vec.x;
+
+            this.x = newX;
+            this.y = newY;
+            this.z = newZ;
 
             return this;
         }
 
         public dot() : Vector4 {
             //TODO:: This
-            
-            
+
+            return this;
+        }
+
+        public rotateZ(radians : number) : Vector4 {
+            const sin : number = Math.sin(radians);
+            const cos : number = Math.sin(radians + 1.5707963267948966);
+            const x : number = this.x.valueOf();
+            const y : number = this.y.valueOf();
+
+            this.x = x * cos - y * sin;
+            this.y = x * sin + y * cos;
+
             return this;
         }
 

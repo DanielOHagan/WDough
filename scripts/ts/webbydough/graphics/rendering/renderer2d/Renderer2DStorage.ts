@@ -12,7 +12,7 @@ namespace WDOH {
         public static readonly UNIFORM_NAME_PROJ_VIEW_MAT : string = "uProjectionViewMatrix";
         public static readonly UNIFORM_NAME_TRANSFORMATION_MAT : string = "uTransformationMatrix";
         public static readonly UNIFORM_NAME_TEXTURE_ARRAY : string = "uTextures";
-        
+
         //Batch Objects
         public static mRenderBatchQuadArray : RenderBatchQuad[];
         public static mRenderBatchQuadIndex : number;
@@ -27,15 +27,16 @@ namespace WDOH {
         public static mQuadVbo : IVertexBuffer;
         //Textures
         public static mWhiteTexture : ITexture;
+        public static mErrorTexture : ITexture;
         //Shaders
         public static mShaderLibrary : ShaderLibrary;
-        
+
         public static mRequiredShadersLoaded : boolean;
         public static mRequiredShadersInitialised : boolean;
 
 
         private constructor() {}
-        
+
         public static init() : void {
             Renderer2DStorage.mRenderBatchQuadArray = [];
             Renderer2DStorage.mRequiredShadersLoaded = false;
@@ -48,7 +49,7 @@ namespace WDOH {
 
             Renderer2DStorage.loadShaders();
             Renderer2DStorage.initVertexArrays();
-            
+
             Renderer2DStorage.initShaders();
             Renderer2DStorage.initTextures();
         }
@@ -62,7 +63,8 @@ namespace WDOH {
             if (ShaderReader.isShaderLoaded(Renderer2DStorage.TEXTURE_SHADER)) {
                 let textureShader : IShader | null = Renderer2DStorage.mShaderLibrary.get(Renderer2DStorage.TEXTURE_SHADER);
                 if (textureShader === null) {
-                    throw new Error("Texture shader null");
+                    mApplication.throwError("Texture Shader is null");
+                    return;
                 }
 
                 //Upload texture sampler indexes
@@ -123,6 +125,12 @@ namespace WDOH {
                 new Uint8Array([255, 255, 255, 255]),
                 ETextureBindingPoint.TEX_2D
             );
+            Renderer2DStorage.mErrorTexture = TextureLoader.generateColourTexture(
+                1,
+                1,
+                new Uint8Array([255, 0, 0, 255]),
+                ETextureBindingPoint.TEX_2D
+            );
         }
 
         public static isReady() : boolean {
@@ -139,17 +147,17 @@ namespace WDOH {
             for (let requiredIndex = 0; requiredIndex < requiredShaders.length; requiredIndex++) {
                 for (let loadedIndex = 0; loadedIndex < loadedShaders.length; loadedIndex++) {
                     if (requiredShaders[requiredIndex] === loadedShaders[loadedIndex]) {
-                        
+
                         if (requiredIndex === requiredShaders.length - 1) {
                             allRequiredShadersLoaded = true;
                             break;
-                        }                     
+                        }
 
                         requiredIndex++;
                         loadedIndex = 0;
                     }
                 }
-                
+
                 if (allRequiredShadersLoaded === true) {
                     break;
                 }
@@ -221,6 +229,7 @@ namespace WDOH {
 
             //Textures
             Renderer2DStorage.mWhiteTexture.cleanUp();
+            Renderer2DStorage.mErrorTexture.cleanUp();
         }
     }
 }

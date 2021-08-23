@@ -13,7 +13,7 @@ namespace WDOH {
             this.mUniformLocations = {};
 
             this.compileShaderSources(sources);
-        };
+        }
 
         public static create(name : string, sources : Map<EShaderType, string>) : IShader {
             return new ShaderWebGL(name, sources);
@@ -34,7 +34,6 @@ namespace WDOH {
         }
 
         public compileShaderSources(sources : Map<EShaderType, string>) {
-
             let program : WebGLProgram | null = mContext.createProgram();
 
             if (program === null) {
@@ -71,18 +70,18 @@ namespace WDOH {
 
             mContext.linkProgram(program);
             if (!mContext.getProgramParameter(program, mContext.LINK_STATUS)) {
-                
+
                 let errorMessage : string = "Program failed to link:";
-                
+
                 for (let shader of compiledShaders) {
                     if (!mContext.getShaderParameter(shader, mContext.COMPILE_STATUS)) {
                         errorMessage += "\nShader: '" + this.mName + "' failed to compile.\n";
                         errorMessage += mContext.getShaderInfoLog(shader);
                     }
-                    
+
                     mContext.deleteShader(shader);
                 }
-                
+
                 mContext.deleteProgram(program);
 
                 throw new Error(errorMessage);
@@ -174,11 +173,11 @@ namespace WDOH {
         public setUniformFloat(uniformName : string, value : number) : void {
             mContext.uniform1f(this.getUniformLocation(uniformName), value);
         }
-        
+
         public setUniformFloat2(uniformName : string, vec : Vector2) : void {
             mContext.uniform2f(this.getUniformLocation(uniformName), vec.x, vec.y);
         }
-        
+
         public setUniformFloat3(uniformName : string, vec : Vector3) : void {
             mContext.uniform3f(this.getUniformLocation(uniformName), vec.x, vec.y, vec.z);
         }

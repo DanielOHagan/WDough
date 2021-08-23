@@ -8,11 +8,11 @@ namespace WDOH {
 
             mContext.enable(mContext.DEPTH_TEST);
         }
-        
+
         public setClearColour(colour : Vector4) : void {
             mContext.clearColor(colour.x, colour.y, colour.z, colour.w);
         }
-        
+
         public setViewport(x : number, y : number, width : number, height : number) : void {
             mContext.viewport(x, y, width, height);
         }
@@ -21,8 +21,8 @@ namespace WDOH {
             mContext.clear(mContext.COLOR_BUFFER_BIT | mContext.DEPTH_BUFFER_BIT);
         }
 
-        public drawIndexed(count : number) : void {
-            mContext.drawElements(mContext.TRIANGLES, count, mContext.UNSIGNED_INT, 0);
+        public drawIndexed(count : number, drawMode : number = mContext.TRIANGLES) : void {
+            mContext.drawElements(drawMode, count, mContext.UNSIGNED_INT, 0);
         }
     }
 }

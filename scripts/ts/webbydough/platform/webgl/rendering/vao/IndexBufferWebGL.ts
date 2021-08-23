@@ -22,11 +22,11 @@ namespace WDOH {
             mContext.bindBuffer(mContext.ELEMENT_ARRAY_BUFFER, this.mIndexBuffer);
             mContext.bufferData(mContext.ELEMENT_ARRAY_BUFFER, new Int32Array(indices), mContext.STATIC_DRAW);
         }
-        
+
         public bind() : void {
             mContext.bindBuffer(mContext.ELEMENT_ARRAY_BUFFER, this.mIndexBuffer)
         }
-        
+
         public unBind() : void {
             mContext.bindBuffer(mContext.ELEMENT_ARRAY_BUFFER, null);
         }

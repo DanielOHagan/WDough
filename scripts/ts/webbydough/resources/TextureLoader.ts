@@ -8,13 +8,14 @@ namespace WDOH {
             if (texture.isDefined()) {
                 return texture;
             } else {
-                throw new Error(`Failed to load texture: ${filePath}`);
+                _Logger().errWDOH(`Failed to load texture: ${filePath}`);
+                return Renderer2DStorage.mErrorTexture;
             }
         }
 
         public static generateTexture(width : number, height : number, bindingPoint : ETextureBindingPoint) : ITexture {
             if (width <= 0 || height <= 0) {
-                throw new Error("Width and Height must be larger than 0.");
+                _Logger().errWDOH("Width and Height must be larger than 0.")
             }
 
             return TextureWebGL.generateTexture(width, height, bindingPoint);
@@ -27,11 +28,11 @@ namespace WDOH {
             bindingPoint : ETextureBindingPoint
         ) : ITexture {
             if (width <= 0 || height <= 0) {
-                throw new Error("Width and Height must be larger than 0.");
+                _Logger().errWDOH("Width and Height must be larger than 0.");
             }
 
             if (rgbaColourData.length % 4 !== 0) {
-                throw new Error("rgbaColourData argument must include 4 data channels in Uint8Array.")
+                _Logger().errWDOH("rgbaColourData argument must include 4 data channels in Uint8Array.")
             }
 
             let texture : ITexture = TextureWebGL.generateTexture(width, height, bindingPoint);
