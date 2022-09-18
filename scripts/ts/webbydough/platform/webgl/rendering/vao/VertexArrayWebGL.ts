@@ -24,14 +24,14 @@ namespace WDOH {
         }
 
         public unBind() : void {
-            for ( ; this.mVertexBufferIndex > 0; this.mVertexBufferIndex--) {
+            for (; this.mVertexBufferIndex > 0; this.mVertexBufferIndex--) {
                 mContext.disableVertexAttribArray(this.mVertexBufferIndex);
             }
             mContext.bindVertexArray(null);
         }
 
         public addVertexBuffer(vertexBuffer : IVertexBuffer) : void {
-            mContext.bindVertexArray(this.mVertexArray);
+            this.bind()
             vertexBuffer.bind();
 
             let layout : BufferLayout = vertexBuffer.getBufferLayout();
@@ -53,7 +53,7 @@ namespace WDOH {
         }
 
         public setIndexBuffer(indexBuffer : IIndexBuffer) : void {
-            mContext.bindVertexArray(this.mVertexArray);
+            this.bind();
             indexBuffer.bind();
 
             this.mIndexBuffer = indexBuffer;

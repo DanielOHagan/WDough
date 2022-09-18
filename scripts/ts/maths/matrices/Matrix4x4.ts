@@ -33,18 +33,18 @@ namespace WDOH {
             this.m00 = this.m11 = this.m22 = this.m33 = 1;
 
             this.m01 = this.m02 = this.m03 =
-            this.m10 = this.m12 = this.m13 =
-            this.m20 = this.m21 = this.m23 =
-            this.m30 = this.m31 = this.m32 = 0;
+                this.m10 = this.m12 = this.m13 =
+                this.m20 = this.m21 = this.m23 =
+                this.m30 = this.m31 = this.m32 = 0;
         }
 
         public identity() : Matrix4x4 {
             this.m00 = this.m11 = this.m22 = this.m33 = 1;
 
             this.m01 = this.m02 = this.m03 =
-            this.m10 = this.m12 = this.m13 =
-            this.m20 = this.m21 = this.m23 =
-            this.m30 = this.m31 = this.m32 = 0;
+                this.m10 = this.m12 = this.m13 =
+                this.m20 = this.m21 = this.m23 =
+                this.m30 = this.m31 = this.m32 = 0;
 
             return this;
         }
@@ -134,7 +134,7 @@ namespace WDOH {
         }
 
 
-        public invert() : Matrix4x4 {
+        public inverse() : Matrix4x4 {
             let mat : Matrix4x4 = new Matrix4x4();
 
             //Determinant calculation

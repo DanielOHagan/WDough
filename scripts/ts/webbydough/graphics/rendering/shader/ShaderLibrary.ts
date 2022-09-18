@@ -29,7 +29,8 @@ namespace WDOH {
          */
         public create(name : string, sources : Map<EShaderType, string>) : IShader | null {
             if (this.mShaderMap.has(name)) {
-                throw new Error(`Shader name already in use: ${name}`);
+                mApplication.throwError(`Shader name already in use : ${name}`);
+                return null;
             } else {
                 let shader : IShader = ShaderLibrary.loadSeparatedShader(name, sources);
 
@@ -43,7 +44,7 @@ namespace WDOH {
             if (!this.mShaderMap.has(name)) {
                 this.mShaderMap.set(name, shader);
             } else {
-                throw new Error(`Shader: ${name} already in use.`);
+                throw new Error(`Shader : ${name} already in use.`);
             }
         }
 
@@ -51,7 +52,7 @@ namespace WDOH {
             if (this.mShaderMap.has(name)) {
                 this.mShaderMap.set(name, shader);
             } else {
-                throw new Error(`Shader: ${name} not found.`);
+                mApplication.throwError(`Shader : ${name} not found.`);
             }
         }
 

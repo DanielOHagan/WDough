@@ -33,7 +33,7 @@ namespace WDOH {
     export class DataType {
 
         //Prevent initialisation
-        private constructor() {}
+        private constructor() { }
 
         /**
          * 
@@ -56,7 +56,7 @@ namespace WDOH {
                 case EDataType.BOOL: return 1;
             }
 
-            mApplication.throwError(`Unrecognised Data Type: ${dataType}`);
+            mApplication.throwError(`Unrecognised Data Type : ${dataType}`);
             return EDataType.NONE;
         }
 
@@ -81,7 +81,7 @@ namespace WDOH {
                 case EDataType.BOOL: return 1;
             }
 
-            mApplication.throwError(`Unrecognised Data Type: ${dataType}`);
+            mApplication.throwError(`Unrecognised Data Type : ${dataType}`);
             return EDataType.NONE;
         }
     }

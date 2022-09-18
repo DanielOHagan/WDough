@@ -32,14 +32,20 @@ namespace TestGame {
         private mCursorWorldPos : WDOH.Vector4 = new WDOH.Vector4(0, 0, 0, 0);
         private mCursorQuad : WDOH.Quad = new WDOH.Quad(new WDOH.Vector3(0, 0, 1), new WDOH.Vector2(0.025, 0.025), new WDOH.Vector4(0, 0, 1, 1), 0, null);
 
+        private mTotalRuntimeTimer : WDOH.Timer;
+
         public constructor(aspectRatio : number) {
             this.mOrthoCameraController = new TG_OrthoCameraController(aspectRatio);
             this.mTestTexture = null;
             this.mPartiallyTransparentTexture = null;
             this.mCanRun = false;
+
+            this.mTotalRuntimeTimer = new WDOH.Timer("AppLogic Runtime Timer", false);
         }
 
         public init() : void {
+            this.mTotalRuntimeTimer.start();
+
             this.mTestTexture = WDOH.TextureLoader.loadTextureFromFile(
                 "res/TG/images/testTexture.png",
                 WDOH.ETextureBindingPoint.TEX_2D
@@ -72,7 +78,7 @@ namespace TestGame {
                 null
             );
             this.mWorldBoundingBox = new WDOH.BoundingBox2D(this.mWorldPlaneQuad);
-            // this.mCollisionQuadTree = new WDOH.QuadTree(0, this.mWorldBoundingBox);
+            // this.mCollisionQuadTree = new QuadTree(0, this.mWorldBoundingBox);
             this.mCollisionQuadTree = new WDOH.QuadTree(this.mWorldBoundingBox, null);
 
             this.populateTestGrid2dArray(this.mTestGridWidth, this.mTestGridHeight);
@@ -91,20 +97,32 @@ namespace TestGame {
 
             WDOH._Renderer().beginScene(this.mOrthoCameraController.getCamera());
 
-            //Update 
+            //Simple example of in app updates to debug output
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_J)) {
+                WDOH._DebugOutput().display(false);
+            } else if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_K)) {
+                WDOH._DebugOutput().display(true);
+            }
+
+            //Update
             this.updateCursorWorldPos(WDOH.Input.get().getMouseScreenPos().x, WDOH.Input.get().getMouseScreenPos().y);
 
             for (let x = 0; x < this.mTestGridWidth; x++) {
                 WDOH._Renderer2D().drawAllIfTextured(this.mTestGridQuads2dArray[x]);
             }
 
-            if (this.mCollisionQuadTree !== null) {
+            if (this.mCollisionQuadTree !== null && WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_M)) {
                 this.mCollisionQuadTree.DEBUG_drawEndBranches();
             }
 
             this.drawCursor();
 
             WDOH._Renderer().endScene();
+
+            WDOH._DebugOutput().getCategoryByName("General")?.updateValue(
+                "Total Runtime",
+                Math.trunc(WDOH.Time.convertMillisToSeconds(this.mTotalRuntimeTimer.getTotalTickingTime())).toString() + "s"
+            );
         }
 
         public onEvent(event : WDOH.AEvent) : void {
@@ -141,6 +159,8 @@ namespace TestGame {
             for (let numberedTexture of this.mNumberTextures) {
                 numberedTexture.cleanUp();
             }
+
+            this.mTotalRuntimeTimer.stop();
         }
 
         public populateTestGrid2dArray(countX : number, countY : number) : void {
@@ -160,7 +180,7 @@ namespace TestGame {
                     let rotation : number = Math.random() < 0.5 ? 45 : 0;
 
                     // if (Math.random() < 0.3) 
-                    //     pos.rotateZ(WDOH.MathsWDOH.radToDeg(45));
+                    //     pos.rotateZ(MathsradToDeg(45));
 
                     let quad : WDOH.Quad = new WDOH.Quad(pos, size, this.mColours[y], rotation, this.mNumberTextures[y % this.mNumTexturesCount]);
 

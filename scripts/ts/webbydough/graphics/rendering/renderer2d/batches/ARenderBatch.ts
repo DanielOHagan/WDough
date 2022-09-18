@@ -6,7 +6,7 @@ namespace WDOH {
 
         public readonly MAX_GEOMETRY_COUNT : number;
         public readonly MAX_VERTEX_COUNT : number;
-        public readonly MAX_INDEX_COUNT  : number;
+        public readonly MAX_INDEX_COUNT : number;
         public readonly MAX_TEXTURE_SLOT_INDEX : number;
 
         protected mData : number[];
@@ -134,7 +134,7 @@ namespace WDOH {
             for (let texture of this.mTextureSlots.values()) {
                 if (texture === null || texture.getId() === Renderer2DStorage.mWhiteTexture.getId()) {
                     textureSlotIndex++;
-                    continue;   
+                    continue;
                 }
 
                 if (textureId === texture.getId()) {
@@ -144,7 +144,7 @@ namespace WDOH {
                 textureSlotIndex++;
             }
 
-            mApplication.getLogger().warnApp("TexId: " + textureId + " not found in batch");
+            mApplication.getLogger().warnApp("TexId : " + textureId + " not found in batch");
 
             return -1;
         }

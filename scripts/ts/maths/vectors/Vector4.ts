@@ -130,7 +130,7 @@ namespace WDOH {
         }
 
         public dot() : Vector4 {
-            //TODO:: This
+            //TODO : : This
 
             return this;
         }

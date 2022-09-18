@@ -5,7 +5,7 @@ namespace WDOH {
         private mCount : number;
         private mIndexBuffer : WebGLBuffer | null;
 
-        public constructor(indices : number[], count? : number) {
+        public constructor(indices : number[], count ? : number) {
 
             if (count !== undefined) {
                 this.mCount = count;
@@ -19,7 +19,7 @@ namespace WDOH {
                 throw new Error("Failed to create Index Buffer");
             }
 
-            mContext.bindBuffer(mContext.ELEMENT_ARRAY_BUFFER, this.mIndexBuffer);
+            this.bind();
             mContext.bufferData(mContext.ELEMENT_ARRAY_BUFFER, new Int32Array(indices), mContext.STATIC_DRAW);
         }
 

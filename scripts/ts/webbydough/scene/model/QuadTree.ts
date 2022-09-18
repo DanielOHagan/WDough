@@ -58,7 +58,12 @@ namespace WDOH {
                     new Quad(
                         new Vector3(pos.x + childWidth, pos.y, 0.000001),
                         new Vector2(childWidth, childHeight),
-                        new Vector4(1, 0, 0, 1),
+                        new Vector4(
+                            0.81960784313, /* (1 / 255) * 209 */
+                            0.21960784313, /* (1 / 255) * 56  */
+                            0.21960784313, /* (1 / 255) * 56  */
+                            1
+                        ),
                         0,
                         null
                     )
@@ -71,7 +76,12 @@ namespace WDOH {
                     new Quad(
                         new Vector3(pos.x, pos.y, 0.000001),
                         new Vector2(childWidth, childHeight),
-                        new Vector4(0, 1, 0, 1),
+                        new Vector4(
+                            0.11764705882, /* (1 / 255) * 30  */
+                            0.76078431372, /* (1 / 255) * 194 */
+                            0.10588235294, /* (1 / 255) * 27  */
+                            1
+                        ),
                         0,
                         null
                     )
@@ -84,7 +94,12 @@ namespace WDOH {
                     new Quad(
                         new Vector3(pos.x, pos.y + childHeight, 0.000001),
                         new Vector2(childWidth, childHeight),
-                        new Vector4(0, 0, 1, 1),
+                        new Vector4(
+                            0.16470588235, /* (1 / 255) * 42  */
+                            0.16470588235, /* (1 / 255) * 42  */
+                            0.81960784313, /* (1 / 255) * 209 */
+                            1
+                        ),
                         0,
                         null
                     )
@@ -97,7 +112,12 @@ namespace WDOH {
                     new Quad(
                         new Vector3(pos.x + childWidth, pos.y + childHeight, 0.000001),
                         new Vector2(childWidth, childHeight),
-                        new Vector4(1, 1, 1, 1),
+                        new Vector4(
+                            0.56078431372, /* (1 / 255) * 143  */
+                            0.55294117647, /* (1 / 255) * 141  */
+                            0.55294117647, /* (1 / 255) * 141 */
+                            1
+                        ),
                         0,
                         null
                     )
@@ -148,7 +168,6 @@ namespace WDOH {
 
         /**
          * Try to add object to current level's mObjects array.
-         * This method is to be used 
          * 
          * @param object Object to add.
          * @returns True if current level has space for object and is added to array.
@@ -262,6 +281,7 @@ namespace WDOH {
          * Objects from this node are added first, then the objects of the
          * first child node, if one exists, before adding objects from the
          * second child node.
+         * 
          * @returns All objects from this node and all children.
          */
         public getAllObjectsFromHere() : T[] {
@@ -337,7 +357,7 @@ namespace WDOH {
             if (this.mChildNodes !== null) {
                 for (let child of this.mChildNodes) {
                     const response : number = child.DEBUG_getLevelFromObject(querriedObject);
-                    if (response !== -1) 
+                    if (response !== -1)
                         return response;
                 }
             }

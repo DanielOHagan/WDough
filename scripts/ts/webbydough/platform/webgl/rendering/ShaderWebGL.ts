@@ -5,7 +5,7 @@ namespace WDOH {
         private mName : string;
         private mProgram : WebGLProgram | null;
 
-        private mUniformLocations : {[uniformName : string] : WebGLUniformLocation};
+        private mUniformLocations : { [uniformName : string] : WebGLUniformLocation };
 
         private constructor(name : string, sources : Map<EShaderType, string>) {
             this.mName = name;
@@ -43,12 +43,12 @@ namespace WDOH {
             let compiledShaders : WebGLShader[] = new Array<WebGLShader>(sources.keys.length);
             let compiledShadersIndex : number = 0;
 
-            for(let shaderType of sources.keys()) {
+            for (let shaderType of sources.keys()) {
                 let shader : WebGLShader | null = mContext.createShader(this.shaderTypeToGLShaderType(shaderType));
 
                 if (shader === null) {
                     throw new Error(
-                        "Failed to create shader!" + 
+                        "Failed to create shader!" +
                         "Name: " + this.mName
                     );
                 }
@@ -104,10 +104,10 @@ namespace WDOH {
                 return mContext.FRAGMENT_SHADER;
             }
 
-            throw new Error("Unknown Shader Type: " + shaderType);
+            throw new Error("Unknown Shader Type : " + shaderType);
         }
 
-        public createUniform(uniformName: string) : void {
+        public createUniform(uniformName : string) : void {
             if (this.mProgram === null) {
                 throw new Error("Shader Program not initialised.");
             }
@@ -121,7 +121,7 @@ namespace WDOH {
             this.mUniformLocations[uniformName] = uniformLocation;
         }
 
-        public createUniforms(uniformNames: string[]) : void {
+        public createUniforms(uniformNames : string[]) : void {
             for (let name of uniformNames) {
                 this.createUniform(name);
             }
@@ -163,7 +163,7 @@ namespace WDOH {
 
         public setUniformIntArray(uniformName : string, array : number[]) : void {
             //Remove decimal value
-            for (let i = 0 ; i < array.length; i++) {
+            for (let i = 0; i < array.length; i++) {
                 array[i] = Math.trunc(array[i]);
             }
 
@@ -186,7 +186,7 @@ namespace WDOH {
             mContext.uniform4f(this.getUniformLocation(uniformName), vec.x, vec.y, vec.z, vec.w);
         }
 
-        public setUniformMat4(uniformName : string, mat: Matrix4x4) : void {
+        public setUniformMat4(uniformName : string, mat : Matrix4x4) : void {
             mContext.uniformMatrix4fv(this.getUniformLocation(uniformName), false, new Float32Array(mat.asArray()));
         }
 

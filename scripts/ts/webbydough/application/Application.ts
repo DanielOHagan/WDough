@@ -9,9 +9,11 @@ namespace WDOH {
         private mLogger : Logger;
         private mResourceList : ResourceList;
         private mAppName : string | null;
+        private mDebugOutput : DebugOutput;
 
         private mRunning : boolean;
         private mFocused : boolean;
+        private mDebugging : boolean;
 
         public constructor(appLogic : IApplicationLogic, appName : string | null) {
             this.mCanvas = new Canvas(window.innerWidth, window.innerHeight);
@@ -23,11 +25,17 @@ namespace WDOH {
             this.mLogger = new Logger(appName);
             this.mResourceList = new ResourceList();
             this.mAppName = appName;
+            this.mDebugOutput = new DebugOutput();
+
+
+            this.mDebugging = true;
         }
 
         public init(/*initSettings : ApplicationInitialisationSettings, appSettings : ApplicationSettings*/) : void {
             //Attach canvas to body
             this.mCanvas.attachCanvas(Canvas.DEFAULT_CANVAS_WRAPPER_ID);
+
+            this.initDebug();
 
             this.mRenderer.init();
 
@@ -56,7 +64,7 @@ namespace WDOH {
 
         public run() : void {
             if (!this.mAppLogic.canRun()) {
-                _Logger().errWDOH("Applicaiton Logic can not run.");
+                this.throwError("Applicaiton Logic can not run.");
             }
             this.mRunning = true;
             this.mAppLoop.run();
@@ -74,12 +82,13 @@ namespace WDOH {
 
         public update(deltaTime : number) : void {
             this.mRenderer.getRendererAPI().clear();
+            this.updateDebugOutput();
             this.mAppLogic.update(deltaTime);
         }
 
         public throwError(errMsg : string) : void {
-            //TODO:: Create an "Error" object containing Message, Origin, Timestamp, etc....
-            _Logger().errWDOH(`Throwing Error & stopping execution: ${errMsg}`);
+            //TODO : : Create an "Error" object containing Message, Origin, Timestamp, etc....
+            _Logger().errWDOH(`Throwing Error & stopping execution : ${errMsg}`);
             throw new Error(errMsg);
         }
 
@@ -134,7 +143,7 @@ namespace WDOH {
 
         public onApplicationEvent(event : AEvent) : void {
             switch (event.getType()) {
-                case EEventType.APPLICATION_FOCUS_CHANGE:
+                case EEventType.APPLICATION_FOCUS_CHANGE :
                     this.mFocused = (event as FocusChangeEvent).isFocused();
                     this.mAppLoop.onFocusChange(this.mFocused);
                     break;
@@ -160,8 +169,32 @@ namespace WDOH {
             }
         }
 
-        public displayFps(fps : number) : void {
-            _Logger().infoWDOH(`FPS: ${fps}`);
+        public initDebug() : void {
+            let generalCategory : DebugOutputCategory | null = _DebugOutput().addCategory("General");
+            if (generalCategory !== null) {
+                generalCategory.addItem("Total Runtime", "");
+                generalCategory.addItem("FPS", "");
+                generalCategory.addItem("Target FPS", this.mAppLoop.getTargetFps().toString());
+                {
+                    const cursorPos : Vector2 = Input.get().getMouseScreenPos();
+                    generalCategory.addItem("Cursor Screen Pos", "X: " + cursorPos.x + " Y: " + cursorPos.y);
+                }
+            }
+
+            this.mCanvas.attachDebugOutput();
+            _DebugOutput().display(this.mDebugging);
+        }
+
+        public updateDebugOutput() : void {
+            let generalCategory : DebugOutputCategory | null = _DebugOutput().getCategoryByName("General");
+            if (generalCategory !== null) {
+                generalCategory.updateValue("FPS", this.mAppLoop.getFps().toString());
+                generalCategory.updateValue("Target FPS", this.mAppLoop.getTargetFps().toString());
+                {
+                    const cursorPos : Vector2 = Input.get().getMouseScreenPos();
+                    generalCategory.updateValue("Cursor Screen Pos", "X: " + cursorPos.x + " Y: " + cursorPos.y);
+                }
+            }
         }
 
         //-----Setters-----
@@ -188,6 +221,10 @@ namespace WDOH {
 
         public getLogger() : Logger {
             return this.mLogger;
+        }
+
+        public getDebugOutput() : DebugOutput {
+            return this.mDebugOutput;
         }
 
         public getAppName() : string | null {

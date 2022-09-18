@@ -75,13 +75,13 @@ namespace WDOH {
 
             if (vertexShaderSrc === null) {
                 ShaderReader.mShaderLoadList.set(fileName, false);
-                mApplication.throwError(`Failed to load Vertex shader from file: ${fileName}`);
+                mApplication.throwError(`Failed to load Vertex shader from file : ${fileName}`);
                 return new Map();
             }
 
             if (fragmentShaderSrc === null) {
                 ShaderReader.mShaderLoadList.set(fileName, false);
-                mApplication.throwError(`Failed to load fragment shader from file: ${fileName}`);
+                mApplication.throwError(`Failed to load fragment shader from file : ${fileName}`);
                 return new Map();
             }
 

@@ -5,7 +5,7 @@
 }
 
 body {
-    background-color: rgba(0, 0, 0, 1);
+    overflow: hidden;
 }
 
 .wdoh-canvas-wrapper {
@@ -13,4 +13,26 @@ body {
     align-items: center;
     justify-content: center;
     height: 100%;
+}
+
+.wdoh-debug-output {
+    position: fixed;
+    padding: 0.5em 0.75em;
+    bottom: 0;
+    left: 0;
+    max-width: 500px;
+    min-width: 200px;
+    width: 100%;
+    min-height: 30px;
+    max-height: 500px;
+    overflow: initial;
+    background-color: rgba(200, 200, 200, 180);
+}
+
+.wdoh-debug-output ul {
+    list-style: none;
+}
+
+.hidden {
+    display: none;
 }

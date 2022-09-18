@@ -17,7 +17,7 @@ namespace WDOH {
             buffer.mBufferLayout = null;
 
             if (buffer.mBuffer === null) {
-                throw new Error("Unable to create Vertex Buffer");
+                mApplication.throwError("Unable to create Vertex Buffer");
             }
 
             let data : BufferSource = DataAllocatorWebGL.createBufferSourceFromData(vertices, dataType);
@@ -35,7 +35,7 @@ namespace WDOH {
             buffer.mBufferLayout = null;
 
             if (buffer.mBuffer === null) {
-                throw new Error("Unable to create Vertex Buffer");
+                mApplication.throwError("Unable to create Vertex Buffer");
             }
 
             let data : BufferSource = DataAllocatorWebGL.createEmptyBufferSource(size, dataType);
@@ -48,7 +48,8 @@ namespace WDOH {
 
         public bind() : void {
             if (this.mBufferLayout === null) {
-                throw new Error("Buffer Layout not set!");
+                _Logger().errWDOH("Buffer Layout not set.");
+                throw new Error();
             }
 
             mContext.bindBuffer(mContext.ARRAY_BUFFER, this.mBuffer);
@@ -71,7 +72,8 @@ namespace WDOH {
 
         public getBufferLayout() : BufferLayout {
             if (this.mBufferLayout === null) {
-                throw new Error("Buffer Layout has not been set.");
+                _Logger().errWDOH("Buffer Layout not set.");
+                throw new Error();
             }
 
             return this.mBufferLayout;

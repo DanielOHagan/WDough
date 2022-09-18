@@ -1,5 +1,4 @@
 namespace WDOH {
-
     export class BufferLayout {
 
         private mBufferElements : BufferElement[];

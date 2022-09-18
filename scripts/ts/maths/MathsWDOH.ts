@@ -33,7 +33,7 @@ namespace WDOH {
          */
         public static clamp(value : number, lowerBound : number, higherBound : number) : number {
             if (lowerBound > higherBound) {
-                throw new Error(`Lower: ${lowerBound} > Higher: ${higherBound}`);
+                throw new Error(`Lower : ${lowerBound} > Higher : ${higherBound}`);
             }
 
             return value > higherBound ? higherBound : value < lowerBound ? lowerBound : value;
@@ -70,7 +70,7 @@ namespace WDOH {
          */
         public static randNum(min : number, max : number) : number {
             if (min > max) {
-                throw new Error(`Min: ${min} is greater than Max: ${max}`);
+                throw new Error(`Min : ${min} is greater than Max : ${max}`);
             }
 
             return (Math.random() * (max - min)) + min;

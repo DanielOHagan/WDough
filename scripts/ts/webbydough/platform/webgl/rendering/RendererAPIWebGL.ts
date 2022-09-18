@@ -2,7 +2,7 @@ namespace WDOH {
 
     export class RendererAPIWebGL implements IRendererAPI {
 
-        public init(): void {
+        public init() : void {
             mContext.enable(mContext.BLEND);
             mContext.blendFuncSeparate(mContext.SRC_ALPHA, mContext.ONE_MINUS_SRC_ALPHA, mContext.ONE, mContext.ONE);
 

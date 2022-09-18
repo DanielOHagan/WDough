@@ -149,7 +149,7 @@ namespace WDOH {
         }
 
         public addTextured(quad : Quad) : boolean {
-            if (quad.mTexture !== null) { 
+            if (quad.mTexture !== null) {
 
                 let texSlotIndex : number = this.hasTextureId(quad.mTexture.getId()) ?
                     this.getTextureSlotIndex(quad.mTexture.getId()) : this.addNewTexture(quad.mTexture);
@@ -308,7 +308,7 @@ namespace WDOH {
         }
 
         public copy(copy : ARenderBatch<Quad>) : void {
-            //TODO:: This
+            //TODO : : This
         }
 
         public bind() : void {

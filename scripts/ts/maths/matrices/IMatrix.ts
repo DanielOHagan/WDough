@@ -19,7 +19,7 @@ namespace WDOH {
         translateVec2(vec : Vector2) : T;
         translateVec3(vec : Vector3) : T;
 
-        invert() : T;
+        inverse() : T;
 
         rotateRads(angleRads : number, axis : Vector3) : T;
 

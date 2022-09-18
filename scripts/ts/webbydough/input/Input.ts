@@ -1,16 +1,16 @@
 namespace WDOH {
 
     /**
-     * Singleton and 'Impl' methods for ease-of-use and cleaner API for end user.
-     */
+    * Singleton and 'Impl' methods for ease-of-use and cleaner API for end user.
+    */
     export class Input {
 
         public static readonly DEFAULT_KEY_INPUT_CODES : EKeyInputCode[] = [
-            EKeyInputCode.KEY_A, EKeyInputCode.KEY_B, EKeyInputCode.KEY_C, EKeyInputCode.KEY_D, EKeyInputCode.KEY_E, 
-            EKeyInputCode.KEY_F, EKeyInputCode.KEY_G, EKeyInputCode.KEY_H, EKeyInputCode.KEY_I, EKeyInputCode.KEY_J, 
-            EKeyInputCode.KEY_K, EKeyInputCode.KEY_L, EKeyInputCode.KEY_M, EKeyInputCode.KEY_N, EKeyInputCode.KEY_O, 
-            EKeyInputCode.KEY_P, EKeyInputCode.KEY_Q, EKeyInputCode.KEY_R, EKeyInputCode.KEY_S, EKeyInputCode.KEY_T, 
-            EKeyInputCode.KEY_U, EKeyInputCode.KEY_V, EKeyInputCode.KEY_W, EKeyInputCode.KEY_X, EKeyInputCode.KEY_Y, 
+            EKeyInputCode.KEY_A, EKeyInputCode.KEY_B, EKeyInputCode.KEY_C, EKeyInputCode.KEY_D, EKeyInputCode.KEY_E,
+            EKeyInputCode.KEY_F, EKeyInputCode.KEY_G, EKeyInputCode.KEY_H, EKeyInputCode.KEY_I, EKeyInputCode.KEY_J,
+            EKeyInputCode.KEY_K, EKeyInputCode.KEY_L, EKeyInputCode.KEY_M, EKeyInputCode.KEY_N, EKeyInputCode.KEY_O,
+            EKeyInputCode.KEY_P, EKeyInputCode.KEY_Q, EKeyInputCode.KEY_R, EKeyInputCode.KEY_S, EKeyInputCode.KEY_T,
+            EKeyInputCode.KEY_U, EKeyInputCode.KEY_V, EKeyInputCode.KEY_W, EKeyInputCode.KEY_X, EKeyInputCode.KEY_Y,
             EKeyInputCode.KEY_Z,
             EKeyInputCode.KEY_0, EKeyInputCode.KEY_1, EKeyInputCode.KEY_2, EKeyInputCode.KEY_3, EKeyInputCode.KEY_4,
             EKeyInputCode.KEY_5, EKeyInputCode.KEY_6, EKeyInputCode.KEY_7, EKeyInputCode.KEY_8, EKeyInputCode.KEY_9
@@ -38,11 +38,11 @@ namespace WDOH {
             return Input.INSTANCE;
         }
 
-        public init(enableKeyEvents : boolean, enableMouseEvents : boolean, possibleKeyInputs : EKeyInputCode[]) {            
+        public init(enableKeyEvents : boolean, enableMouseEvents : boolean, possibleKeyInputs : EKeyInputCode[]) {
             if (enableKeyEvents) {
                 Input.get().addKeyEventListeners();
             }
-            
+
             if (enableMouseEvents) {
                 Input.get().addMouseEventListeners();
             }
@@ -68,7 +68,7 @@ namespace WDOH {
                 mApplication.onKeyEvent(new KeyEvent(keyBoardEvent, EEventType.INPUT_KEY_DOWN));
             }
         }
-        
+
         public onKeyPress(keyBoardEvent : KeyboardEvent) : void {
             mApplication.onKeyEvent(new KeyEvent(keyBoardEvent, EEventType.INPUT_KEY_PRESS));
         }
@@ -142,10 +142,10 @@ namespace WDOH {
             if (Input.get().mMouseEventListeners) {
                 mApplication.getLogger().infoWDOH("Removed mouse event listeners");
 
-                window.removeEventListener("mousemove", event =>{});
-                window.removeEventListener("mousedown", event =>{});
-                window.removeEventListener("mouseup", event =>{});
-                window.removeEventListener("mousewheel", event =>{});
+                window.removeEventListener("mousemove", event => {});
+                window.removeEventListener("mousedown", event => {});
+                window.removeEventListener("mouseup", event => {});
+                window.removeEventListener("mousewheel", event => {});
 
                 Input.get().mMouseEventListeners = !Input.get().mMouseEventListeners;
             }

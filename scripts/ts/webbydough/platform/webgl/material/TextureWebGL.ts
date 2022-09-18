@@ -82,7 +82,7 @@ namespace WDOH {
             return texture;
         }
 
-        public static generateTexture(width : number, height : number, bindingPoint : ETextureBindingPoint) : ITexture {
+        public static generateTexture(width : number, height : number, bindingPoint: ETextureBindingPoint) : ITexture {
             let textureId : number = mApplication.getResourceList().generateUnusedTextureId();
             let texture : TextureWebGL = new TextureWebGL(textureId, bindingPoint);
 
@@ -92,7 +92,7 @@ namespace WDOH {
             texture.mAlphaChannel = true;
 
             texture.mInternalFormat = mContext.RGBA8;
-		    texture.mDataFormat = mContext.RGBA;
+            texture.mDataFormat = mContext.RGBA;
 
             texture.mHandle = mContext.createTexture();
 
@@ -180,7 +180,7 @@ namespace WDOH {
             this.delete();
         }
 
-        private onHtmlImageLoad(thisTexture : TextureWebGL, htmlImage : HTMLImageElement) : void {
+        private onHtmlImageLoad(thisTexture: TextureWebGL, htmlImage: HTMLImageElement) : void {
             if (thisTexture.mData !== null) {
                 //Get data from the image element
                 thisTexture.mWidth = htmlImage.width;
@@ -193,7 +193,7 @@ namespace WDOH {
                     thisTexture.mFileType = EFileTypeTextureWebGL.NONE
                 }
 
-                switch(extension) {
+                switch (extension) {
                     case EFileTypeTextureWebGL.JPEG:
                         thisTexture.mFileType = EFileTypeTextureWebGL.JPEG;
                         thisTexture.mAlphaChannel = false;
@@ -205,7 +205,7 @@ namespace WDOH {
                 }
 
                 if (thisTexture.mFileType === EFileTypeTextureWebGL.NONE) {
-                    let msg : string = "Unable to determine image type. Src: " + htmlImage.src;
+                    let msg: string = "Unable to determine image type. Src: " + htmlImage.src;
                     thisTexture.cleanUp();
                     throw new Error(msg);
                 }
@@ -247,7 +247,7 @@ namespace WDOH {
             }
         }
 
-        private static bindingPointToGLEeum(bindingPoint : ETextureBindingPoint) : GLenum {
+        private static bindingPointToGLEeum(bindingPoint: ETextureBindingPoint) : GLenum {
             switch (bindingPoint) {
                 case ETextureBindingPoint.TEX_2D:
                     return mContext.TEXTURE_2D;

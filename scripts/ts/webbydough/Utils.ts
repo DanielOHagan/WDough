@@ -12,4 +12,8 @@ namespace WDOH {
     export function _Logger() : Logger {
         return mApplication.getLogger();
     }
+
+    export function _DebugOutput() : DebugOutput {
+        return mApplication.getDebugOutput();
+    }
 }

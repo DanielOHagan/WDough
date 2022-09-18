@@ -7,6 +7,5 @@ namespace WDOH {
 
         cross(vec : T) : T;
         dot(vec : T) : T;
-
     }
 }

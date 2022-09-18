@@ -55,13 +55,13 @@ namespace WDOH {
         }
 
         public cross() : Vector2 {
-            //TODO:: This
+            //TODO : : This
 
             return this;
         }
 
         public dot() : Vector2 {
-            //TODO:: This
+            //TODO : : This
 
             return this;
         }

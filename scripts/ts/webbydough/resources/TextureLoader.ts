@@ -32,7 +32,7 @@ namespace WDOH {
             }
 
             if (rgbaColourData.length % 4 !== 0) {
-                _Logger().errWDOH("rgbaColourData argument must include 4 data channels in Uint8Array.")
+                _Logger().errWDOH("rgbaColourData argument must include 4 data channels in Uint8Array.");
             }
 
             let texture : ITexture = TextureWebGL.generateTexture(width, height, bindingPoint);

@@ -1,5 +1,4 @@
 namespace WDOH {
-
     export class Logger {
 
         private static readonly WDOH_LOG_PREFIX : string = "WDOH: ";

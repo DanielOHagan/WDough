@@ -63,6 +63,10 @@ namespace TestGame {
                 this.zoom(-this.mZoomScale * deltaTime)
             }
 
+            if (WDOH.Input.isKeyPressed(WDOH.EKeyInputCode.KEY_R)) {
+                this.mRotation = 0;
+            }
+
             this.mCamera.setRotation(this.mRotation);
             this.mCamera.setPosition(this.mPosition);
         }
@@ -143,11 +147,11 @@ namespace TestGame {
             return this.mCamera;
         }
 
-        private zoom(zoomAmount : number) : void {
+        public zoom(zoomAmount : number) : void {
             this.mZoomLevel -= zoomAmount * this.mZoomScale;
             this.mZoomLevel = WDOH.MathsWDOH.clamp(this.mZoomLevel, this.mZoomMin, this.mZoomMax);
 
-            //TODO:: Possible optimisation, even if the zoom is clamped and stays at the same min / max value, the projection mat is still re-calculated.
+            //TODO : : Possible optimisation, even if the zoom is clamped and stays at the same min / max value, the projection mat is still re-calculated.
             // Maybe add a check to see if the zoom level changes then perform the updating.
             this.updateProjection();
         }

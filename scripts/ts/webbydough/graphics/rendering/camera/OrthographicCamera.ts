@@ -31,7 +31,7 @@ namespace WDOH {
             this.mViewMatrix.identity();
             this.mViewMatrix.translateVec3(this.mPosition);
             this.mViewMatrix.rotateRads(this.mRotation, new Vector3(0, 0, 1));
-            this.mViewMatrix.invert();
+            this.mViewMatrix.inverse();
         }
 
         public updateProjectionViewMatrix() : void {

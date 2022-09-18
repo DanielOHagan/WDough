@@ -18,8 +18,6 @@ namespace WDOH {
             texture : ITexture | null
         ) {
             super(pos, size, rotation);
-            this.mPosition = pos;
-            this.mSize = size;
             this.mColour = colour;
             this.mTexture = texture;
             this.mTextureCoordsU = Quad.DEFAULT_TEXTURE_COORDS_U;

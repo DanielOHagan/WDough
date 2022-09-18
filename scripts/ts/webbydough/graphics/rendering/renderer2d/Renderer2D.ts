@@ -2,7 +2,7 @@ namespace WDOH {
 
     export class Renderer2D implements IRenderer {
 
-        public constructor() {}
+        public constructor() { }
 
         public init() : void {
             Renderer2DStorage.init();
@@ -22,7 +22,7 @@ namespace WDOH {
                 textureShader.setUniformMat4(Renderer2DStorage.UNIFORM_NAME_PROJ_VIEW_MAT, camera.getProjectionViewMatrix());
 
                 //TODO:: One Optimisation could be to set scene data for what batches are going to be used until the end of the scene so the renderer knows what that to initialise.
-                //      e.g: HUD, Background, Player
+                //      e.g HUD, Background, Player
                 //Create first Quad Batch if none exist
                 if (Renderer2DStorage.mRenderBatchQuadIndex < 0) {
                     Renderer2DStorage.createNewQuadBatch(null);
@@ -93,7 +93,7 @@ namespace WDOH {
             let sourceArrayLength : number = quadArray.length;
             let splitCount : number = 0;
 
-            while(sourceArrayLength > Renderer2DStorage.mRenderBatchMaxQuadCount) {
+            while (sourceArrayLength > Renderer2DStorage.mRenderBatchMaxQuadCount) {
                 splitQuadArray.push(quadArray.slice(
                     splitCount * Renderer2DStorage.mRenderBatchMaxQuadCount,
                     Renderer2DStorage.mRenderBatchMaxQuadCount
@@ -243,7 +243,7 @@ namespace WDOH {
                             if (addedCount === totalQuadCount) added = true;
                         }
                     }
-                } else if (batch.hasSpace(totalQuadCount - addedCount) && batch.hasTextureSlotsAvailable()) {
+                } else if (batch.hasSpace((totalQuadCount - addedCount) * 4) && batch.hasTextureSlotsAvailable()) {
                     firstBatchWithSpaceIndex = index;
                 }
 

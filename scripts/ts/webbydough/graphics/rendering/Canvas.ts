@@ -26,7 +26,7 @@ namespace WDOH {
             maxSizeEnable : boolean = true,
             disableContextMenu : boolean = false,
             hideNativeCursor : boolean = false,
-            canvasId ? : string
+            canvasId? : string
         ) {
             this.mCanvasNode = this.createCanvasNode(disableContextMenu, canvasId);
 
@@ -48,13 +48,13 @@ namespace WDOH {
             );
 
             if (!this.areSizesValid(width, height)) {
-                throw new Error(
+                mApplication.throwError(
                     `Canvas creation sizes outside of allowed parameters:
-                    Min Width: ${this.mMinWidth}, Min Height: ${this.mMinHeight},`
-                    + this.mMaxSizeEnabled ? 
-                    `Max Width: ${this.mMaxWidth}, Max Height: ${this.mMaxHeight}.
-                    Given Sizes: Width: ${width}, Height: ${height}` 
-                    : `Max size not enabeld.`
+                        Min Width: ${this.mMinWidth}, Min Height: ${this.mMinHeight},`
+                        + this.mMaxSizeEnabled ?
+                        `Max Width: ${this.mMaxWidth}, Max Height: ${this.mMaxHeight}.
+                        Given Sizes: Width: ${width}, Height: ${height}`
+                         : `Max size not enabeld.`
                 );
             }
 
@@ -76,7 +76,7 @@ namespace WDOH {
             }
         }
 
-        private createCanvasNode(disableContextMenu : boolean, canvasId ? : string) : HTMLCanvasElement {
+        private createCanvasNode(disableContextMenu : boolean, canvasId? : string) : HTMLCanvasElement {
             let canvasNode : HTMLCanvasElement;
 
             if (canvasId === undefined) {
@@ -87,12 +87,12 @@ namespace WDOH {
             }
 
             if (canvasNode === undefined || canvasNode === null) {
-                throw new Error("Unable to create node");
+                mApplication.throwError("Unable to create node.")
             }
 
             if (disableContextMenu) {
                 //Disable context menu (right click menu)
-                canvasNode.oncontextmenu = function(event) {event.preventDefault(), event.stopPropagation()};
+                canvasNode.oncontextmenu = function (event) { event.preventDefault(), event.stopPropagation() };
             }
 
             return canvasNode;
@@ -100,13 +100,13 @@ namespace WDOH {
 
         private createRenderingContext() : WebGL2RenderingContext {
             if (this.mCanvasNode === null || this.mCanvasNode === undefined) {
-                throw new Error("Canvas not yet defined, unable to create rendering context.");
+                mApplication.throwError("Canvas not yet defined, unable to create rendering context.");
             }
 
             let context : WebGL2RenderingContext = this.mCanvasNode.getContext(Canvas.WEBGL_2_CONTEXT_STRING) as WebGL2RenderingContext;
 
             if (context === null) {
-                throw new Error("Unable to create rendering context, WebGL2 support is required.");
+                mApplication.throwError("Unable to create rendering context, WebGL2 support is required.");
             }
 
             return context;
@@ -121,11 +121,15 @@ namespace WDOH {
                 let node : HTMLElement | null = document.getElementById(nodeId);
 
                 if (node === null) {
-                    mApplication.throwError(`Unable to find the node with ID: ${nodeId}`);
+                    mApplication.throwError(`Unable to find the node with ID : ${nodeId}`);
                 } else {
                     node.appendChild(this.mCanvasNode);
                 }
             }
+        }
+
+        public attachDebugOutput() : void {
+            document.body.appendChild(_DebugOutput().getAsHTML());
         }
 
         public enableResizeEvents(resizable : boolean) : void {
@@ -133,7 +137,7 @@ namespace WDOH {
 
             if (this.mResizable) {
                 //Set resize event
-                window.onresize = function() {
+                window.onresize = function () {
                     mApplication.onEvent(new CanvasResizeEvent(window.innerWidth, window.innerHeight));
                 }
             } else {
@@ -154,11 +158,10 @@ namespace WDOH {
             maxWidth : number,
             maxHeight : number
         ) : void {
-
             if (enableMaxSize !== null) {
                 this.mMaxSizeEnabled = enableMaxSize;
             }
-            //TODO:: Run checks when setting these values (e.g. if maxValue is larger than minValue)
+            //TODO : : Run checks when setting these values (e.g. if maxValue is larger than minValue)
 
             this.setMinSizeParameters(minWidth, minHeight);
 
@@ -193,8 +196,8 @@ namespace WDOH {
             );
         }
 
-        //TODO:: Have multiple methods for more specific calculations that return smaller vectors (vec2 and vec3 instead of it always being a vec4)
-        //TODO:: ROTATION!!!
+        //TODO : : Have multiple methods for more specific calculations that return smaller vectors (vec2 and vec3 instead of it always being a vec4)
+        //TODO : : ROTATION!!!
         public convertScreenToCanvasSpace(
             offsetX : number,
             offsetY : number,
@@ -238,7 +241,7 @@ namespace WDOH {
 
             let pos : Vector4 = new Vector4(x1 + x2, y1 + y2, z, w);
             // let pos : Vector4 = new Vector4(screenPos.x + offsetPos.x, screenPos.y + offsetPos.y, z, w);
-            pos.rotateZ(rotationRadians);
+            //pos.rotateZ(rotationRadians);
 
 
             return pos;
@@ -248,11 +251,11 @@ namespace WDOH {
 
         private setWindowCallbacks() : void {
             //Set callbacks
-            window.onblur = function() {
+            window.onblur = function () {
                 mApplication.onEvent(new FocusChangeEvent(false));
             }
 
-            window.onfocus = function() {
+            window.onfocus = function () {
                 mApplication.onEvent(new FocusChangeEvent(true));
             }
         }

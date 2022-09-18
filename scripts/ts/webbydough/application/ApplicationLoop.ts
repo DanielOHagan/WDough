@@ -58,10 +58,16 @@ namespace WDOH {
                     this.mFpsCounterTime = 0;
                     this.mLastFrameExtraTimeSpan = 0;
 
-                    //To display FPS every SECOND, call displayFps here
-                    mApplication.displayFps(this.mPreviousFps);
+                    //Display FPS every second
+                    //let category : DebugOutputCategory | null = _DebugOutput().getCategoryByName("General");
+                    //if (category !== null) {
+                    //    category.updateValue("FPS", this.mPreviousFps.toString());
+                    //} else {
+                    //    _Logger().errWDOH("General category not found");
+                    //}
                 }
 
+                // updateFrame = updateFrame && (mApplication.isFocused() || this.mRunInBackground);
                 if (updateFrame) {
                     updateFrame = mApplication.isFocused() || this.mRunInBackground;
                 }
@@ -85,7 +91,7 @@ namespace WDOH {
         private updateTargetFrameTime(focused : boolean) : void {
             if (focused) {
                 this.mTargetFrameTimeSpan = 1 / this.mTargetFps;
-            } else {
+            } else if (!this.mRunInBackground) {
                 this.mTargetFrameTimeSpan = 1 / this.mTargetBackgroundFps;
             }
         }
@@ -98,6 +104,7 @@ namespace WDOH {
             }
 
             this.updateTargetFrameTime(mApplication.isFocused());
+            //_DebugOutput().getCategoryByName("General")?.updateValue("Target FPS", this.mTargetFps.toString());
         }
 
         public setTargetBackgroundFps(targetBackgroundFps : number) : void {

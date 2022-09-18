@@ -2,7 +2,7 @@ namespace WDOH {
 
     export class DebugToolsWebGL {
 
-        private constructor() {};
+        private constructor() { };
 
         public static printBufferParam(buffer : number, param : number) : void {
             if (mApplication !== null) {
